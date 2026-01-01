@@ -1,0 +1,5 @@
+- [ ] Verify that the copilot-instructions.md file in the .github directory is created.
+- [ ] Scaffold the Project
+- [ ] Customize the Project
+- [ ] Compile the Project
+- [ ] Ensure Documentation is Complete
