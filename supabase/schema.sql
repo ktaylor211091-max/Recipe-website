@@ -52,6 +52,7 @@ create table if not exists public.recipes (
 
   title text not null,
   slug text not null unique,
+  category text not null default 'General',
   description text,
   ingredients text[] not null default '{}',
   steps text[] not null default '{}',
@@ -59,6 +60,17 @@ create table if not exists public.recipes (
   image_path text,
   published boolean not null default false
 );
+
+-- Migration helper (safe to re-run)
+alter table public.recipes
+  add column if not exists category text;
+
+alter table public.recipes
+  alter column category set default 'General';
+
+update public.recipes
+set category = 'General'
+where category is null;
 
 create index if not exists recipes_published_created_at_idx
 on public.recipes (published, created_at desc);

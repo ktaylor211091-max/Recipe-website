@@ -34,7 +34,7 @@ export default async function RecipePage({ params }: Props) {
   const { data: recipe } = await supabase
     .from("recipes")
     .select(
-      "id,title,slug,description,ingredients,steps,image_path,published,created_at",
+      "id,title,slug,category,description,ingredients,steps,image_path,published,created_at",
     )
     .eq("slug", slug)
     .eq("published", true)
@@ -55,6 +55,11 @@ export default async function RecipePage({ params }: Props) {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{recipe.title}</h1>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+              {(recipe.category ?? "General").trim() || "General"}
+            </div>
+          </div>
           {recipe.description ? (
             <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-600">
               {recipe.description}
@@ -62,7 +67,7 @@ export default async function RecipePage({ params }: Props) {
           ) : null}
         </div>
         <Link
-          className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+          className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
           href="/"
         >
           Back

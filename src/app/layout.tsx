@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <header className="border-b border-neutral-200 bg-white">
+        <header className="border-b border-indigo-200 bg-gradient-to-r from-indigo-600 to-sky-600 text-white">
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
             <Link href="/" className="font-semibold tracking-tight">
               Recipe Website
@@ -23,13 +23,13 @@ export default function RootLayout({
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/"
-                className="rounded-md px-3 py-2 text-neutral-700 hover:bg-neutral-100"
+                className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
               >
                 Home
               </Link>
               <Link
                 href="/admin"
-                className="rounded-md px-3 py-2 text-neutral-700 hover:bg-neutral-100"
+                className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
               >
                 Admin
               </Link>

@@ -5,6 +5,7 @@ type RecipeRow = {
   id: string;
   title: string;
   slug: string;
+  category: string | null;
   description: string | null;
   created_at: string;
 };
@@ -15,15 +16,26 @@ export default async function Home() {
   const { data: recipes } = supabase
     ? await supabase
         .from("recipes")
-        .select("id,title,slug,description,created_at")
+        .select("id,title,slug,category,description,created_at")
         .eq("published", true)
         .order("created_at", { ascending: false })
         .returns<RecipeRow[]>()
     : { data: null };
 
+  const byCategory = (recipes ?? []).reduce<Record<string, RecipeRow[]>>(
+    (acc, r) => {
+      const cat = (r.category ?? "General").trim() || "General";
+      (acc[cat] ??= []).push(r);
+      return acc;
+    },
+    {},
+  );
+
+  const categories = Object.keys(byCategory).sort((a, b) => a.localeCompare(b));
+
   return (
     <main>
-      <section className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
+      <section className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-white to-indigo-50 p-8 shadow-sm">
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-semibold tracking-tight">
             Find something good to cook
@@ -37,13 +49,13 @@ export default async function Home() {
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/recipes/example-recipe"
-            className="inline-flex items-center justify-center rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-50 hover:bg-neutral-800"
+            className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
           >
             View example recipe
           </Link>
           <Link
             href="/admin"
-            className="inline-flex items-center justify-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+            className="inline-flex items-center justify-center rounded-md border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
           >
             Go to admin
           </Link>
@@ -71,21 +83,41 @@ export default async function Home() {
             No published recipes yet.
           </div>
         ) : (
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {recipes.map((r) => (
-              <Link
-                key={r.id}
-                href={`/recipes/${r.slug}`}
-                className="block rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm hover:bg-neutral-50"
-              >
-                <div className="text-base font-semibold">{r.title}</div>
-                {r.description ? (
-                  <div className="mt-2 line-clamp-3 text-sm leading-6 text-neutral-600">
-                    {r.description}
+          <div className="mt-4 space-y-8">
+            {categories.map((cat) => (
+              <div key={cat}>
+                <div className="flex items-center gap-2">
+                  <div className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-800">
+                    {cat}
                   </div>
-                ) : null}
-                <div className="mt-4 text-xs text-neutral-500">/{r.slug}</div>
-              </Link>
+                  <div className="text-xs text-neutral-500">
+                    {byCategory[cat].length} recipe{byCategory[cat].length === 1 ? "" : "s"}
+                  </div>
+                </div>
+
+                <div className="mt-3 grid gap-4 md:grid-cols-2">
+                  {byCategory[cat].map((r) => (
+                    <Link
+                      key={r.id}
+                      href={`/recipes/${r.slug}`}
+                      className="block rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm hover:bg-neutral-50"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="text-base font-semibold">{r.title}</div>
+                        <div className="shrink-0 rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+                          {(r.category ?? "General").trim() || "General"}
+                        </div>
+                      </div>
+                      {r.description ? (
+                        <div className="mt-2 line-clamp-3 text-sm leading-6 text-neutral-600">
+                          {r.description}
+                        </div>
+                      ) : null}
+                      <div className="mt-4 text-xs text-neutral-500">/{r.slug}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}

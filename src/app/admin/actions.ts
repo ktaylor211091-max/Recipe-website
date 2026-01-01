@@ -50,6 +50,8 @@ export async function signOut() {
 
 export async function createRecipe(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
+  const categoryRaw = String(formData.get("category") ?? "").trim();
+  const category = categoryRaw || "General";
   const description = String(formData.get("description") ?? "").trim();
   const ingredientsText = String(formData.get("ingredients") ?? "");
   const stepsText = String(formData.get("steps") ?? "");
@@ -105,6 +107,7 @@ export async function createRecipe(formData: FormData) {
   const { error } = await supabase.from("recipes").insert({
     title,
     slug,
+    category,
     description: description || null,
     ingredients,
     steps,

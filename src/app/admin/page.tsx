@@ -34,7 +34,7 @@ export default async function AdminPage({
           </p>
         </div>
         <Link
-          className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+          className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
           href="/"
         >
           Back to home
@@ -69,7 +69,7 @@ export default async function AdminPage({
             </label>
             <button
               type="submit"
-              className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-50 hover:bg-neutral-800"
+              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
             >
               Sign in
             </button>
@@ -78,7 +78,7 @@ export default async function AdminPage({
           <form action={signOut} className="mt-3">
             <button
               type="submit"
-              className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+              className="rounded-md border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
             >
               Sign out
             </button>
@@ -105,6 +105,18 @@ export default async function AdminPage({
                 required
                 className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
               />
+            </label>
+
+            <label className="block">
+              <div className="text-sm font-medium">Category</div>
+              <input
+                name="category"
+                placeholder="e.g. Dinner, Desserts, Snacks"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+              />
+              <div className="mt-1 text-xs text-neutral-500">
+                Leave blank to use “General”.
+              </div>
             </label>
             <label className="block">
               <div className="text-sm font-medium">Description</div>
@@ -149,7 +161,7 @@ export default async function AdminPage({
             </label>
             <button
               type="submit"
-              className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-50 hover:bg-neutral-800"
+              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
             >
               Create
             </button>
@@ -195,7 +207,7 @@ async function AdminRecipes() {
 
   const { data: recipes } = await supabase
     .from("recipes")
-    .select("id,title,slug,published,created_at,image_path")
+    .select("id,title,slug,category,published,created_at,image_path")
     .order("created_at", { ascending: false });
 
   return (
@@ -249,7 +261,12 @@ async function AdminRecipes() {
                 )}
 
                 <div>
-                  <div className="font-medium">{r.title}</div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="font-medium">{r.title}</div>
+                    <div className="rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+                      {(r.category ?? "General").trim() || "General"}
+                    </div>
+                  </div>
                   <div className="mt-1 text-xs text-neutral-500">/{r.slug}</div>
                 </div>
               </div>
@@ -257,7 +274,7 @@ async function AdminRecipes() {
               <div className="flex flex-wrap gap-2">
                 <Link
                   href={`/recipes/${r.slug}`}
-                  className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+                  className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                 >
                   Open
                 </Link>
@@ -271,7 +288,7 @@ async function AdminRecipes() {
                   />
                   <button
                     type="submit"
-                    className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+                    className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
                   >
                     {r.published ? "Unpublish" : "Publish"}
                   </button>
@@ -281,7 +298,7 @@ async function AdminRecipes() {
                   <input type="hidden" name="id" value={r.id} />
                   <button
                     type="submit"
-                    className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+                    className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
                   >
                     Delete
                   </button>
@@ -292,7 +309,7 @@ async function AdminRecipes() {
                     <input type="hidden" name="id" value={r.id} />
                     <button
                       type="submit"
-                      className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
+                      className="rounded-md border border-amber-200 bg-white px-3 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50"
                     >
                       Remove image
                     </button>

@@ -18,6 +18,7 @@ npm install
 	- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 3. In Supabase Dashboard → SQL Editor:
 	- Run `supabase/schema.sql`
+	- If you already ran it earlier, re-run it to apply the new `category` column migration
 4. In Supabase Dashboard → Storage:
 	- Create a bucket named `recipe-images`
 	- If you want images to load via public URLs, set the bucket to **Public**
