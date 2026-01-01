@@ -12,12 +12,14 @@ type RecipeRow = {
 export default async function Home() {
   const supabase = await createSupabaseServerClient();
 
-  const { data: recipes } = await supabase
-    .from("recipes")
-    .select("id,title,slug,description,created_at")
-    .eq("published", true)
-    .order("created_at", { ascending: false })
-    .returns<RecipeRow[]>();
+  const { data: recipes } = supabase
+    ? await supabase
+        .from("recipes")
+        .select("id,title,slug,description,created_at")
+        .eq("published", true)
+        .order("created_at", { ascending: false })
+        .returns<RecipeRow[]>()
+    : { data: null };
 
   return (
     <main>
@@ -46,6 +48,14 @@ export default async function Home() {
             Go to admin
           </Link>
         </div>
+
+        {!supabase ? (
+          <div className="mt-6 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
+            Supabase is not configured. Set Vercel env vars
+            <b> NEXT_PUBLIC_SUPABASE_URL</b> and
+            <b> NEXT_PUBLIC_SUPABASE_ANON_KEY</b>.
+          </div>
+        ) : null}
       </section>
 
       <section className="mt-8">

@@ -168,6 +168,18 @@ export default async function AdminPage({
 
 async function AdminRecipes() {
   const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return (
+      <section className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <h2 className="text-base font-semibold">Your recipes</h2>
+        <p className="mt-2 text-sm text-neutral-600">
+          Supabase is not configured. Set Vercel env vars
+          <b> NEXT_PUBLIC_SUPABASE_URL</b> and
+          <b> NEXT_PUBLIC_SUPABASE_ANON_KEY</b>, then redeploy.
+        </p>
+      </section>
+    );
+  }
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes.user;
 

@@ -14,11 +14,23 @@ function splitLines(input: string) {
     .filter(Boolean);
 }
 
+async function requireSupabase() {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    redirect(
+      `/admin?error=${encodeURIComponent(
+        "Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.",
+      )}`,
+    );
+  }
+  return supabase;
+}
+
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireSupabase();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
@@ -30,7 +42,7 @@ export async function signIn(formData: FormData) {
 }
 
 export async function signOut() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireSupabase();
   await supabase.auth.signOut();
   revalidatePath("/admin");
   redirect("/admin");
@@ -54,7 +66,7 @@ export async function createRecipe(formData: FormData) {
     redirect(`/admin?error=${encodeURIComponent("Could not create a slug")}`);
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireSupabase();
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes.user;
 
@@ -114,7 +126,7 @@ export async function togglePublish(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const nextPublished = String(formData.get("published") ?? "") === "true";
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireSupabase();
   const { error } = await supabase
     .from("recipes")
     .update({ published: nextPublished })
@@ -132,7 +144,7 @@ export async function togglePublish(formData: FormData) {
 export async function deleteRecipe(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireSupabase();
 
   // Best-effort: delete associated image from Storage first (if any).
   const { data: existing } = await supabase
@@ -160,7 +172,7 @@ export async function deleteRecipe(formData: FormData) {
 export async function removeRecipeImage(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireSupabase();
 
   const { data: existing, error: fetchError } = await supabase
     .from("recipes")

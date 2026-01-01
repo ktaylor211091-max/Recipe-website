@@ -12,6 +12,7 @@ export async function middleware(request: NextRequest) {
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !anonKey) {
+    // Don't crash middleware in production if env vars aren't set yet.
     return response;
   }
 

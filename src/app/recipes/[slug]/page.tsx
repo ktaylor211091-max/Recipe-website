@@ -11,6 +11,26 @@ export default async function RecipePage({ params }: Props) {
   const { slug } = await params;
 
   const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return (
+      <main>
+        <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Supabase not configured
+          </h1>
+          <p className="mt-2 text-sm text-neutral-600">
+            Set the required Vercel environment variables and redeploy.
+          </p>
+          <div className="mt-4">
+            <Link className="underline" href="/">
+              Back to home
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const { data: recipe } = await supabase
     .from("recipes")
     .select(
