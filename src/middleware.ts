@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSupabaseEnv } from "@/lib/supabase/server";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({
@@ -8,8 +9,7 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const { url, anonKey } = getSupabaseEnv();
 
   if (!url || !anonKey) {
     // Don't crash middleware in production if env vars aren't set yet.
