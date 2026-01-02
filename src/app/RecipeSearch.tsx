@@ -27,7 +27,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
               setQuery(e.target.value);
               onSearch(e.target.value, selectedCategory);
             }}
-            className="w-full border-b-2 border-orange-200 bg-transparent py-3 text-base font-medium transition-colors focus:border-orange-500 focus:outline-none"
+            className="w-full border-b-2 border-pink-300 bg-transparent py-3 text-base font-medium transition-colors focus:border-pink-600 focus:outline-none"
           />
         </div>
 
@@ -37,7 +37,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
             setSelectedCategory(e.target.value);
             onSearch(query, e.target.value);
           }}
-          className="border-b-2 border-orange-200 bg-transparent py-3 text-base font-medium transition-colors focus:border-orange-500 focus:outline-none sm:w-48"
+          className="border-b-2 border-pink-300 bg-transparent py-3 text-base font-medium transition-colors focus:border-pink-600 focus:outline-none sm:w-48"
         >
           <option value="all">All Categories</option>
           {categories.map((cat) => (
