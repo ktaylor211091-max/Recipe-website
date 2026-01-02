@@ -10,15 +10,16 @@ export function createSupabaseBrowserClient() {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY?.trim() ||
     process.env.EXPO_PUBLIC_SUPABASE_KEY?.trim();
 
-  // If env vars are missing/empty, use hardcoded fallback
-  if (!url || !anonKey) {
-    url = url || SUPABASE_CONFIG.url;
-    anonKey = anonKey || SUPABASE_CONFIG.anonKey;
-  }
+  // Hardcoded fallback (temporary workaround for Vercel env var issues)
+  const FALLBACK_URL = "https://hojzqqefgvvaztkcsiys.supabase.co";
+  const FALLBACK_KEY = "sb_publishable_w5bc9NxWE5o-G1h-OnVNWg_03Tp0ZSx";
 
-  if (!url || !anonKey || anonKey === "YOUR_KEY_HERE") {
+  url = url || FALLBACK_URL;
+  anonKey = anonKey || FALLBACK_KEY;
+
+  if (!url || !anonKey) {
     throw new Error(
-      "Missing Supabase config. Edit src/lib/supabase/config.ts and paste your anon/publishable key.",
+      "Missing Supabase config (this should never happen with fallback).",
     );
   }
 
