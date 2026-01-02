@@ -1,17 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { SUPABASE_CONFIG } from "./config";
 
 export function getSupabaseEnv() {
   const url =
     process.env.NEXT_PUBLIC_SUPABASE_URL ??
-    process.env.EXPO_PUBLIC_SUPABASE_URL;
+    process.env.EXPO_PUBLIC_SUPABASE_URL ??
+    SUPABASE_CONFIG.url;
 
   // Supabase has recently renamed/introduced publishable keys.
   // We accept several common env var names but still only use public keys.
   const anonKey =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_KEY;
+    process.env.EXPO_PUBLIC_SUPABASE_KEY ??
+    SUPABASE_CONFIG.anonKey;
   return { url, anonKey };
 }
 
