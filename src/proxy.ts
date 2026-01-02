@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "@/lib/supabase/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const { url, anonKey } = getSupabaseEnv();
 
   if (!url || !anonKey) {
-    // Don't crash middleware in production if env vars aren't set yet.
+    // Don't crash proxy in production if env vars aren't set yet.
     return response;
   }
 
