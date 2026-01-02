@@ -1,17 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { signIn } from "./actions";
 
-import { AdminClient } from "./AdminClient";
-import {
-  createRecipe,
-  deleteRecipe,
-  removeRecipeImage,
-  signIn,
-  signOut,
-  togglePublish,
-} from "./actions";
-
-export default async function AdminPage({
+export default async function AdminSignInPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -24,302 +16,89 @@ export default async function AdminPage({
         ? sp.error[0]
         : "";
 
+  // Check if user is already signed in
+  const supabase = await createSupabaseServerClient();
+  if (supabase) {
+    const { data: userRes } = await supabase.auth.getUser();
+    if (userRes.user) {
+      // User is signed in, redirect to dashboard
+      redirect("/admin/dashboard");
+    }
+  }
+
   return (
-    <main>
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-sky-50 px-4">
+      <div className="w-full max-w-md">
+        <div className="mb-6 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+            Admin Sign In
+          </h1>
           <p className="mt-2 text-sm text-neutral-600">
-            Upload and manage recipes (coming next).
+            Sign in to manage your recipes
           </p>
         </div>
-        <Link
-          className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
-          href="/"
-        >
-          Back to home
-        </Link>
-      </div>
 
-      <section className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-semibold">Sign in</h2>
-          <p className="mt-2 text-sm leading-6 text-neutral-600">
-            Only admins can create recipes once roles are set up in Supabase.
-          </p>
-
-          <form action={signIn} className="mt-4 space-y-3">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg">
+          <form action={signIn} className="space-y-4">
             <label className="block">
-              <div className="text-sm font-medium">Email</div>
+              <div className="mb-2 text-sm font-medium text-neutral-700">
+                Email
+              </div>
               <input
                 name="email"
                 type="email"
                 required
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+                placeholder="admin@example.com"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
               />
             </label>
+
             <label className="block">
-              <div className="text-sm font-medium">Password</div>
+              <div className="mb-2 text-sm font-medium text-neutral-700">
+                Password
+              </div>
               <input
                 name="password"
                 type="password"
                 required
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+                placeholder="••••••••"
+                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
               />
             </label>
+
+            {errorMessage ? (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                {errorMessage}
+              </div>
+            ) : null}
+
             <button
               type="submit"
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+              className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              Sign in
+              Sign In
             </button>
           </form>
 
-          <form action={signOut} className="mt-3">
-            <button
-              type="submit"
-              className="rounded-md border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
+          <div className="mt-6 text-center">
+            <Link
+              href="/"
+              className="text-sm text-indigo-600 hover:text-indigo-500 hover:underline"
             >
-              Sign out
-            </button>
-          </form>
-
-          {errorMessage ? (
-            <div className="mt-4 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-800">
-              {errorMessage}
-            </div>
-          ) : null}
+              ← Back to home
+            </Link>
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-semibold">Create recipe</h2>
-          <p className="mt-2 text-sm leading-6 text-neutral-600">
-            New recipes start as drafts unless you publish them.
+        <div className="mt-6 rounded-xl border border-neutral-200 bg-white p-4 text-center text-sm text-neutral-600">
+          <p>
+            <strong>Note:</strong> Only admin accounts can access the dashboard.
           </p>
-
-          <form action={createRecipe} className="mt-4 space-y-3">
-            <label className="block">
-              <div className="text-sm font-medium">Title</div>
-              <input
-                name="title"
-                required
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
-              />
-            </label>
-
-            <label className="block">
-              <div className="text-sm font-medium">Category</div>
-              <input
-                name="category"
-                placeholder="e.g. Dinner, Desserts, Snacks"
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
-              />
-              <div className="mt-1 text-xs text-neutral-500">
-                Leave blank to use “General”.
-              </div>
-            </label>
-            <label className="block">
-              <div className="text-sm font-medium">Description</div>
-              <textarea
-                name="description"
-                rows={3}
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
-              />
-            </label>
-            <label className="block">
-              <div className="text-sm font-medium">Ingredients (one per line)</div>
-              <textarea
-                name="ingredients"
-                rows={5}
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
-              />
-            </label>
-            <label className="block">
-              <div className="text-sm font-medium">Steps (one per line)</div>
-              <textarea
-                name="steps"
-                rows={6}
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
-              />
-            </label>
-
-            <label className="block">
-              <div className="text-sm font-medium">Image (optional)</div>
-              <input
-                name="image"
-                type="file"
-                accept="image/*"
-                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
-              />
-              <div className="mt-1 text-xs text-neutral-500">
-                Best results: JPG/PNG/WebP.
-              </div>
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input name="published" type="checkbox" className="h-4 w-4" />
-              Publish now
-            </label>
-            <button
-              type="submit"
-              className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
-            >
-              Create
-            </button>
-          </form>
+          <p className="mt-1">
+            Make sure your role is set to <code className="rounded bg-neutral-100 px-1 py-0.5 font-mono text-xs">admin</code> in Supabase profiles.
+          </p>
         </div>
-      </section>
-
-      <AdminRecipes />
-
-      <div className="mt-6">
-        <AdminClient />
       </div>
     </main>
-  );
-}
-
-async function AdminRecipes() {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    return (
-      <section className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold">Your recipes</h2>
-        <p className="mt-2 text-sm text-neutral-600">
-          Supabase is not configured. Set Vercel env vars
-          <b> NEXT_PUBLIC_SUPABASE_URL</b> and
-          <b> NEXT_PUBLIC_SUPABASE_ANON_KEY</b>, then redeploy.
-        </p>
-      </section>
-    );
-  }
-  const { data: userRes } = await supabase.auth.getUser();
-  const user = userRes.user;
-
-  const { data: roleRow } = user
-    ? await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle()
-    : { data: null };
-
-  const isAdmin = roleRow?.role === "admin";
-
-  const { data: recipes } = await supabase
-    .from("recipes")
-    .select("id,title,slug,category,published,created_at,image_path")
-    .order("created_at", { ascending: false });
-
-  return (
-    <section className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h2 className="text-base font-semibold">Your recipes</h2>
-          <p className="mt-1 text-sm text-neutral-600">
-            Signed in as: {user?.email ?? "(not signed in)"} · Role:{" "}
-            {roleRow?.role ?? "(unknown)"}
-          </p>
-          {!user ? (
-            <p className="mt-2 text-sm text-neutral-600">
-              Sign in to manage recipes.
-            </p>
-          ) : !isAdmin ? (
-            <p className="mt-2 text-sm text-neutral-600">
-              Your account is not an admin yet. Set your role to <b>admin</b> in
-              Supabase profiles.
-            </p>
-          ) : null}
-        </div>
-        <Link className="text-sm underline" href="/">
-          View public site
-        </Link>
-      </div>
-
-      {!recipes || recipes.length === 0 ? (
-        <div className="mt-4 text-sm text-neutral-600">No recipes yet.</div>
-      ) : (
-        <div className="mt-4 divide-y divide-neutral-200 rounded-xl border border-neutral-200">
-          {recipes.map((r) => (
-            <div
-              key={r.id}
-              className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between"
-            >
-              <div className="flex items-center gap-3">
-                {r.image_path ? (
-                  <img
-                    src={
-                      supabase.storage
-                        .from("recipe-images")
-                        .getPublicUrl(r.image_path).data.publicUrl
-                    }
-                    alt=""
-                    className="h-12 w-12 shrink-0 rounded-md border border-neutral-200 object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="h-12 w-12 shrink-0 rounded-md border border-neutral-200 bg-neutral-50" />
-                )}
-
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="font-medium">{r.title}</div>
-                    <div className="rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
-                      {(r.category ?? "General").trim() || "General"}
-                    </div>
-                  </div>
-                  <div className="mt-1 text-xs text-neutral-500">/{r.slug}</div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <Link
-                  href={`/recipes/${r.slug}`}
-                  className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
-                >
-                  Open
-                </Link>
-
-                <form action={togglePublish}>
-                  <input type="hidden" name="id" value={r.id} />
-                  <input
-                    type="hidden"
-                    name="published"
-                    value={String(!r.published)}
-                  />
-                  <button
-                    type="submit"
-                    className="rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
-                  >
-                    {r.published ? "Unpublish" : "Publish"}
-                  </button>
-                </form>
-
-                <form action={deleteRecipe}>
-                  <input type="hidden" name="id" value={r.id} />
-                  <button
-                    type="submit"
-                    className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
-                  >
-                    Delete
-                  </button>
-                </form>
-
-                {r.image_path ? (
-                  <form action={removeRecipeImage}>
-                    <input type="hidden" name="id" value={r.id} />
-                    <button
-                      type="submit"
-                      className="rounded-md border border-amber-200 bg-white px-3 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50"
-                    >
-                      Remove image
-                    </button>
-                  </form>
-                ) : null}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
   );
 }

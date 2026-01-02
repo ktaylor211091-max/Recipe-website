@@ -1,11 +1,13 @@
 -- Run AFTER you create a Storage bucket named: recipe-images
 -- In Supabase Dashboard: Storage → Buckets → New bucket → name "recipe-images"
--- You can leave it PRIVATE; we will use signed URLs later if needed.
+-- Make it PUBLIC so images have public URLs.
 
 -- Restrict uploads to admins.
 -- NOTE: storage policies apply to storage.objects.
+-- Safe to re-run: drops then creates.
 
-create policy if not exists "recipe-images: admin upload"
+drop policy if exists "recipe-images: admin upload" on storage.objects;
+create policy "recipe-images: admin upload"
 on storage.objects
 for insert
 to authenticated
@@ -14,7 +16,8 @@ with check (
   and public.is_admin()
 );
 
-create policy if not exists "recipe-images: admin update"
+drop policy if exists "recipe-images: admin update" on storage.objects;
+create policy "recipe-images: admin update"
 on storage.objects
 for update
 to authenticated
@@ -27,7 +30,8 @@ with check (
   and public.is_admin()
 );
 
-create policy if not exists "recipe-images: admin delete"
+drop policy if exists "recipe-images: admin delete" on storage.objects;
+create policy "recipe-images: admin delete"
 on storage.objects
 for delete
 to authenticated
@@ -36,9 +40,9 @@ using (
   and public.is_admin()
 );
 
--- Public can read recipe images ONLY if you make the bucket public.
--- If the bucket is private, you can remove this policy and use signed URLs.
-create policy if not exists "recipe-images: public read"
+-- Public can read recipe images (bucket must be public)
+drop policy if exists "recipe-images: public read" on storage.objects;
+create policy "recipe-images: public read"
 on storage.objects
 for select
 to anon, authenticated
