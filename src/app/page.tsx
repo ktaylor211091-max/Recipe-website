@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 import { RecipeListClient } from "./RecipeListClient";
 
 type RecipeRow = {
@@ -87,7 +88,7 @@ export default async function Home() {
         ) : (
           <RecipeListClient
             recipes={recipes}
-            supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL}
+            supabaseUrl={SUPABASE_CONFIG.url}
             bucketName="recipe-images"
           />
         )}
