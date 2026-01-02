@@ -187,15 +187,14 @@ export async function updateRecipe(formData: FormData) {
   // Handle new image upload if provided
   let image_path: string | null | undefined = undefined; // undefined means "don't update"
   
-  // Check if a new image file was uploaded (must have size > 0 and be a File)
-  const hasNewImage = imageFile instanceof File && imageFile.size > 0 && imageFile.name;
-  
-  if (hasNewImage) {
+  // Check if a new image file was uploaded
+  if (imageFile && imageFile instanceof File && imageFile.size > 0) {
     // Check file size (5MB limit)
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
-    if ((imageFile as File).size > MAX_FILE_SIZE) {
+    if (imageFile.size > MAX_FILE_SIZE) {
       redirect(`/admin/dashboard?error=${encodeURIComponent("Image too large. Maximum size is 5MB. Please compress your image.")}`);  
     }
+    
     // Get existing recipe to check for old image
     const { data: existing } = await supabase
       .from("recipes")
@@ -204,7 +203,7 @@ export async function updateRecipe(formData: FormData) {
       .maybeSingle();
 
     const ext = (() => {
-      const name = (imageFile as File).name || "";
+      const name = imageFile.name || "";
       const dot = name.lastIndexOf(".");
       const maybe = dot >= 0 ? name.slice(dot + 1).toLowerCase() : "";
       return maybe && /^[a-z0-9]+$/.test(maybe) ? maybe : "bin";
@@ -214,8 +213,8 @@ export async function updateRecipe(formData: FormData) {
 
     const { error: uploadError } = await supabase.storage
       .from("recipe-images")
-      .upload(objectPath, imageFile as File, {
-        contentType: (imageFile as File).type || undefined,
+      .upload(objectPath, imageFile, {
+        contentType: imageFile.type || undefined,
         upsert: false,
       });
 
