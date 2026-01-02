@@ -30,6 +30,15 @@ export default async function EditRecipePage({ params }: Props) {
     notFound();
   }
 
+  // Safely convert arrays to strings
+  const ingredientsText = Array.isArray(recipe.ingredients) 
+    ? recipe.ingredients.join("\n") 
+    : "";
+  
+  const stepsText = Array.isArray(recipe.steps) 
+    ? recipe.steps.join("\n") 
+    : "";
+
   const imageUrl = recipe.image_path
     ? supabase.storage
         .from("recipe-images")
@@ -149,7 +158,7 @@ export default async function EditRecipePage({ params }: Props) {
               name="ingredients"
               rows={6}
               required
-              defaultValue={(recipe.ingredients as string[])?.join("\n") || ""}
+              defaultValue={ingredientsText}
               className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
           </div>
@@ -162,7 +171,7 @@ export default async function EditRecipePage({ params }: Props) {
               name="steps"
               rows={8}
               required
-              defaultValue={(recipe.steps as string[])?.join("\n") || ""}
+              defaultValue={stepsText}
               className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
           </div>
