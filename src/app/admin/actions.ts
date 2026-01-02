@@ -90,6 +90,11 @@ export async function createRecipe(formData: FormData) {
 
   let image_path: string | null = null;
   if (imageFile instanceof File && imageFile.size > 0) {
+    // Check file size (5MB limit)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    if (imageFile.size > MAX_FILE_SIZE) {
+      redirect(`/admin/dashboard?error=${encodeURIComponent("Image too large. Maximum size is 5MB. Please compress your image.")}`);  
+    }
     const ext = (() => {
       const name = imageFile.name || "";
       const dot = name.lastIndexOf(".");
@@ -186,6 +191,11 @@ export async function updateRecipe(formData: FormData) {
   const hasNewImage = imageFile instanceof File && imageFile.size > 0 && imageFile.name;
   
   if (hasNewImage) {
+    // Check file size (5MB limit)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    if ((imageFile as File).size > MAX_FILE_SIZE) {
+      redirect(`/admin/dashboard?error=${encodeURIComponent("Image too large. Maximum size is 5MB. Please compress your image.")}`);  
+    }
     // Get existing recipe to check for old image
     const { data: existing } = await supabase
       .from("recipes")

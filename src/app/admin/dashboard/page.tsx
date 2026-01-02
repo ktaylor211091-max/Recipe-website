@@ -338,7 +338,7 @@ export default async function AdminDashboard() {
                 className="mt-1 block w-full text-sm text-neutral-600 file:mr-4 file:rounded file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
               />
               <p className="mt-1 text-xs text-neutral-500">
-                Best results: JPG/PNG/WebP.
+                Best results: JPG/PNG/WebP. Max 5MB.
               </p>
             </div>
 
