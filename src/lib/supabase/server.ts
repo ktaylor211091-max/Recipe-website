@@ -5,13 +5,13 @@ import { SUPABASE_CONFIG } from "./config";
 export function getSupabaseEnv() {
   // Try env vars first, then fall back to hardcoded config
   let url =
-    process.env.NEXT_PUBLIC_SUPABASE_URL ??
-    process.env.EXPO_PUBLIC_SUPABASE_URL;
+    process.env.NEXT_PUBLIC_SUPABASE_URL?. trim() ||
+    process.env.EXPO_PUBLIC_SUPABASE_URL?.trim();
   
   let anonKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_KEY;
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY?.trim() ||
+    process.env.EXPO_PUBLIC_SUPABASE_KEY?.trim();
 
   // If env vars are missing/empty, use hardcoded fallback
   if (!url || !anonKey) {
