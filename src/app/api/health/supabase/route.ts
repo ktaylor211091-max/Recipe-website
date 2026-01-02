@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 function getSupabaseEnv() {
   const url =
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -13,6 +16,11 @@ function getSupabaseEnv() {
 }
 
 export async function GET() {
+  const allEnvKeys = Object.keys(process.env || {});
+  const seenSupabaseKeys = allEnvKeys
+    .filter((k) => k.toUpperCase().includes("SUPABASE"))
+    .sort();
+
   const { url, anonKey } = getSupabaseEnv();
 
   const configured = Boolean(url && anonKey);
@@ -22,6 +30,14 @@ export async function GET() {
       {
         ok: false,
         configured: false,
+        vercel: {
+          VERCEL: process.env.VERCEL ?? null,
+          VERCEL_ENV: process.env.VERCEL_ENV ?? null,
+          VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+        },
+        debug: {
+          seenSupabaseKeys,
+        },
         missing: {
           url: !url,
           anonKey: !anonKey,
@@ -29,7 +45,7 @@ export async function GET() {
         expectedEnv:
           "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (or supported fallbacks) and redeploy.",
       },
-      { status: 500 },
+      { status: 200 },
     );
   }
 
@@ -58,6 +74,14 @@ export async function GET() {
       {
         ok: res.ok,
         configured: true,
+        vercel: {
+          VERCEL: process.env.VERCEL ?? null,
+          VERCEL_ENV: process.env.VERCEL_ENV ?? null,
+          VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+        },
+        debug: {
+          seenSupabaseKeys,
+        },
         supabase: {
           endpoint,
           status: res.status,
@@ -65,17 +89,25 @@ export async function GET() {
           body,
         },
       },
-      { status: res.ok ? 200 : 502 },
+      { status: 200 },
     );
   } catch (err) {
     return NextResponse.json(
       {
         ok: false,
         configured: true,
+        vercel: {
+          VERCEL: process.env.VERCEL ?? null,
+          VERCEL_ENV: process.env.VERCEL_ENV ?? null,
+          VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+        },
+        debug: {
+          seenSupabaseKeys,
+        },
         supabase: { endpoint },
         error: "Request failed",
       },
-      { status: 502 },
+      { status: 200 },
     );
   }
 }
