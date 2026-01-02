@@ -98,7 +98,7 @@ export function RecipeListClient({
           {categories.map((cat) => (
             <div key={cat}>
               <div className="mb-8 text-center">
-                <h3 className="text-4xl font-bold tracking-tighter text-neutral-900 mb-2">
+                <h3 className="text-4xl font-bold tracking-tighter text-orange-600 mb-2">
                   {cat.toUpperCase()}
                 </h3>
                 <p className="text-sm text-neutral-500">
@@ -118,7 +118,7 @@ export function RecipeListClient({
                       href={`/recipes/${r.slug}`}
                       className="group block"
                     >
-                      <div className="overflow-hidden bg-neutral-100 mb-4 aspect-[4/3] rounded-lg">
+                      <div className="overflow-hidden bg-orange-100/50 mb-4 aspect-[4/3] rounded-lg border-2 border-transparent group-hover:border-orange-300 transition-colors duration-300">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
@@ -150,7 +150,7 @@ export function RecipeListClient({
                           {r.servings && (
                             <span>· {r.servings} SERVINGS</span>
                           )}
-                          <span className="ml-auto text-neutral-400">→</span>
+                          <span className="ml-auto text-orange-500 transition-transform group-hover:translate-x-1">→</span>
                         </div>
                       </div>
                     </Link>
