@@ -27,12 +27,6 @@ export default function RootLayout({
               >
                 Home
               </Link>
-              <Link
-                href="/admin"
-                className="rounded-md px-3 py-2 text-white/90 hover:bg-white/10"
-              >
-                Admin
-              </Link>
             </nav>
           </div>
         </header>
@@ -40,8 +34,11 @@ export default function RootLayout({
         <div className="mx-auto max-w-5xl px-6 py-10">{children}</div>
 
         <footer className="border-t border-neutral-200 bg-white">
-          <div className="mx-auto max-w-5xl px-6 py-6 text-sm text-neutral-600">
-            Built with Next.js
+          <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6 text-sm text-neutral-600">
+            <div>Built with Next.js</div>
+            <Link href="/admin" className="text-xs text-neutral-400 hover:text-neutral-600">
+              Admin
+            </Link>
           </div>
         </footer>
       </body>

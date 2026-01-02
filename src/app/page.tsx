@@ -41,24 +41,8 @@ export default async function Home() {
             Find something good to cook
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-neutral-600">
-            Browse published recipes below. Admins can log in to upload new
-            recipes.
+            Browse published recipes below.
           </p>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/recipes/example-recipe"
-            className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
-          >
-            View example recipe
-          </Link>
-          <Link
-            href="/admin"
-            className="inline-flex items-center justify-center rounded-md border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
-          >
-            Go to admin
-          </Link>
         </div>
 
         {!supabase ? (
@@ -71,12 +55,7 @@ export default async function Home() {
       </section>
 
       <section className="mt-8">
-        <div className="flex items-end justify-between gap-4">
-          <h2 className="text-base font-semibold">Recipes</h2>
-          <Link className="text-sm underline" href="/admin">
-            Add recipes (admin)
-          </Link>
-        </div>
+        <h2 className="text-base font-semibold">Recipes</h2>
 
         {!recipes || recipes.length === 0 ? (
           <div className="mt-4 rounded-2xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600 shadow-sm">
