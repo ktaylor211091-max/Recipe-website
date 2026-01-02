@@ -57,6 +57,15 @@ export async function createRecipe(formData: FormData) {
   const stepsText = String(formData.get("steps") ?? "");
   const published = formData.get("published") === "on";
 
+  // Parse recipe metadata
+  const prepTimeRaw = String(formData.get("prep_time_minutes") ?? "").trim();
+  const cookTimeRaw = String(formData.get("cook_time_minutes") ?? "").trim();
+  const servingsRaw = String(formData.get("servings") ?? "").trim();
+
+  const prep_time_minutes = prepTimeRaw ? parseInt(prepTimeRaw, 10) : null;
+  const cook_time_minutes = cookTimeRaw ? parseInt(cookTimeRaw, 10) : null;
+  const servings = servingsRaw ? parseInt(servingsRaw, 10) : null;
+
   const imageFile = formData.get("image");
 
   if (!title) {
@@ -111,6 +120,9 @@ export async function createRecipe(formData: FormData) {
     description: description || null,
     ingredients,
     steps,
+    prep_time_minutes,
+    cook_time_minutes,
+    servings,
     image_path,
     published,
     author_id: user.id,
@@ -122,7 +134,8 @@ export async function createRecipe(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/admin");
-  redirect("/admin");
+  revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
 }
 
 export async function togglePublish(formData: FormData) {
@@ -141,7 +154,8 @@ export async function togglePublish(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/admin");
-  redirect("/admin");
+  revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
 }
 
 export async function deleteRecipe(formData: FormData) {
@@ -169,7 +183,8 @@ export async function deleteRecipe(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/admin");
-  redirect("/admin");
+  revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
 }
 
 export async function removeRecipeImage(formData: FormData) {
@@ -211,5 +226,6 @@ export async function removeRecipeImage(formData: FormData) {
   }
 
   revalidatePath("/admin");
-  redirect("/admin");
+  revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
 }

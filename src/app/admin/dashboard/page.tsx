@@ -233,6 +233,47 @@ export default async function AdminDashboard() {
               />
             </div>
 
+            <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700">
+                  Prep Time (minutes)
+                </label>
+                <input
+                  name="prep_time_minutes"
+                  type="number"
+                  min="0"
+                  placeholder="15"
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700">
+                  Cook Time (minutes)
+                </label>
+                <input
+                  name="cook_time_minutes"
+                  type="number"
+                  min="0"
+                  placeholder="30"
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700">
+                  Servings
+                </label>
+                <input
+                  name="servings"
+                  type="number"
+                  min="1"
+                  placeholder="4"
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-neutral-700">
                 Description

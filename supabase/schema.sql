@@ -57,6 +57,11 @@ create table if not exists public.recipes (
   ingredients text[] not null default '{}',
   steps text[] not null default '{}',
 
+  -- Recipe metadata
+  prep_time_minutes integer,
+  cook_time_minutes integer,
+  servings integer,
+
   image_path text,
   published boolean not null default false
 );
@@ -64,6 +69,15 @@ create table if not exists public.recipes (
 -- Migration helper (safe to re-run)
 alter table public.recipes
   add column if not exists category text;
+
+alter table public.recipes
+  add column if not exists prep_time_minutes integer;
+
+alter table public.recipes
+  add column if not exists cook_time_minutes integer;
+
+alter table public.recipes
+  add column if not exists servings integer;
 
 alter table public.recipes
   alter column category set default 'General';
