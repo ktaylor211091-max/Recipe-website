@@ -7,7 +7,7 @@ html {
 }
 
 body {
-	background: #fef7ed;
+	background: white;
 	color: #171717;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -15,7 +15,7 @@ body {
 
 ::selection {
 	color: #fff;
-	background-color: #ec4899;
+	background-color: #000;
 }
 
 /* Custom animations */
@@ -108,7 +108,7 @@ body {
 
 /* Better focus styles */
 *:focus-visible {
-	outline: 2px solid #ec4899;
+	outline: 2px solid #000;
 	outline-offset: 4px;
 }
 

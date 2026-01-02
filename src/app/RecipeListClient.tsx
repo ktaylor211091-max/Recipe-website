@@ -98,10 +98,10 @@ export function RecipeListClient({
           {categories.map((cat) => (
             <div key={cat}>
               <div className="mb-8 text-center">
-                <h3 className="text-4xl font-bold tracking-tighter text-pink-600 mb-2">
+                <h3 className="text-4xl font-bold tracking-tighter text-neutral-900 mb-2">
                   {cat.toUpperCase()}
                 </h3>
-                <p className="text-sm text-neutral-600">
+                <p className="text-sm text-neutral-500">
                   {byCategory[cat].length} {byCategory[cat].length === 1 ? "recipe" : "recipes"}
                 </p>
               </div>
@@ -118,7 +118,7 @@ export function RecipeListClient({
                       href={`/recipes/${r.slug}`}
                       className="group block"
                     >
-                      <div className="overflow-hidden bg-pink-100/50 mb-4 aspect-[4/3] rounded-lg border-2 border-transparent group-hover:border-purple-400 transition-colors duration-300">
+                      <div className="overflow-hidden bg-neutral-100 mb-4 aspect-[4/3] rounded-lg">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
@@ -143,14 +143,14 @@ export function RecipeListClient({
                           </p>
                         )}
 
-                        <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-neutral-600">
+                        <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-neutral-500">
                           {totalTime > 0 && (
                             <span>{totalTime} MIN</span>
                           )}
                           {r.servings && (
                             <span>· {r.servings} SERVINGS</span>
                           )}
-                          <span className="ml-auto text-pink-500 transition-all group-hover:translate-x-1 group-hover:text-purple-600">→</span>
+                          <span className="ml-auto text-neutral-400">→</span>
                         </div>
                       </div>
                     </Link>

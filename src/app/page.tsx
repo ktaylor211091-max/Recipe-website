@@ -32,16 +32,16 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="py-20 text-center animate-fade-in">
         <div className="mx-auto max-w-4xl">
-          <h1 className="text-7xl font-bold tracking-tighter mb-6 leading-none sm:text-8xl">
-            <span className="text-pink-600">DELICIOUS</span><br/><span className="text-purple-900">RECIPES.</span>
+          <h1 className="text-7xl font-bold tracking-tighter text-neutral-900 mb-6 leading-none sm:text-8xl">
+            DELICIOUS<br/>RECIPES.
           </h1>
-          <p className="text-xl text-neutral-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto leading-relaxed">
             Curated collection of recipes. Simple, bold, and made to be enjoyed.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-neutral-700">
-            <span className="px-4 py-2 border-2 border-pink-400 bg-pink-50 rounded-full">EASY TO FOLLOW</span>
-            <span className="px-4 py-2 border-2 border-purple-400 bg-purple-50 rounded-full">TRIED & TESTED</span>
-            <span className="px-4 py-2 border-2 border-blue-400 bg-blue-50 rounded-full">NO FLUFF</span>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-neutral-500">
+            <span className="px-4 py-2 border border-neutral-200 rounded-full">EASY TO FOLLOW</span>
+            <span className="px-4 py-2 border border-neutral-200 rounded-full">TRIED & TESTED</span>
+            <span className="px-4 py-2 border border-neutral-200 rounded-full">NO FLUFF</span>
           </div>
         </div>
 
@@ -57,10 +57,10 @@ export default async function Home() {
       {/* Recipes Section */}
       <section>
         <div className="mb-12 text-center">
-          <h2 className="text-5xl font-bold tracking-tighter text-purple-900 mb-4">
+          <h2 className="text-5xl font-bold tracking-tighter text-neutral-900 mb-4">
             BROWSE RECIPES
           </h2>
-          <div className="h-1 w-20 bg-gradient-to-r from-pink-500 to-purple-500 mx-auto rounded-full"></div>
+          <div className="h-1 w-20 bg-neutral-900 mx-auto"></div>
         </div>
 
         {!recipes || recipes.length === 0 ? (
