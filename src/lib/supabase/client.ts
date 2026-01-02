@@ -2,15 +2,19 @@ import { createBrowserClient } from "@supabase/ssr";
 import { SUPABASE_CONFIG } from "./config";
 
 export function createSupabaseBrowserClient() {
-  const url =
+  let url =
     process.env.NEXT_PUBLIC_SUPABASE_URL ??
-    process.env.EXPO_PUBLIC_SUPABASE_URL ??
-    SUPABASE_CONFIG.url;
-  const anonKey =
+    process.env.EXPO_PUBLIC_SUPABASE_URL;
+  let anonKey =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
-    process.env.EXPO_PUBLIC_SUPABASE_KEY ??
-    SUPABASE_CONFIG.anonKey;
+    process.env.EXPO_PUBLIC_SUPABASE_KEY;
+
+  // If env vars are missing/empty, use hardcoded fallback
+  if (!url || !anonKey) {
+    url = url || SUPABASE_CONFIG.url;
+    anonKey = anonKey || SUPABASE_CONFIG.anonKey;
+  }
 
   if (!url || !anonKey || anonKey === "YOUR_KEY_HERE") {
     throw new Error(
