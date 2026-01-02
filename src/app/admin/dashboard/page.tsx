@@ -117,6 +117,13 @@ async function AdminRecipes() {
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-2">
+                    <Link
+                      href={`/admin/dashboard/edit/${r.id}`}
+                      className="rounded border border-neutral-300 bg-white px-2 py-1 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+                    >
+                      Edit
+                    </Link>
+
                     <form action={togglePublish}>
                       <input type="hidden" name="id" value={r.id} />
                       <input

@@ -133,8 +133,121 @@ export async function createRecipe(formData: FormData) {
   }
 
   revalidatePath("/");
+  revalidatePath("/");
   revalidatePath("/admin");
   revalidatePath("/admin/dashboard");
+  redirect("/admin/dashboard");
+}
+
+export async function updateRecipe(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const categoryRaw = String(formData.get("category") ?? "").trim();
+  const category = categoryRaw || "General";
+  const description = String(formData.get("description") ?? "").trim();
+  const ingredientsText = String(formData.get("ingredients") ?? "");
+  const stepsText = String(formData.get("steps") ?? "");
+  const published = formData.get("published") === "on";
+
+  const prepTimeRaw = String(formData.get("prep_time_minutes") ?? "").trim();
+  const cookTimeRaw = String(formData.get("cook_time_minutes") ?? "").trim();
+  const servingsRaw = String(formData.get("servings") ?? "").trim();
+
+  const prep_time_minutes = prepTimeRaw ? parseInt(prepTimeRaw, 10) : null;
+  const cook_time_minutes = cookTimeRaw ? parseInt(cookTimeRaw, 10) : null;
+  const servings = servingsRaw ? parseInt(servingsRaw, 10) : null;
+
+  const imageFile = formData.get("image");
+
+  if (!title) {
+    redirect(`/admin/dashboard?error=${encodeURIComponent("Title is required")}`);
+  }
+
+  const slug = slugify(title);
+  if (!slug) {
+    redirect(`/admin/dashboard?error=${encodeURIComponent("Could not create a slug")}`);
+  }
+
+  const supabase = await requireSupabase();
+  const { data: userRes } = await supabase.auth.getUser();
+  const user = userRes.user;
+
+  if (!user) {
+    redirect(`/admin/dashboard?error=${encodeURIComponent("You must be signed in")}`);
+  }
+
+  const ingredients = splitLines(ingredientsText);
+  const steps = splitLines(stepsText);
+
+  // Handle new image upload if provided
+  let image_path: string | null | undefined = undefined; // undefined means "don't update"
+  
+  if (imageFile instanceof File && imageFile.size > 0) {
+    // Get existing recipe to check for old image
+    const { data: existing } = await supabase
+      .from("recipes")
+      .select("image_path, slug")
+      .eq("id", id)
+      .maybeSingle();
+
+    const ext = (() => {
+      const name = imageFile.name || "";
+      const dot = name.lastIndexOf(".");
+      const maybe = dot >= 0 ? name.slice(dot + 1).toLowerCase() : "";
+      return maybe && /^[a-z0-9]+$/.test(maybe) ? maybe : "bin";
+    })();
+
+    const objectPath = `recipes/${slug}/${randomUUID()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("recipe-images")
+      .upload(objectPath, imageFile, {
+        contentType: imageFile.type || undefined,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      redirect(`/admin/dashboard?error=${encodeURIComponent(uploadError.message)}`);
+    }
+
+    // Delete old image if it exists
+    if (existing?.image_path) {
+      await supabase.storage.from("recipe-images").remove([existing.image_path]);
+    }
+
+    image_path = objectPath;
+  }
+
+  // Build update object - only include image_path if we're updating it
+  const updateData: any = {
+    title,
+    slug,
+    category,
+    description: description || null,
+    ingredients,
+    steps,
+    prep_time_minutes,
+    cook_time_minutes,
+    servings,
+    published,
+  };
+
+  if (image_path !== undefined) {
+    updateData.image_path = image_path;
+  }
+
+  const { error } = await supabase
+    .from("recipes")
+    .update(updateData)
+    .eq("id", id);
+
+  if (error) {
+    redirect(`/admin/dashboard?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin/dashboard");
+  revalidatePath(`/recipes/${slug}`);
   redirect("/admin/dashboard");
 }
 
