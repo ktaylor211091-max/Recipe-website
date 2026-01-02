@@ -17,10 +17,10 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
 
   return (
     <div className="space-y-3">
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400"
+            className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -34,13 +34,13 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
           </svg>
           <input
             type="text"
-            placeholder="Search recipes..."
+            placeholder="Search for recipes..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
               onSearch(e.target.value, selectedCategory);
             }}
-            className="w-full rounded-lg border border-neutral-300 bg-white py-2 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            className="w-full rounded-xl border-2 border-neutral-200 bg-white py-3 pl-12 pr-4 text-sm shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:shadow-md"
           />
         </div>
 
@@ -50,7 +50,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
             setSelectedCategory(e.target.value);
             onSearch(query, e.target.value);
           }}
-          className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          className="rounded-xl border-2 border-neutral-200 bg-white px-5 py-3 text-sm font-medium shadow-sm transition-all focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:shadow-md sm:w-48"
         >
           <option value="all">All Categories</option>
           {categories.map((cat) => (

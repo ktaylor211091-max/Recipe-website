@@ -1,14 +1,117 @@
 @import "tailwindcss";
 
-/* Small global polish (no new theme/colors; just sensible defaults). */
+/* Enhanced global styles with animations and better typography */
 html {
 	color-scheme: light;
+	scroll-behavior: smooth;
 }
 
 body {
-	@apply bg-neutral-50 text-neutral-900 antialiased;
+	@apply bg-gradient-to-br from-neutral-50 via-white to-indigo-50/30 text-neutral-900 antialiased;
 }
 
 ::selection {
-	@apply bg-neutral-900 text-neutral-50;
+	@apply bg-indigo-600 text-white;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.animate-fade-in {
+	animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+	animation: slideIn 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+	animation: scaleIn 0.4s ease-out forwards;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+	opacity: 0;
+	animation: fadeIn 0.5s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* Print styles */
+@media print {
+	.print\\:hidden {
+		display: none !important;
+	}
+	
+	body {
+		background: white;
+	}
+	
+	@page {
+		margin: 1cm;
+	}
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+/* Better focus styles */
+*:focus-visible {
+	@apply outline-2 outline-offset-2 outline-indigo-500;
+}
+
+/* Image loading skeleton */
+img {
+	@apply bg-neutral-100;
 }
