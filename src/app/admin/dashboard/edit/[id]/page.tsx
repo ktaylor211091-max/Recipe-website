@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { updateRecipe } from "../../actions";
+import { updateRecipe } from "../../../actions";
 
 type Props = {
   params: Promise<{ id: string }>;
