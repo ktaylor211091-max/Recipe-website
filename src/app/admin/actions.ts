@@ -182,7 +182,10 @@ export async function updateRecipe(formData: FormData) {
   // Handle new image upload if provided
   let image_path: string | null | undefined = undefined; // undefined means "don't update"
   
-  if (imageFile instanceof File && imageFile.size > 0) {
+  // Check if a new image file was uploaded (must have size > 0 and be a File)
+  const hasNewImage = imageFile instanceof File && imageFile.size > 0 && imageFile.name;
+  
+  if (hasNewImage) {
     // Get existing recipe to check for old image
     const { data: existing } = await supabase
       .from("recipes")
@@ -191,7 +194,7 @@ export async function updateRecipe(formData: FormData) {
       .maybeSingle();
 
     const ext = (() => {
-      const name = imageFile.name || "";
+      const name = (imageFile as File).name || "";
       const dot = name.lastIndexOf(".");
       const maybe = dot >= 0 ? name.slice(dot + 1).toLowerCase() : "";
       return maybe && /^[a-z0-9]+$/.test(maybe) ? maybe : "bin";
@@ -201,8 +204,8 @@ export async function updateRecipe(formData: FormData) {
 
     const { error: uploadError } = await supabase.storage
       .from("recipe-images")
-      .upload(objectPath, imageFile, {
-        contentType: imageFile.type || undefined,
+      .upload(objectPath, imageFile as File, {
+        contentType: (imageFile as File).type || undefined,
         upsert: false,
       });
 
