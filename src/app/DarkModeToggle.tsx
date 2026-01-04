@@ -3,35 +3,46 @@
 import { useEffect, useState } from "react";
 
 export function DarkModeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState<boolean | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Check localStorage and system preference
+    // Check localStorage first, then system preference
     const stored = localStorage.getItem("darkMode");
-    if (stored) {
-      setDarkMode(stored === "true");
+    if (stored !== null) {
+      const isDark = stored === "true";
+      setDarkMode(isDark);
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     } else {
       // Check system preference
-      setDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setDarkMode(isDark);
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+      }
     }
+    setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-
-    if (darkMode) {
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    
+    if (newMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("darkMode", "true");
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("darkMode", "false");
     }
-  }, [darkMode, mounted]);
+  };
 
   // Don't render until mounted to avoid hydration mismatch
-  if (!mounted) {
+  if (!mounted || darkMode === null) {
     return (
       <button className="rounded-lg border border-neutral-300 bg-white p-2 transition-colors hover:bg-neutral-50">
         <svg className="h-5 w-5 text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,7 +54,7 @@ export function DarkModeToggle() {
 
   return (
     <button
-      onClick={() => setDarkMode(!darkMode)}
+      onClick={toggleDarkMode}
       className="rounded-lg border border-neutral-300 bg-white p-2 transition-colors hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-800 dark:hover:bg-neutral-700"
       aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
     >
