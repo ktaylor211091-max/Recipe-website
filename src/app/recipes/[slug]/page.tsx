@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { PrintButton } from "./PrintButton";
+import { ShareButton } from "./ShareButton";
+import { IngredientScaler } from "./IngredientScaler";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -81,6 +83,11 @@ export default async function RecipePage({ params }: Props) {
         </div>
       </div>
 
+      {/* Share buttons */}
+      <div className="mb-6 print:hidden">
+        <ShareButton title={recipe.title} slug={recipe.slug} />
+      </div>
+
       {/* Metadata cards */}
       {(recipe.prep_time_minutes || recipe.cook_time_minutes || recipe.servings) ? (
         <div className="mb-8 grid gap-4 sm:grid-cols-3">
@@ -154,14 +161,10 @@ export default async function RecipePage({ params }: Props) {
               <h2 className="text-xl font-bold text-neutral-900">Ingredients</h2>
             </div>
             {recipe.ingredients?.length ? (
-              <ul className="space-y-3">
-                {recipe.ingredients.map((item: string, i: number) => (
-                  <li key={`${i}-${item}`} className="flex items-start gap-3 text-sm leading-relaxed text-neutral-700">
-                    <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400"></div>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              <IngredientScaler 
+                initialServings={recipe.servings || 1}
+                ingredients={recipe.ingredients}
+              />
             ) : (
               <p className="text-sm text-neutral-500">No ingredients yet.</p>
             )}
