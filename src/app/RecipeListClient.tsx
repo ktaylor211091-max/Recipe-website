@@ -3,46 +3,49 @@
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { RecipeSearch } from "./RecipeSearch";
+import type { Category } from "./admin/categories/actions";
 
 type Recipe = {
   id: string;
   title: string;
   slug: string;
-  category: string | null;
+  category_id: string;
   description: string | null;
   image_path: string | null;
   prep_time_minutes: number | null;
   cook_time_minutes: number | null;
   servings: number | null;
   created_at: string;
+  categories?: {
+    name: string;
+    slug: string;
+  };
 };
 
 type RecipeListClientProps = {
   recipes: Recipe[];
+  categories: Category[];
   supabaseUrl?: string;
   bucketName: string;
 };
 
 export function RecipeListClient({
   recipes,
+  categories,
   supabaseUrl,
   bucketName,
 }: RecipeListClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("all");
 
-  const allCategories = useMemo(() => {
-    const cats = new Set(
-      recipes.map((r) => (r.category ?? "General").trim() || "General")
-    );
-    return Array.from(cats).sort((a, b) => a.localeCompare(b));
-  }, [recipes]);
+  const categoryNames = useMemo(() => {
+    return categories.map((c) => c.name);
+  }, [categories]);
 
   const filteredRecipes = useMemo(() => {
     return recipes.filter((r) => {
-      const cat = (r.category ?? "General").trim() || "General";
       const matchesCategory =
-        selectedCategory === "all" || cat === selectedCategory;
+        selectedCategoryId === "all" || r.category_id === selectedCategoryId;
       const matchesQuery =
         !searchQuery ||
         r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,24 +53,41 @@ export function RecipeListClient({
 
       return matchesCategory && matchesQuery;
     });
-  }, [recipes, searchQuery, selectedCategory]);
+  }, [recipes, searchQuery, selectedCategoryId]);
 
   const byCategory = useMemo(() => {
-    return filteredRecipes.reduce<Record<string, Recipe[]>>((acc, r) => {
-      const cat = (r.category ?? "General").trim() || "General";
-      (acc[cat] ??= []).push(r);
-      return acc;
-    }, {});
-  }, [filteredRecipes]);
+    const grouped: Record<string, Recipe[]> = {};
+    
+    // Group filtered recipes by category
+    filteredRecipes.forEach((r) => {
+      const cat = categories.find((c) => c.id === r.category_id);
+      if (cat) {
+        if (!grouped[cat.id]) {
+          grouped[cat.id] = [];
+        }
+        grouped[cat.id].push(r);
+      }
+    });
+    
+    return grouped;
+  }, [filteredRecipes, categories]);
 
-  const categories = useMemo(
-    () => Object.keys(byCategory).sort((a, b) => a.localeCompare(b)),
-    [byCategory]
-  );
+  // Get categories that have recipes, in display order
+  const categoriesWithRecipes = useMemo(() => {
+    return categories
+      .filter((cat) => byCategory[cat.id] && byCategory[cat.id].length > 0)
+      .sort((a, b) => a.display_order - b.display_order);
+  }, [categories, byCategory]);
 
-  const handleSearch = (query: string, category: string) => {
+  const handleSearch = (query: string, categoryName: string) => {
     setSearchQuery(query);
-    setSelectedCategory(category);
+    
+    if (categoryName === "all") {
+      setSelectedCategoryId("all");
+    } else {
+      const cat = categories.find((c) => c.name === categoryName);
+      setSelectedCategoryId(cat?.id || "all");
+    }
   };
 
   const getImageUrl = (imagePath: string | null) => {
@@ -77,13 +97,13 @@ export function RecipeListClient({
 
   return (
     <>
-      <RecipeSearch categories={allCategories} onSearch={handleSearch} />
+      <RecipeSearch categories={categoryNames} onSearch={handleSearch} />
 
       {filteredRecipes.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-neutral-200 bg-neutral-50 p-12 text-center">
           <div className="text-5xl mb-4">🔍</div>
           <p className="text-lg font-medium text-neutral-700">
-            {searchQuery || selectedCategory !== "all"
+            {searchQuery || selectedCategoryId !== "all"
               ? "No recipes match your search"
               : "No published recipes yet"}
           </p>
@@ -95,19 +115,19 @@ export function RecipeListClient({
         </div>
       ) : (
         <div className="space-y-12">
-          {categories.map((cat) => (
-            <div key={cat} id={cat.toLowerCase().replace(/\s+/g, '-')}>
+          {categoriesWithRecipes.map((cat) => (
+            <div key={cat.id} id={cat.slug}>
               <div className="mb-6 border-b border-neutral-200 pb-3">
                 <h3 className="text-2xl font-bold text-neutral-900">
-                  {cat}
+                  {cat.name}
                 </h3>
                 <p className="text-sm text-neutral-500 mt-1">
-                  {byCategory[cat].length} {byCategory[cat].length === 1 ? "recipe" : "recipes"}
+                  {byCategory[cat.id].length} {byCategory[cat.id].length === 1 ? "recipe" : "recipes"}
                 </p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {byCategory[cat].map((r) => {
+                {byCategory[cat.id].map((r) => {
                   const totalTime =
                     (r.prep_time_minutes ?? 0) + (r.cook_time_minutes ?? 0);
                   const imageUrl = getImageUrl(r.image_path);

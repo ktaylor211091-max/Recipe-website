@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getCategories } from "./admin/categories/actions";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,11 +8,13 @@ export const metadata: Metadata = {
   description: "A simple recipe website with an admin uploader.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories = await getCategories();
+
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-white">
@@ -37,36 +40,15 @@ export default function RootLayout({
               >
                 All Recipes
               </Link>
-              <Link
-                href="/#breakfast"
-                className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
-              >
-                Breakfast
-              </Link>
-              <Link
-                href="/#lunch"
-                className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
-              >
-                Lunch
-              </Link>
-              <Link
-                href="/#dinner"
-                className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
-              >
-                Dinner
-              </Link>
-              <Link
-                href="/#dessert"
-                className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
-              >
-                Desserts
-              </Link>
-              <Link
-                href="/#snacks"
-                className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
-              >
-                Snacks
-              </Link>
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/#${cat.slug}`}
+                  className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
+                >
+                  {cat.name}
+                </Link>
+              ))}
             </nav>
           </div>
         </header>

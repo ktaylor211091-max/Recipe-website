@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCategories } from "../categories/actions";
 
 import { AdminClient } from "../AdminClient";
 import {
@@ -33,15 +34,28 @@ async function AdminRecipes() {
     : null;
 
   const role = profile?.data?.role ?? "(unknown)";
-  const { data: recipes } = await supabase
-    .from("recipes")
-    .select("*")
-    .order("created_at", { ascending: false });
+  
+  const [recipes, categories] = await Promise.all([
+    supabase
+      .from("recipes")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => data),
+    getCategories(),
+  ]);
 
   return (
     <>
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold">Your recipes</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-semibold">Your recipes</h2>
+          <Link
+            href="/admin/categories"
+            className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+          >
+            Manage Categories
+          </Link>
+        </div>
         <div className="mt-3 flex items-center gap-4 text-sm text-neutral-600">
           <span>
             Signed in as: <b>{userRes?.user?.email ?? "(not signed in)"}</b>
@@ -230,14 +244,20 @@ export default async function AdminDashboard() {
 
             <div>
               <label className="block text-sm font-medium text-neutral-700">
-                Category
+                Category *
               </label>
-              <input
-                name="category"
-                type="text"
-                placeholder='Leave blank to use "General".'
+              <select
+                name="category_id"
+                required
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              />
+              >
+                <option value="">Select a category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">

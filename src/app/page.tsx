@@ -2,31 +2,40 @@ import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 import { RecipeListClient } from "./RecipeListClient";
+import { getCategories } from "./admin/categories/actions";
 
 type RecipeRow = {
   id: string;
   title: string;
   slug: string;
-  category: string | null;
+  category_id: string;
   description: string | null;
   image_path: string | null;
   prep_time_minutes: number | null;
   cook_time_minutes: number | null;
   servings: number | null;
   created_at: string;
+  categories?: {
+    name: string;
+    slug: string;
+  };
 };
 
 export default async function Home() {
   const supabase = await createSupabaseServerClient();
 
-  const { data: recipes } = supabase
-    ? await supabase
-        .from("recipes")
-        .select("id,title,slug,category,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at")
-        .eq("published", true)
-        .order("created_at", { ascending: false })
-        .returns<RecipeRow[]>()
-    : { data: null };
+  const [recipes, categories] = await Promise.all([
+    supabase
+      ? supabase
+          .from("recipes")
+          .select("id,title,slug,category_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,categories(name,slug)")
+          .eq("published", true)
+          .order("created_at", { ascending: false })
+          .returns<RecipeRow[]>()
+          .then(({ data }) => data)
+      : Promise.resolve(null),
+    getCategories(),
+  ]);
 
   return (
     <main className="space-y-12">
@@ -114,6 +123,7 @@ export default async function Home() {
         ) : (
           <RecipeListClient
             recipes={recipes}
+            categories={categories}
             supabaseUrl={SUPABASE_CONFIG.url}
             bucketName="recipe-images"
           />

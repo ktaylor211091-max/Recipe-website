@@ -50,8 +50,7 @@ export async function signOut() {
 
 export async function createRecipe(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const categoryRaw = String(formData.get("category") ?? "").trim();
-  const category = categoryRaw || "General";
+  const categoryId = String(formData.get("category_id") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const ingredientsText = String(formData.get("ingredients") ?? "");
   const stepsText = String(formData.get("steps") ?? "");
@@ -70,6 +69,10 @@ export async function createRecipe(formData: FormData) {
 
   if (!title) {
     redirect(`/admin?error=${encodeURIComponent("Title is required")}`);
+  }
+
+  if (!categoryId) {
+    redirect(`/admin?error=${encodeURIComponent("Category is required")}`);
   }
 
   const slug = slugify(title);
@@ -121,7 +124,7 @@ export async function createRecipe(formData: FormData) {
   const { error } = await supabase.from("recipes").insert({
     title,
     slug,
-    category,
+    category_id: categoryId,
     description: description || null,
     ingredients,
     steps,
@@ -147,8 +150,7 @@ export async function createRecipe(formData: FormData) {
 export async function updateRecipe(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const title = String(formData.get("title") ?? "").trim();
-  const categoryRaw = String(formData.get("category") ?? "").trim();
-  const category = categoryRaw || "General";
+  const categoryId = String(formData.get("category_id") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const ingredientsText = String(formData.get("ingredients") ?? "");
   const stepsText = String(formData.get("steps") ?? "");
@@ -166,6 +168,10 @@ export async function updateRecipe(formData: FormData) {
 
   if (!title) {
     redirect(`/admin/dashboard?error=${encodeURIComponent("Title is required")}`);
+  }
+
+  if (!categoryId) {
+    redirect(`/admin/dashboard?error=${encodeURIComponent("Category is required")}`);
   }
 
   const slug = slugify(title);
@@ -234,7 +240,7 @@ export async function updateRecipe(formData: FormData) {
   const updateData: any = {
     title,
     slug,
-    category,
+    category_id: categoryId,
     description: description || null,
     ingredients,
     steps,
