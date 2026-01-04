@@ -24,7 +24,7 @@ type RecipeRow = {
 export default async function Home() {
   const supabase = await createSupabaseServerClient();
 
-  const [recipes, categories] = await Promise.all([
+  const [recipes, categories, featuredRecipe] = await Promise.all([
     supabase
       ? supabase
           .from("recipes")
@@ -35,19 +35,31 @@ export default async function Home() {
           .then(({ data }) => data)
       : Promise.resolve(null),
     getCategories(),
+    supabase
+      ? supabase
+          .from("recipes")
+          .select("id,title,slug,category_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,categories(name,slug)")
+          .eq("published", true)
+          .limit(20)
+          .then(({ data }) => {
+            if (!data || data.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * data.length);
+            return data[randomIndex];
+          })
+      : Promise.resolve(null),
   ]);
 
   return (
     <main className="space-y-12">
       {/* Hero Section with Featured Recipe */}
-      {recipes && recipes.length > 0 && (
+      {featuredRecipe && (
         <section className="relative overflow-hidden rounded-xl bg-neutral-900 text-white">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="relative aspect-[16/9] lg:aspect-auto">
-              {recipes[0].image_path ? (
+              {featuredRecipe.image_path ? (
                 <img
-                  src={`${SUPABASE_CONFIG.url}/storage/v1/object/public/recipe-images/${recipes[0].image_path}`}
-                  alt={recipes[0].title}
+                  src={`${SUPABASE_CONFIG.url}/storage/v1/object/public/recipe-images/${featuredRecipe.image_path}`}
+                  alt={featuredRecipe.title}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -61,35 +73,35 @@ export default async function Home() {
                 FEATURED RECIPE
               </div>
               <h2 className="mb-4 text-4xl font-bold leading-tight lg:text-5xl">
-                {recipes[0].title}
+                {featuredRecipe.title}
               </h2>
-              {recipes[0].description && (
+              {featuredRecipe.description && (
                 <p className="mb-6 text-lg text-neutral-300 leading-relaxed">
-                  {recipes[0].description}
+                  {featuredRecipe.description}
                 </p>
               )}
               <div className="mb-6 flex flex-wrap gap-4 text-sm">
-                {recipes[0].prep_time_minutes && (
+                {featuredRecipe.prep_time_minutes && (
                   <div className="flex items-center gap-2">
                     <span className="text-neutral-400">Prep:</span>
-                    <span className="font-medium">{recipes[0].prep_time_minutes} min</span>
+                    <span className="font-medium">{featuredRecipe.prep_time_minutes} min</span>
                   </div>
                 )}
-                {recipes[0].cook_time_minutes && (
+                {featuredRecipe.cook_time_minutes && (
                   <div className="flex items-center gap-2">
                     <span className="text-neutral-400">Cook:</span>
-                    <span className="font-medium">{recipes[0].cook_time_minutes} min</span>
+                    <span className="font-medium">{featuredRecipe.cook_time_minutes} min</span>
                   </div>
                 )}
-                {recipes[0].servings && (
+                {featuredRecipe.servings && (
                   <div className="flex items-center gap-2">
                     <span className="text-neutral-400">Serves:</span>
-                    <span className="font-medium">{recipes[0].servings}</span>
+                    <span className="font-medium">{featuredRecipe.servings}</span>
                   </div>
                 )}
               </div>
               <Link
-                href={`/recipes/${recipes[0].slug}`}
+                href={`/recipes/${featuredRecipe.slug}`}
                 className="inline-flex w-fit items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-neutral-900 transition-all hover:bg-neutral-100"
               >
                 View Recipe
