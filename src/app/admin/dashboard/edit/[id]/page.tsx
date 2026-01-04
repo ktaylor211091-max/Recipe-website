@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { updateRecipe } from "../../../actions";
+import { updateRecipe, getTags } from "../../../actions";
 import { getCategories } from "../../../categories/actions";
 
 type Props = {
@@ -21,7 +21,7 @@ export default async function EditRecipePage({ params }: Props) {
     redirect("/admin");
   }
 
-  const [recipe, categories] = await Promise.all([
+  const [recipe, categories, tags] = await Promise.all([
     supabase
       .from("recipes")
       .select("*")
@@ -29,11 +29,20 @@ export default async function EditRecipePage({ params }: Props) {
       .maybeSingle()
       .then(({ data }) => data),
     getCategories(),
+    getTags(),
   ]);
 
   if (!recipe) {
     notFound();
   }
+
+  // Get existing tag associations
+  const { data: existingTags } = await supabase
+    .from("recipe_tags")
+    .select("tag_id")
+    .eq("recipe_id", recipe.id);
+
+  const selectedTagIds = new Set(existingTags?.map((t) => t.tag_id) ?? []);
 
   // Safely convert arrays to strings
   const ingredientsText = Array.isArray(recipe.ingredients) 
@@ -218,6 +227,129 @@ export default async function EditRecipePage({ params }: Props) {
             <p className="mt-1 text-xs text-neutral-500">
               Best results: JPG/PNG/WebP. Max 5MB. Leave empty to keep current image.
             </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-700">
+              Notes (optional)
+            </label>
+            <textarea
+              name="notes"
+              rows={3}
+              placeholder="Additional notes or comments about this recipe..."
+              defaultValue={recipe.notes || ""}
+              className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-700">
+              Tips (optional)
+            </label>
+            <textarea
+              name="tips"
+              rows={3}
+              placeholder="Helpful tips for making this recipe..."
+              defaultValue={recipe.tips || ""}
+              className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
+              Tags (optional)
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {tags.map((tag) => (
+                <label key={tag.id} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    name="tags"
+                    value={tag.id}
+                    defaultChecked={selectedTagIds.has(tag.id)}
+                    className="rounded border-neutral-300"
+                  />
+                  <span>{tag.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-neutral-700 mb-3">
+              Nutritional Information (optional, per serving)
+            </h3>
+            <div className="grid gap-4 md:grid-cols-5">
+              <div>
+                <label className="block text-xs font-medium text-neutral-600">
+                  Calories
+                </label>
+                <input
+                  name="calories"
+                  type="number"
+                  min="0"
+                  placeholder="250"
+                  defaultValue={recipe.calories ?? ""}
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-600">
+                  Protein (g)
+                </label>
+                <input
+                  name="protein_grams"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  placeholder="20"
+                  defaultValue={recipe.protein_grams ?? ""}
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-600">
+                  Carbs (g)
+                </label>
+                <input
+                  name="carbs_grams"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  placeholder="30"
+                  defaultValue={recipe.carbs_grams ?? ""}
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-600">
+                  Fat (g)
+                </label>
+                <input
+                  name="fat_grams"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  placeholder="10"
+                  defaultValue={recipe.fat_grams ?? ""}
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-600">
+                  Fiber (g)
+                </label>
+                <input
+                  name="fiber_grams"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  placeholder="5"
+                  defaultValue={recipe.fiber_grams ?? ""}
+                  className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+            </div>
           </div>
 
           <div>

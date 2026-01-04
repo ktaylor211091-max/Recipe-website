@@ -37,7 +37,7 @@ export default async function RecipePage({ params }: Props) {
   const { data: recipe } = await supabase
     .from("recipes")
     .select(
-      "id,title,slug,category,description,ingredients,steps,image_path,published,created_at,prep_time_minutes,cook_time_minutes,servings",
+      "id,title,slug,category,description,ingredients,steps,image_path,published,created_at,prep_time_minutes,cook_time_minutes,servings,notes,tips,calories,protein_grams,carbs_grams,fat_grams,fiber_grams",
     )
     .eq("slug", slug)
     .eq("published", true)
@@ -46,6 +46,14 @@ export default async function RecipePage({ params }: Props) {
   if (!recipe) {
     notFound();
   }
+
+  // Fetch tags for this recipe
+  const { data: recipeTags } = await supabase
+    .from("recipe_tags")
+    .select("tag_id, tags(name, slug)")
+    .eq("recipe_id", recipe.id);
+
+  const tags = recipeTags?.map((rt: any) => rt.tags).filter(Boolean) || [];
 
   const imageUrl = recipe.image_path
     ? supabase.storage
@@ -58,10 +66,24 @@ export default async function RecipePage({ params }: Props) {
       {/* Header with actions */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div className="flex-1">
-          <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 px-3 py-1 shadow-md mb-3">
-            <span className="text-xs font-bold text-white">
-              {(recipe.category ?? "General").trim() || "General"}
-            </span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 px-3 py-1 shadow-md">
+              <span className="text-xs font-bold text-white">
+                {(recipe.category ?? "General").trim() || "General"}
+              </span>
+            </div>
+            {tags.length > 0 && (
+              <>
+                {tags.map((tag: any) => (
+                  <span 
+                    key={tag.slug} 
+                    className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </>
+            )}
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-neutral-900 leading-tight">
             {recipe.title}
@@ -197,6 +219,85 @@ export default async function RecipePage({ params }: Props) {
           )}
         </section>
       </div>
+
+      {/* Nutritional Information */}
+      {(recipe.calories || recipe.protein_grams || recipe.carbs_grams || recipe.fat_grams || recipe.fiber_grams) && (
+        <div className="mt-6">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-md">
+            <div className="mb-4 flex items-center gap-2">
+              <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <h2 className="text-xl font-bold text-neutral-900">Nutrition Facts</h2>
+              <span className="text-sm text-neutral-500">(per serving)</span>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-5">
+              {recipe.calories && (
+                <div className="rounded-xl bg-gradient-to-br from-red-50 to-orange-50 p-4">
+                  <div className="text-sm font-medium text-neutral-600">Calories</div>
+                  <div className="text-2xl font-bold text-neutral-900">{recipe.calories}</div>
+                </div>
+              )}
+              {recipe.protein_grams && (
+                <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+                  <div className="text-sm font-medium text-neutral-600">Protein</div>
+                  <div className="text-2xl font-bold text-neutral-900">{recipe.protein_grams}g</div>
+                </div>
+              )}
+              {recipe.carbs_grams && (
+                <div className="rounded-xl bg-gradient-to-br from-amber-50 to-yellow-50 p-4">
+                  <div className="text-sm font-medium text-neutral-600">Carbs</div>
+                  <div className="text-2xl font-bold text-neutral-900">{recipe.carbs_grams}g</div>
+                </div>
+              )}
+              {recipe.fat_grams && (
+                <div className="rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-4">
+                  <div className="text-sm font-medium text-neutral-600">Fat</div>
+                  <div className="text-2xl font-bold text-neutral-900">{recipe.fat_grams}g</div>
+                </div>
+              )}
+              {recipe.fiber_grams && (
+                <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-green-50 p-4">
+                  <div className="text-sm font-medium text-neutral-600">Fiber</div>
+                  <div className="text-2xl font-bold text-neutral-900">{recipe.fiber_grams}g</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notes and Tips */}
+      {(recipe.notes || recipe.tips) && (
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          {recipe.notes && (
+            <div className="rounded-2xl border border-neutral-200 bg-amber-50 p-6 shadow-md">
+              <div className="mb-3 flex items-center gap-2">
+                <svg className="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                <h2 className="text-lg font-bold text-neutral-900">Notes</h2>
+              </div>
+              <p className="text-base leading-relaxed text-neutral-700 whitespace-pre-line">
+                {recipe.notes}
+              </p>
+            </div>
+          )}
+          {recipe.tips && (
+            <div className="rounded-2xl border border-neutral-200 bg-sky-50 p-6 shadow-md">
+              <div className="mb-3 flex items-center gap-2">
+                <svg className="h-5 w-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                <h2 className="text-lg font-bold text-neutral-900">Tips</h2>
+              </div>
+              <p className="text-base leading-relaxed text-neutral-700 whitespace-pre-line">
+                {recipe.tips}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </main>
   );
 }

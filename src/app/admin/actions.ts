@@ -65,6 +65,26 @@ export async function createRecipe(formData: FormData) {
   const cook_time_minutes = cookTimeRaw ? parseInt(cookTimeRaw, 10) : null;
   const servings = servingsRaw ? parseInt(servingsRaw, 10) : null;
 
+  // Parse new fields
+  const notes = String(formData.get("notes") ?? "").trim() || null;
+  const tips = String(formData.get("tips") ?? "").trim() || null;
+
+  // Parse nutritional information
+  const caloriesRaw = String(formData.get("calories") ?? "").trim();
+  const proteinRaw = String(formData.get("protein_grams") ?? "").trim();
+  const carbsRaw = String(formData.get("carbs_grams") ?? "").trim();
+  const fatRaw = String(formData.get("fat_grams") ?? "").trim();
+  const fiberRaw = String(formData.get("fiber_grams") ?? "").trim();
+
+  const calories = caloriesRaw ? parseInt(caloriesRaw, 10) : null;
+  const protein_grams = proteinRaw ? parseFloat(proteinRaw) : null;
+  const carbs_grams = carbsRaw ? parseFloat(carbsRaw) : null;
+  const fat_grams = fatRaw ? parseFloat(fatRaw) : null;
+  const fiber_grams = fiberRaw ? parseFloat(fiberRaw) : null;
+
+  // Get selected tag IDs
+  const tagIds = formData.getAll("tags").map((id) => String(id));
+
   const imageFile = formData.get("image");
 
   if (!title) {
@@ -131,6 +151,13 @@ export async function createRecipe(formData: FormData) {
     prep_time_minutes,
     cook_time_minutes,
     servings,
+    notes,
+    tips,
+    calories,
+    protein_grams,
+    carbs_grams,
+    fat_grams,
+    fiber_grams,
     image_path,
     published,
     author_id: user.id,
@@ -138,6 +165,22 @@ export async function createRecipe(formData: FormData) {
 
   if (error) {
     redirect(`/admin?error=${encodeURIComponent(error.message)}`);
+  }
+
+  // Get the recipe ID to insert tags
+  const { data: recipe } = await supabase
+    .from("recipes")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  // Insert tag associations if any tags were selected
+  if (recipe && tagIds.length > 0) {
+    const tagInserts = tagIds.map((tagId) => ({
+      recipe_id: recipe.id,
+      tag_id: tagId,
+    }));
+    await supabase.from("recipe_tags").insert(tagInserts);
   }
 
   revalidatePath("/");
@@ -163,6 +206,26 @@ export async function updateRecipe(formData: FormData) {
   const prep_time_minutes = prepTimeRaw ? parseInt(prepTimeRaw, 10) : null;
   const cook_time_minutes = cookTimeRaw ? parseInt(cookTimeRaw, 10) : null;
   const servings = servingsRaw ? parseInt(servingsRaw, 10) : null;
+
+  // Parse new fields
+  const notes = String(formData.get("notes") ?? "").trim() || null;
+  const tips = String(formData.get("tips") ?? "").trim() || null;
+
+  // Parse nutritional information
+  const caloriesRaw = String(formData.get("calories") ?? "").trim();
+  const proteinRaw = String(formData.get("protein_grams") ?? "").trim();
+  const carbsRaw = String(formData.get("carbs_grams") ?? "").trim();
+  const fatRaw = String(formData.get("fat_grams") ?? "").trim();
+  const fiberRaw = String(formData.get("fiber_grams") ?? "").trim();
+
+  const calories = caloriesRaw ? parseInt(caloriesRaw, 10) : null;
+  const protein_grams = proteinRaw ? parseFloat(proteinRaw) : null;
+  const carbs_grams = carbsRaw ? parseFloat(carbsRaw) : null;
+  const fat_grams = fatRaw ? parseFloat(fatRaw) : null;
+  const fiber_grams = fiberRaw ? parseFloat(fiberRaw) : null;
+
+  // Get selected tag IDs
+  const tagIds = formData.getAll("tags").map((id) => String(id));
 
   const imageFile = formData.get("image");
 
@@ -247,6 +310,13 @@ export async function updateRecipe(formData: FormData) {
     prep_time_minutes,
     cook_time_minutes,
     servings,
+    notes,
+    tips,
+    calories,
+    protein_grams,
+    carbs_grams,
+    fat_grams,
+    fiber_grams,
     published,
   };
 
@@ -261,6 +331,18 @@ export async function updateRecipe(formData: FormData) {
 
   if (error) {
     redirect(`/admin/dashboard?error=${encodeURIComponent(error.message)}`);
+  }
+
+  // Update tags - delete all existing tags first
+  await supabase.from("recipe_tags").delete().eq("recipe_id", id);
+
+  // Insert new tag associations if any tags were selected
+  if (tagIds.length > 0) {
+    const tagInserts = tagIds.map((tagId) => ({
+      recipe_id: id,
+      tag_id: tagId,
+    }));
+    await supabase.from("recipe_tags").insert(tagInserts);
   }
 
   revalidatePath("/");
@@ -359,4 +441,25 @@ export async function removeRecipeImage(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/dashboard");
   redirect("/admin/dashboard");
+}
+
+export type Tag = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export async function getTags(): Promise<Tag[]> {
+  const supabase = await requireSupabase();
+  const { data, error } = await supabase
+    .from("tags")
+    .select("*")
+    .order("name");
+
+  if (error || !data) {
+    console.error("Failed to fetch tags:", error);
+    return [];
+  }
+
+  return data;
 }

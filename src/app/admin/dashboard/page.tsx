@@ -10,6 +10,7 @@ import {
   removeRecipeImage,
   signOut,
   togglePublish,
+  getTags,
 } from "../actions";
 
 async function AdminRecipes() {
@@ -211,8 +212,9 @@ export default async function AdminDashboard() {
     redirect("/admin");
   }
 
-  // Fetch categories for the create form
+  // Fetch categories and tags for the create form
   const categories = await getCategories();
+  const tags = await getTags();
 
   return (
     <main>
@@ -337,6 +339,121 @@ export default async function AdminDashboard() {
                 required
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700">
+                Notes (optional)
+              </label>
+              <textarea
+                name="notes"
+                rows={3}
+                placeholder="Additional notes or comments about this recipe..."
+                className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700">
+                Tips (optional)
+              </label>
+              <textarea
+                name="tips"
+                rows={3}
+                placeholder="Helpful tips for making this recipe..."
+                className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
+                Tags (optional)
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {tags.map((tag) => (
+                  <label key={tag.id} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      name="tags"
+                      value={tag.id}
+                      className="rounded border-neutral-300"
+                    />
+                    <span>{tag.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-neutral-700 mb-3">
+                Nutritional Information (optional, per serving)
+              </h3>
+              <div className="grid gap-4 md:grid-cols-5">
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600">
+                    Calories
+                  </label>
+                  <input
+                    name="calories"
+                    type="number"
+                    min="0"
+                    placeholder="250"
+                    className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600">
+                    Protein (g)
+                  </label>
+                  <input
+                    name="protein_grams"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="20"
+                    className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600">
+                    Carbs (g)
+                  </label>
+                  <input
+                    name="carbs_grams"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="30"
+                    className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600">
+                    Fat (g)
+                  </label>
+                  <input
+                    name="fat_grams"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="10"
+                    className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-neutral-600">
+                    Fiber (g)
+                  </label>
+                  <input
+                    name="fiber_grams"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="5"
+                    className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
             </div>
 
             <div>
