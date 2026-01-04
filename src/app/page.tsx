@@ -51,6 +51,16 @@ export default async function Home() {
 
   return (
     <main className="space-y-12">
+      {/* Page Heading */}
+      <section className="py-12 text-center">
+        <h1 className="text-6xl font-bold tracking-tight text-neutral-900 mb-4 leading-none sm:text-7xl">
+          DELICIOUS RECIPES
+        </h1>
+        <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+          Curated collection of recipes. Simple, bold, and made to be enjoyed.
+        </p>
+      </section>
+
       {/* Hero Section with Featured Recipe */}
       {featuredRecipe && (
         <section className="relative overflow-hidden rounded-xl bg-neutral-900 text-white">
