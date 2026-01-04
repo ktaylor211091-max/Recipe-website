@@ -211,6 +211,9 @@ export default async function AdminDashboard() {
     redirect("/admin");
   }
 
+  // Fetch categories for the create form
+  const categories = await getCategories();
+
   return (
     <main>
       <div className="flex items-end justify-between gap-4">
