@@ -6,10 +6,6 @@ html {
 	scroll-behavior: smooth;
 }
 
-html.dark {
-	color-scheme: dark;
-}
-
 body {
 	background: white;
 	color: #171717;
@@ -17,20 +13,9 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-body.dark,
-html.dark body {
-	background: #0a0a0a;
-	color: #e5e5e5;
-}
-
 ::selection {
 	color: #fff;
 	background-color: #000;
-}
-
-html.dark ::selection {
-	color: #000;
-	background-color: #fff;
 }
 
 /* Custom animations */

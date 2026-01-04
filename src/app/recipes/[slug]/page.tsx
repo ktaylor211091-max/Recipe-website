@@ -175,12 +175,12 @@ export default async function RecipePage({ params }: Props) {
             </div>
           ) : null}
 
-          <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-md dark:border-neutral-700 dark:bg-neutral-800">
+          <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-md">
             <div className="mb-4 flex items-center gap-2">
               <svg className="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Ingredients</h2>
+              <h2 className="text-xl font-bold text-neutral-900">Ingredients</h2>
             </div>
             {recipe.ingredients?.length ? (
               <IngredientScalerWithShopping 
