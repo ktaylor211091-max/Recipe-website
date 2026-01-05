@@ -205,7 +205,7 @@ export default async function RecipePage({ params }: Props) {
             <ol className="space-y-6">
               {recipe.steps.map((step: string, i: number) => (
                 <li key={`${i}-${step}`} className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-sky-500 text-lg font-bold text-white shadow-md">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-800 text-lg font-bold text-white">
                     {i + 1}
                   </div>
                   <p className="flex-1 pt-1.5 text-base leading-relaxed text-neutral-700">
