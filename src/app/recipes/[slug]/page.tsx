@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { PrintButton } from "./PrintButton";
 import { ShareButton } from "./ShareButton";
 import { IngredientScalerWithShopping } from "./IngredientScalerWithShopping";
+import { FavoriteButton } from "./FavoriteButton";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -55,6 +56,19 @@ export default async function RecipePage({ params }: Props) {
 
   const tags = recipeTags?.map((rt: any) => rt.tags).filter(Boolean) || [];
 
+  // Check if current user has favorited this recipe
+  const { data: userRes } = await supabase.auth.getUser();
+  let isFavorite = false;
+  if (userRes?.user) {
+    const { data: favoriteData } = await supabase
+      .from("favorite_recipes")
+      .select("id")
+      .eq("user_id", userRes.user.id)
+      .eq("recipe_id", recipe.id)
+      .maybeSingle();
+    isFavorite = !!favoriteData;
+  }
+
   const imageUrl = recipe.image_path
     ? supabase.storage
         .from("recipe-images")
@@ -95,6 +109,7 @@ export default async function RecipePage({ params }: Props) {
           ) : null}
         </div>
         <div className="flex shrink-0 gap-2 print:hidden">
+          <FavoriteButton recipeId={recipe.id} initialIsFavorite={isFavorite} />
           <PrintButton />
           <Link
             className="rounded-xl border-2 border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-700 transition-all hover:bg-indigo-50 hover:border-indigo-300 hover:shadow-md"

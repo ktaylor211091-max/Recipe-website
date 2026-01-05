@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +16,25 @@ export default async function RootLayout({
 }>) {
   const categories = await getCategories();
 
+  // Check if user is logged in
+  const supabase = await createSupabaseServerClient();
+  let user = null;
+  let isAdmin = false;
+
+  if (supabase) {
+    const { data: userRes } = await supabase.auth.getUser();
+    user = userRes?.user;
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      isAdmin = profile?.role === "admin";
+    }
+  }
+
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-white">
@@ -26,12 +46,41 @@ export default async function RootLayout({
                   RECIPES
                 </div>
               </Link>
-              <Link
-                href="/admin"
-                className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
-              >
-                Login
-              </Link>
+              <div className="flex items-center gap-3">
+                {user ? (
+                  <>
+                    <Link
+                      href="/account"
+                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                    >
+                      My Account
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin/dashboard"
+                        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+                      >
+                        Admin
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
             <nav className="flex items-center gap-6 border-t border-neutral-100 py-3 overflow-x-auto">
               <Link
@@ -72,9 +121,20 @@ export default async function RootLayout({
                 <Link href="/" className="hover:text-neutral-900">
                   Home
                 </Link>
-                <Link href="/admin" className="hover:text-neutral-900">
-                  Login
-                </Link>
+                {user ? (
+                  <Link href="/account" className="hover:text-neutral-900">
+                    My Account
+                  </Link>
+                ) : (
+                  <>
+                    <Link href="/login" className="hover:text-neutral-900">
+                      Sign In
+                    </Link>
+                    <Link href="/signup" className="hover:text-neutral-900">
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
