@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type ShareButtonProps = {
   title: string;
@@ -9,10 +9,13 @@ type ShareButtonProps = {
 
 export function ShareButton({ title, slug }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
+  const [canShare, setCanShare] = useState(false);
+  const [url, setUrl] = useState("");
 
-  const url = typeof window !== "undefined" 
-    ? `${window.location.origin}/recipes/${slug}`
-    : "";
+  useEffect(() => {
+    setUrl(`${window.location.origin}/recipes/${slug}`);
+    setCanShare('share' in navigator);
+  }, [slug]);
 
   const handleCopyLink = async () => {
     try {
@@ -60,7 +63,7 @@ export function ShareButton({ title, slug }: ShareButtonProps) {
         )}
       </button>
 
-      {typeof navigator !== "undefined" && 'share' in navigator && (
+      {canShare && (
         <button
           onClick={handleShare}
           className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"

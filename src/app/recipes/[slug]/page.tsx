@@ -7,6 +7,8 @@ import { ShareButton } from "./ShareButton";
 import { IngredientScalerWithShopping } from "./IngredientScalerWithShopping";
 import { FavoriteButton } from "./FavoriteButton";
 import { RecipeReviews } from "./RecipeReviews";
+import { RecipeComments } from "./RecipeComments";
+import { ForkButton } from "./ForkButton";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -92,6 +94,49 @@ export default async function RecipePage({ params }: Props) {
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
 
+  // Get comments for this recipe
+  const { data: commentsRaw } = await supabase
+    .from("recipe_comments")
+    .select(`
+      id,
+      user_id,
+      content,
+      created_at,
+      parent_comment_id,
+      profiles (display_name)
+    `)
+    .eq("recipe_id", recipe.id)
+    .order("created_at", { ascending: false });
+
+  // Transform comments to match type
+  const comments = (commentsRaw || []).map((c: any) => ({
+    ...c,
+    profiles: Array.isArray(c.profiles) ? c.profiles[0] : c.profiles,
+  }));
+
+  // Check if this is a fork and get fork info
+  const { data: forkInfo } = await supabase
+    .from("recipe_forks")
+    .select("original_recipe_id, recipes!recipe_forks_original_recipe_id_fkey(id, title, slug)")
+    .eq("forked_recipe_id", recipe.id)
+    .maybeSingle();
+
+  // Get all forks of this recipe
+  const { data: forks } = await supabase
+    .from("recipe_forks")
+    .select("forked_recipe_id, recipes!recipe_forks_forked_recipe_id_fkey(id, title, slug, author_id, profiles!recipes_author_id_fkey(display_name))")
+    .eq("original_recipe_id", recipe.id);
+
+  const originalRecipe = forkInfo?.recipes ? (Array.isArray(forkInfo.recipes) ? forkInfo.recipes[0] : forkInfo.recipes) : null;
+  const recipeForks = forks?.map((f: any) => {
+    const recipeData = Array.isArray(f.recipes) ? f.recipes[0] : f.recipes;
+    const profileData = Array.isArray(recipeData?.profiles) ? recipeData.profiles[0] : recipeData?.profiles;
+    return {
+      ...recipeData,
+      author_name: profileData?.display_name || "Anonymous Chef",
+    };
+  }).filter(Boolean) || [];
+
 
   const imageUrl = recipe.image_path
     ? supabase.storage
@@ -126,6 +171,19 @@ export default async function RecipePage({ params }: Props) {
           <h1 className="text-4xl font-bold tracking-tight text-neutral-900 leading-tight">
             {recipe.title}
           </h1>
+          {originalRecipe && (
+            <div className="mt-3 rounded-lg bg-purple-50 border border-purple-200 px-4 py-2 inline-flex items-center gap-2">
+              <svg className="h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <span className="text-sm text-purple-700">
+                Forked from{" "}
+                <Link href={`/recipes/${originalRecipe.slug}`} className="font-semibold hover:underline">
+                  {originalRecipe.title}
+                </Link>
+              </span>
+            </div>
+          )}
           {recipe.description ? (
             <p className="mt-3 max-w-3xl text-base leading-relaxed text-neutral-600">
               {recipe.description}
@@ -134,6 +192,9 @@ export default async function RecipePage({ params }: Props) {
         </div>
         <div className="flex shrink-0 gap-2 print:hidden">
           <FavoriteButton recipeId={recipe.id} initialIsFavorite={isFavorite} />
+          {userRes?.user && (
+            <ForkButton recipeId={recipe.id} recipeTitle={recipe.title} />
+          )}
           <PrintButton />
           <Link
             className="rounded-xl border-2 border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-700 transition-all hover:bg-indigo-50 hover:border-indigo-300 hover:shadow-md"
@@ -346,6 +407,49 @@ export default async function RecipePage({ params }: Props) {
           averageRating={averageRating}
           userReview={userReview}
           isAuthenticated={!!userRes?.user}
+        />
+      </div>
+
+      {/* Recipe Forks */}
+      {recipeForks.length > 0 && (
+        <div className="mt-6">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xl font-bold text-neutral-900">
+              Variations ({recipeForks.length})
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {recipeForks.map((fork: any) => (
+                <Link
+                  key={fork.id}
+                  href={`/recipes/${fork.slug}`}
+                  className="group rounded-xl border border-neutral-200 bg-neutral-50 p-4 transition-all hover:border-purple-300 hover:bg-purple-50 hover:shadow-md"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-400 to-purple-600 text-sm font-bold text-white">
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-neutral-900 group-hover:text-purple-700 transition-colors line-clamp-2">
+                        {fork.title}
+                      </h3>
+                      <p className="mt-1 text-xs text-neutral-500">by {fork.author_name}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comments Section */}
+      <div className="mt-6">
+        <RecipeComments
+          recipeId={recipe.id}
+          comments={comments}
+          currentUserId={userRes?.user?.id || null}
         />
       </div>
     </main>

@@ -50,9 +50,30 @@ export default async function AccountPage({
   // Get user profile
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, display_name, bio, location, website")
     .eq("id", user.id)
     .single();
+
+  // Get social stats
+  const [recipesData, followersData, followingData] = await Promise.all([
+    supabase
+      .from("recipes")
+      .select("id")
+      .eq("author_id", user.id)
+      .eq("published", true),
+    supabase
+      .from("user_follows")
+      .select("follower_id")
+      .eq("following_id", user.id),
+    supabase
+      .from("user_follows")
+      .select("following_id")
+      .eq("follower_id", user.id),
+  ]);
+
+  const recipeCount = recipesData.data?.length || 0;
+  const followerCount = followersData.data?.length || 0;
+  const followingCount = followingData.data?.length || 0;
 
   // Get favorite recipes
   const { data: favorites } = await supabase
@@ -92,14 +113,41 @@ export default async function AccountPage({
           <h1 className="text-2xl font-semibold tracking-tight">My Account</h1>
           <p className="mt-2 text-sm text-neutral-600">{user.email}</p>
         </div>
-        <form action={signOut}>
-          <button
-            type="submit"
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/profile/${user.id}`}
             className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
           >
-            Sign Out
-          </button>
-        </form>
+            View Profile
+          </Link>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+            >
+              Sign Out
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Social Stats */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <Link
+          href="/create-recipe"
+          className="rounded-xl border border-neutral-200 bg-gradient-to-br from-emerald-50 to-white p-6 shadow-sm transition-all hover:shadow-md"
+        >
+          <div className="text-3xl font-bold text-emerald-600">{recipeCount}</div>
+          <div className="mt-1 text-sm font-medium text-neutral-700">Recipes Created</div>
+        </Link>
+        <div className="rounded-xl border border-neutral-200 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm">
+          <div className="text-3xl font-bold text-blue-600">{followerCount}</div>
+          <div className="mt-1 text-sm font-medium text-neutral-700">Followers</div>
+        </div>
+        <div className="rounded-xl border border-neutral-200 bg-gradient-to-br from-purple-50 to-white p-6 shadow-sm">
+          <div className="text-3xl font-bold text-purple-600">{followingCount}</div>
+          <div className="mt-1 text-sm font-medium text-neutral-700">Following</div>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
@@ -107,6 +155,10 @@ export default async function AccountPage({
         <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-neutral-900">Account Info</h2>
           <div className="mt-4 space-y-3 text-sm">
+            <div>
+              <div className="font-medium text-neutral-700">Display Name</div>
+              <div className="text-neutral-600">{profile?.display_name || "Not set"}</div>
+            </div>
             <div>
               <div className="font-medium text-neutral-700">Email</div>
               <div className="text-neutral-600">{user.email}</div>
