@@ -6,6 +6,7 @@ import { PrintButton } from "./PrintButton";
 import { ShareButton } from "./ShareButton";
 import { IngredientScalerWithShopping } from "./IngredientScalerWithShopping";
 import { FavoriteButton } from "./FavoriteButton";
+import { RecipeReviews } from "./RecipeReviews";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -56,9 +57,11 @@ export default async function RecipePage({ params }: Props) {
 
   const tags = recipeTags?.map((rt: any) => rt.tags).filter(Boolean) || [];
 
-  // Check if current user has favorited this recipe
+  // Check if current user has favorited this recipe and get reviews
   const { data: userRes } = await supabase.auth.getUser();
   let isFavorite = false;
+  let userReview = null;
+  
   if (userRes?.user) {
     const { data: favoriteData } = await supabase
       .from("favorite_recipes")
@@ -67,7 +70,28 @@ export default async function RecipePage({ params }: Props) {
       .eq("recipe_id", recipe.id)
       .maybeSingle();
     isFavorite = !!favoriteData;
+
+    // Get user's review
+    const { data: reviewData } = await supabase
+      .from("recipe_reviews")
+      .select("*")
+      .eq("user_id", userRes.user.id)
+      .eq("recipe_id", recipe.id)
+      .maybeSingle();
+    userReview = reviewData;
   }
+
+  // Get all reviews and average rating
+  const { data: reviews } = await supabase
+    .from("recipe_reviews")
+    .select("*")
+    .eq("recipe_id", recipe.id)
+    .order("created_at", { ascending: false });
+
+  const averageRating = reviews && reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
+
 
   const imageUrl = recipe.image_path
     ? supabase.storage
@@ -313,6 +337,17 @@ export default async function RecipePage({ params }: Props) {
           )}
         </div>
       )}
+
+      {/* Reviews Section */}
+      <div className="mt-6">
+        <RecipeReviews
+          recipeId={recipe.id}
+          reviews={reviews || []}
+          averageRating={averageRating}
+          userReview={userReview}
+          isAuthenticated={!!userRes?.user}
+        />
+      </div>
     </main>
   );
 }

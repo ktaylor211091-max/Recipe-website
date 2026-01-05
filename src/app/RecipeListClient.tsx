@@ -37,13 +37,14 @@ export function RecipeListClient({
 }: RecipeListClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
 
   const categoryNames = useMemo(() => {
     return categories.map((c) => c.name);
   }, [categories]);
 
-  const filteredRecipes = useMemo(() => {
-    return recipes.filter((r) => {
+  const filteredAndSortedRecipes = useMemo(() => {
+    let filtered = recipes.filter((r) => {
       const matchesCategory =
         selectedCategoryId === "all" || r.category_id === selectedCategoryId;
       const matchesQuery =
@@ -53,13 +54,33 @@ export function RecipeListClient({
 
       return matchesCategory && matchesQuery;
     });
-  }, [recipes, searchQuery, selectedCategoryId]);
+
+    // Sort filtered recipes
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case "oldest":
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case "title":
+          return a.title.localeCompare(b.title);
+        case "prepTime":
+          return (a.prep_time_minutes || 999) - (b.prep_time_minutes || 999);
+        case "cookTime":
+          return (a.cook_time_minutes || 999) - (b.cook_time_minutes || 999);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [recipes, searchQuery, selectedCategoryId, sortBy]);
 
   const byCategory = useMemo(() => {
     const grouped: Record<string, Recipe[]> = {};
     
     // Group filtered recipes by category
-    filteredRecipes.forEach((r) => {
+    filteredAndSortedRecipes.forEach((r) => {
       const cat = categories.find((c) => c.id === r.category_id);
       if (cat) {
         if (!grouped[cat.id]) {
@@ -70,7 +91,7 @@ export function RecipeListClient({
     });
     
     return grouped;
-  }, [filteredRecipes, categories]);
+  }, [filteredAndSortedRecipes, categories]);
 
   // Get categories that have recipes, in display order
   const categoriesWithRecipes = useMemo(() => {
@@ -79,8 +100,9 @@ export function RecipeListClient({
       .sort((a, b) => a.display_order - b.display_order);
   }, [categories, byCategory]);
 
-  const handleSearch = (query: string, categoryName: string) => {
+  const handleSearch = (query: string, categoryName: string, sortOption: string) => {
     setSearchQuery(query);
+    setSortBy(sortOption);
     
     if (categoryName === "all") {
       setSelectedCategoryId("all");
@@ -99,7 +121,7 @@ export function RecipeListClient({
     <>
       <RecipeSearch categories={categoryNames} onSearch={handleSearch} />
 
-      {filteredRecipes.length === 0 ? (
+      {filteredAndSortedRecipes.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-neutral-200 bg-neutral-50 p-12 text-center">
           <div className="text-5xl mb-4">🔍</div>
           <p className="text-lg font-medium text-neutral-700">
@@ -136,43 +158,50 @@ export function RecipeListClient({
                     <Link
                       key={r.id}
                       href={`/recipes/${r.slug}`}
-                      className="group block bg-white"
+                      className="group block overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
                     >
-                      <div className="overflow-hidden rounded-lg bg-neutral-100 mb-3 aspect-[4/3]">
+                      <div className="relative overflow-hidden bg-neutral-100 aspect-[4/3]">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
                             alt={r.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <div className="text-5xl">🍳</div>
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200">
+                            <div className="text-6xl">🍳</div>
                           </div>
                         )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
 
-                      <div>
-                        <h4 className="text-base font-bold text-neutral-900 mb-2 leading-snug group-hover:text-neutral-600 transition-colors">
+                      <div className="p-4">
+                        <h4 className="text-lg font-bold text-neutral-900 mb-2 leading-snug group-hover:text-emerald-600 transition-colors line-clamp-2">
                           {r.title}
                         </h4>
 
+                        {r.description && (
+                          <p className="text-sm text-neutral-600 mb-3 line-clamp-2 leading-relaxed">
+                            {r.description}
+                          </p>
+                        )}
+
                         {(totalTime > 0 || r.servings) && (
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500 pt-3 border-t border-neutral-100">
                             {totalTime > 0 && (
-                              <span className="flex items-center gap-1">
-                                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <span className="flex items-center gap-1.5">
+                                <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                {totalTime} min
+                                <span className="font-medium">{totalTime} min</span>
                               </span>
                             )}
                             {r.servings && (
-                              <span className="flex items-center gap-1">
-                                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <span className="flex items-center gap-1.5">
+                                <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
-                                Serves {r.servings}
+                                <span className="font-medium">Serves {r.servings}</span>
                               </span>
                             )}
                           </div>
