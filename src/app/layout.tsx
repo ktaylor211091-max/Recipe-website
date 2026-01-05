@@ -30,7 +30,7 @@ export default async function RootLayout({
                 href="/admin"
                 className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
               >
-                Admin
+                Login
               </Link>
             </div>
             <nav className="flex items-center gap-6 border-t border-neutral-100 py-3 overflow-x-auto">
@@ -73,7 +73,7 @@ export default async function RootLayout({
                   Home
                 </Link>
                 <Link href="/admin" className="hover:text-neutral-900">
-                  Admin
+                  Login
                 </Link>
               </div>
             </div>
