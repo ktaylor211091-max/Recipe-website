@@ -67,8 +67,8 @@ export default async function RecipePage({ params }: Props) {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 px-3 py-1 shadow-md">
-              <span className="text-xs font-bold text-white">
+            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1">
+              <span className="text-xs font-bold text-neutral-700">
                 {(recipe.category ?? "General").trim() || "General"}
               </span>
             </div>
