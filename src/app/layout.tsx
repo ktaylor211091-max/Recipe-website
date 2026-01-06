@@ -113,7 +113,7 @@ export default async function RootLayout({
               >
                 All Recipes
               </Link>
-              {categories.map((cat) => (
+              {categories.filter(cat => !cat.parent_category_id).map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/#${cat.slug}`}

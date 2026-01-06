@@ -79,14 +79,27 @@ export default async function CreateRecipePage({ searchParams }: Props) {
             <select
               name="category_id"
               required
+              defaultValue={originalRecipe?.category_id || ""}
               className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             >
               <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
+              {categories
+                .filter(cat => !cat.parent_category_id)
+                .map((parentCat) => {
+                  const subcategories = categories.filter(
+                    cat => cat.parent_category_id === parentCat.id
+                  );
+                  return (
+                    <optgroup key={parentCat.id} label={parentCat.name}>
+                      <option value={parentCat.id}>{parentCat.name} (General)</option>
+                      {subcategories.map((subcat) => (
+                        <option key={subcat.id} value={subcat.id}>
+                          {subcat.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  );
+                })}
             </select>
           </div>
 
