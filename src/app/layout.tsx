@@ -50,6 +50,12 @@ export default async function RootLayout({
                 {user ? (
                   <>
                     <Link
+                      href="/search-users"
+                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
+                    >
+                      Find Chefs
+                    </Link>
+                    <Link
                       href="/messages"
                       className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
                     >
