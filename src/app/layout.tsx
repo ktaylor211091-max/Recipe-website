@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { CategoryNav } from "./CategoryNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -106,23 +107,7 @@ export default async function RootLayout({
                 )}
               </div>
             </div>
-            <nav className="flex items-center gap-6 border-t border-neutral-100 py-3 overflow-x-auto">
-              <Link
-                href="/"
-                className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600"
-              >
-                All Recipes
-              </Link>
-              {categories.filter(cat => !cat.parent_category_id).map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/#${cat.slug}`}
-                  className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </nav>
+            <CategoryNav categories={categories} />
           </div>
         </header>
 
