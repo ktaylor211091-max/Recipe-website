@@ -19,7 +19,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
 
   return (
     <nav className="relative z-50 flex items-center gap-6 border-t border-neutral-100 py-3">
-      <div className="flex items-center gap-6 overflow-x-auto">
+      <div className="flex items-center gap-6 overflow-x-auto sm:overflow-visible">
       <Link
         href="/"
         className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600"
