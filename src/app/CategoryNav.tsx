@@ -59,7 +59,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             </Link>
 
             {hasSubcategories && openDropdown === cat.id && (
-              <div className="absolute left-0 top-full z-50 mt-1 w-48 rounded-lg border border-neutral-200 bg-white shadow-lg">
+              <div className="absolute left-0 top-full z-[9999] mt-1 w-48 rounded-lg border border-neutral-200 bg-white shadow-lg">
                 <div className="py-2">
                   <Link
                     href={`/#${cat.slug}`}
