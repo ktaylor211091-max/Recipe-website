@@ -9,98 +9,79 @@ add column if not exists parent_category_id uuid references public.categories(id
 create index if not exists idx_categories_parent on public.categories(parent_category_id);
 
 -- 3) Insert subcategories for Breakfast
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Pancakes & Waffles', 'pancakes-waffles', 11, id from public.categories where slug = 'breakfast'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Eggs', 'eggs', 12, id from public.categories where slug = 'breakfast'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Smoothies', 'smoothies', 13, id from public.categories where slug = 'breakfast'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Oatmeal & Cereal', 'oatmeal-cereal', 14, id from public.categories where slug = 'breakfast'
-on conflict do nothing;
+do $$
+declare
+  breakfast_id uuid;
+begin
+  select id into breakfast_id from public.categories where slug = 'breakfast';
+  
+  insert into public.categories (name, slug, display_order, parent_category_id) values
+    ('Pancakes & Waffles', 'pancakes-waffles', 11, breakfast_id),
+    ('Eggs', 'eggs', 12, breakfast_id),
+    ('Smoothies', 'smoothies', 13, breakfast_id),
+    ('Oatmeal & Cereal', 'oatmeal-cereal', 14, breakfast_id)
+  on conflict (slug) do nothing;
+end $$;
 
 -- 4) Insert subcategories for Lunch
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Sandwiches', 'sandwiches', 21, id from public.categories where slug = 'lunch'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Salads', 'salads', 22, id from public.categories where slug = 'lunch'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Soups', 'soups', 23, id from public.categories where slug = 'lunch'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Wraps & Bowls', 'wraps-bowls', 24, id from public.categories where slug = 'lunch'
-on conflict do nothing;
+do $$
+declare
+  lunch_id uuid;
+begin
+  select id into lunch_id from public.categories where slug = 'lunch';
+  
+  insert into public.categories (name, slug, display_order, parent_category_id) values
+    ('Sandwiches', 'sandwiches', 21, lunch_id),
+    ('Salads', 'salads', 22, lunch_id),
+    ('Soups', 'soups', 23, lunch_id),
+    ('Wraps & Bowls', 'wraps-bowls', 24, lunch_id)
+  on conflict (slug) do nothing;
+end $$;
 
 -- 5) Insert subcategories for Dinner
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Pasta', 'pasta', 31, id from public.categories where slug = 'dinner'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Chicken', 'chicken', 32, id from public.categories where slug = 'dinner'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Beef', 'beef', 33, id from public.categories where slug = 'dinner'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Seafood', 'seafood', 34, id from public.categories where slug = 'dinner'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Vegetarian', 'vegetarian', 35, id from public.categories where slug = 'dinner'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Pizza', 'pizza', 36, id from public.categories where slug = 'dinner'
-on conflict do nothing;
+do $$
+declare
+  dinner_id uuid;
+begin
+  select id into dinner_id from public.categories where slug = 'dinner';
+  
+  insert into public.categories (name, slug, display_order, parent_category_id) values
+    ('Pasta', 'pasta', 31, dinner_id),
+    ('Chicken', 'chicken', 32, dinner_id),
+    ('Beef', 'beef', 33, dinner_id),
+    ('Seafood', 'seafood', 34, dinner_id),
+    ('Vegetarian', 'vegetarian', 35, dinner_id),
+    ('Pizza', 'pizza', 36, dinner_id)
+  on conflict (slug) do nothing;
+end $$;
 
 -- 6) Insert subcategories for Desserts
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Cakes', 'cakes', 41, id from public.categories where slug = 'dessert'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Cookies', 'cookies', 42, id from public.categories where slug = 'dessert'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Pies & Tarts', 'pies-tarts', 43, id from public.categories where slug = 'dessert'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Ice Cream', 'ice-cream', 44, id from public.categories where slug = 'dessert'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Brownies & Bars', 'brownies-bars', 45, id from public.categories where slug = 'dessert'
-on conflict do nothing;
+do $$
+declare
+  dessert_id uuid;
+begin
+  select id into dessert_id from public.categories where slug = 'dessert';
+  
+  insert into public.categories (name, slug, display_order, parent_category_id) values
+    ('Cakes', 'cakes', 41, dessert_id),
+    ('Cookies', 'cookies', 42, dessert_id),
+    ('Pies & Tarts', 'pies-tarts', 43, dessert_id),
+    ('Ice Cream', 'ice-cream', 44, dessert_id),
+    ('Brownies & Bars', 'brownies-bars', 45, dessert_id)
+  on conflict (slug) do nothing;
+end $$;
 
 -- 7) Insert subcategories for Snacks
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Dips & Spreads', 'dips-spreads', 51, id from public.categories where slug = 'snacks'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Appetizers', 'appetizers', 52, id from public.categories where slug = 'snacks'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Finger Foods', 'finger-foods', 53, id from public.categories where slug = 'snacks'
-on conflict do nothing;
-
-insert into public.categories (name, slug, display_order, parent_category_id)
-select 'Energy Bars', 'energy-bars', 54, id from public.categories where slug = 'snacks'
-on conflict do nothing;
+do $$
+declare
+  snacks_id uuid;
+begin
+  select id into snacks_id from public.categories where slug = 'snacks';
+  
+  insert into public.categories (name, slug, display_order, parent_category_id) values
+    ('Dips & Spreads', 'dips-spreads', 51, snacks_id),
+    ('Appetizers', 'appetizers', 52, snacks_id),
+    ('Finger Foods', 'finger-foods', 53, snacks_id),
+    ('Energy Bars', 'energy-bars', 54, snacks_id)
+  on conflict (slug) do nothing;
+end $$;
