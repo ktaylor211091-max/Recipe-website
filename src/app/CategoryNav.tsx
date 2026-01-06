@@ -18,7 +18,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
   };
 
   return (
-    <nav className="flex items-center gap-6 border-t border-neutral-100 py-3 overflow-x-auto">
+    <nav className="relative z-50 flex items-center gap-6 border-t border-neutral-100 py-3 overflow-x-auto">
       <Link
         href="/"
         className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600"
@@ -32,7 +32,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
         return (
           <div
             key={cat.id}
-            className="relative"
+            className="relative z-50"
             onMouseEnter={() => hasSubcategories && setOpenDropdown(cat.id)}
             onMouseLeave={() => setOpenDropdown(null)}
           >
