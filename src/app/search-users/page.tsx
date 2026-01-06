@@ -20,76 +20,36 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
   let profiles: any[] = [];
 
   if (query && query.trim()) {
-    const searchQuery = query.toLowerCase();
-    const profileIdSet = new Set<string>();
-
     // Search for profiles by display name
-    const { data: profilesByName } = await supabase
+    const { data: profilesData } = await supabase
       .from("profiles")
       .select("id, display_name, bio, avatar_url, is_public")
       .eq("is_public", true)
       .ilike("display_name", `%${query}%`)
       .limit(20);
 
-    // Add matching profiles to set
-    if (profilesByName) {
-      profilesByName.forEach(p => profileIdSet.add(p.id));
-    }
+    if (profilesData) {
+      // Get user emails and recipe counts
+      const profilesWithDetails = await Promise.all(
+        profilesData.map(async (profile) => {
+          const [userData, recipesData] = await Promise.all([
+            supabase.auth.admin.getUserById(profile.id),
+            supabase
+              .from("recipes")
+              .select("id", { count: "exact", head: true })
+              .eq("author_id", profile.id)
+              .eq("published", true),
+          ]);
 
-    // Search for users by email using auth admin API
-    const { data: allUsersData } = await supabase.auth.admin.listUsers();
-    if (allUsersData?.users) {
-      const matchingUserIds = allUsersData.users
-        .filter(user => user.email?.toLowerCase().includes(searchQuery))
-        .map(user => user.id)
-        .slice(0, 20);
+          return {
+            ...profile,
+            email: userData.data?.user?.email,
+            recipeCount: recipesData.count || 0,
+          };
+        })
+      );
 
-      // Get profiles for matching emails
-      if (matchingUserIds.length > 0) {
-        const { data: profilesByEmail } = await supabase
-          .from("profiles")
-          .select("id, display_name, bio, avatar_url, is_public")
-          .eq("is_public", true)
-          .in("id", matchingUserIds);
-
-        if (profilesByEmail) {
-          profilesByEmail.forEach(p => profileIdSet.add(p.id));
-        }
-      }
-    }
-
-    // Get full profile data for all matches
-    if (profileIdSet.size > 0) {
-      const profileIds = Array.from(profileIdSet).slice(0, 20);
-      const { data: allMatchingProfiles } = await supabase
-        .from("profiles")
-        .select("id, display_name, bio, avatar_url, is_public")
-        .eq("is_public", true)
-        .in("id", profileIds);
-
-      if (allMatchingProfiles) {
-        // Get user emails and recipe counts
-        const profilesWithDetails = await Promise.all(
-          allMatchingProfiles.map(async (profile) => {
-            const [userData, recipesData] = await Promise.all([
-              supabase.auth.admin.getUserById(profile.id),
-              supabase
-                .from("recipes")
-                .select("id", { count: "exact", head: true })
-                .eq("author_id", profile.id)
-                .eq("published", true),
-            ]);
-
-            return {
-              ...profile,
-              email: userData.data?.user?.email,
-              recipeCount: recipesData.count || 0,
-            };
-          })
-        );
-
-        profiles = profilesWithDetails;
-      }
+      profiles = profilesWithDetails;
     }
   }
 
@@ -100,7 +60,7 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
           Find Chefs
         </h1>
         <p className="mt-2 text-neutral-600">
-          Search by name or email to discover other cooks and their recipes
+          Search for other cooks and discover their recipes
         </p>
       </div>
 
@@ -112,7 +72,7 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
               type="text"
               name="q"
               defaultValue={query || ""}
-              placeholder="Search by name or email..."
+              placeholder="Search by name..."
               className="flex-1 rounded-lg border border-neutral-300 px-4 py-3 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
             />
             <button
@@ -248,14 +208,14 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
             Discover Chefs
           </h2>
           <p className="text-neutral-600 mb-6">
-            Search for other cooks by name or email to discover their recipes and connect
+            Search for other cooks by name to discover their recipes and connect
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-neutral-500">
             <div className="flex items-center gap-2">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              Search by name or email
+              Search by name
             </div>
             <div className="flex items-center gap-2">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
