@@ -100,12 +100,6 @@ export default function ShoppingListPage() {
   // Group items by recipe
   const recipeItems = items.filter((item) => item.recipeTitle);
   const manualItems = items.filter((item) => !item.recipeTitle);
-  const groupedByRecipe = recipeItems.reduce((acc, item) => {
-    const key = item.recipeTitle || "Other";
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(item);
-    return acc;
-  }, {} as Record<string, ShoppingListItem[]>);
 
   return (
     <main className="animate-fade-in">
@@ -165,121 +159,62 @@ export default function ShoppingListPage() {
               </Link>
             </div>
           ) : (
-            <div className="space-y-6">
-              {/* Recipe-based items */}
-              {Object.entries(groupedByRecipe).map(([recipeTitle, recipeItems]) => (
-                <div
-                  key={recipeTitle}
-                  className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-neutral-900">
-                      {recipeTitle}
-                    </h2>
-                    {recipeItems[0]?.recipeSlug && (
-                      <Link
-                        href={`/recipes/${recipeItems[0].recipeSlug}`}
-                        className="text-sm font-medium text-emerald-600 hover:underline"
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-bold text-neutral-900">
+                Your Items
+              </h2>
+              <div className="space-y-2">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-colors hover:bg-neutral-50"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={item.checked}
+                      onChange={() => toggleItem(item.id)}
+                      className="h-5 w-5 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <div className="flex-1">
+                      <span
+                        className={`text-sm block ${
+                          item.checked
+                            ? "text-neutral-400 line-through"
+                            : "text-neutral-700"
+                        }`}
                       >
-                        View Recipe →
-                      </Link>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    {recipeItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-colors hover:bg-neutral-50"
+                        {item.text}
+                      </span>
+                      {item.recipeTitle && (
+                        <Link
+                          href={`/recipes/${item.recipeSlug}`}
+                          className="text-xs text-emerald-600 hover:underline"
+                        >
+                          from {item.recipeTitle}
+                        </Link>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => deleteItem(item.id)}
+                      className="rounded p-1 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                       >
-                        <input
-                          type="checkbox"
-                          checked={item.checked}
-                          onChange={() => toggleItem(item.id)}
-                          className="h-5 w-5 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-500"
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                         />
-                        <span
-                          className={`flex-1 text-sm ${
-                            item.checked
-                              ? "text-neutral-400 line-through"
-                              : "text-neutral-700"
-                          }`}
-                        >
-                          {item.text}
-                        </span>
-                        <button
-                          onClick={() => deleteItem(item.id)}
-                          className="rounded p-1 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                        >
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
+                      </svg>
+                    </button>
                   </div>
-                </div>
-              ))}
-
-              {/* Manual items */}
-              {manualItems.length > 0 && (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-                  <h2 className="mb-4 text-lg font-bold text-neutral-900">
-                    Custom Items
-                  </h2>
-                  <div className="space-y-2">
-                    {manualItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-colors hover:bg-neutral-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={item.checked}
-                          onChange={() => toggleItem(item.id)}
-                          className="h-5 w-5 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <span
-                          className={`flex-1 text-sm ${
-                            item.checked
-                              ? "text-neutral-400 line-through"
-                              : "text-neutral-700"
-                          }`}
-                        >
-                          {item.text}
-                        </span>
-                        <button
-                          onClick={() => deleteItem(item.id)}
-                          className="rounded p-1 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                        >
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
           )}
         </div>
