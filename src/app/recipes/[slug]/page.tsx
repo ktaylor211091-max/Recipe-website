@@ -286,6 +286,8 @@ export default async function RecipePage({ params }: Props) {
               <IngredientScalerWithShopping 
                 initialServings={recipe.servings || 1}
                 ingredients={recipe.ingredients}
+                recipeTitle={recipe.title}
+                recipeSlug={recipe.slug}
               />
             ) : (
               <p className="text-sm text-neutral-500">No ingredients yet.</p>

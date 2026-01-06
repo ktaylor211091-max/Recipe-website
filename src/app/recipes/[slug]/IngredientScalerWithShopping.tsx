@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   initialServings: number;
   ingredients: string[];
+  recipeTitle: string;
+  recipeSlug: string;
 };
 
-export function IngredientScalerWithShopping({ initialServings, ingredients }: Props) {
+export function IngredientScalerWithShopping({ initialServings, ingredients, recipeTitle, recipeSlug }: Props) {
   const [scale, setScale] = useState(1);
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [showModal, setShowModal] = useState(false);
   const [shoppingMode, setShoppingMode] = useState(false);
+  const router = useRouter();
 
   const scaleIngredient = (ingredient: string): string => {
     // Match fractional patterns like 1/2, 1 1/2, etc.
@@ -130,6 +134,28 @@ export function IngredientScalerWithShopping({ initialServings, ingredients }: P
   const handleClearAll = () => {
     setSelectedItems(new Set());
     setShoppingMode(false);
+  };
+
+  const addToShoppingList = () => {
+    // Get existing shopping list from localStorage
+    const existing = localStorage.getItem("shoppingList");
+    const existingItems = existing ? JSON.parse(existing) : [];
+
+    // Add selected ingredients (scaled)
+    const newItems = Array.from(selectedItems).map((index) => ({
+      id: `${Date.now()}-${index}`,
+      text: scaledIngredients[index],
+      recipeTitle,
+      recipeSlug,
+      checked: false,
+    }));
+
+    // Combine and save
+    const combined = [...existingItems, ...newItems];
+    localStorage.setItem("shoppingList", JSON.stringify(combined));
+
+    // Navigate to shopping list page
+    router.push("/shopping-list");
   };
 
   return (
@@ -261,16 +287,16 @@ export function IngredientScalerWithShopping({ initialServings, ingredients }: P
 
             <div className="flex gap-2">
               <button
+                onClick={addToShoppingList}
+                className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+              >
+                Add to List
+              </button>
+              <button
                 onClick={handleCopyList}
                 className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
               >
                 Copy
-              </button>
-              <button
-                onClick={handlePrint}
-                className="flex-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-500"
-              >
-                Print
               </button>
               <button
                 onClick={handleClearAll}

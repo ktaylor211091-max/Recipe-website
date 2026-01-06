@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   ingredients: string[];
+  recipeTitle: string;
+  recipeSlug: string;
 };
 
-export function ShoppingList({ ingredients }: Props) {
+export function ShoppingList({ ingredients, recipeTitle, recipeSlug }: Props) {
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 
   const toggleItem = (index: number) => {
     const newSet = new Set(selectedItems);
@@ -61,6 +65,28 @@ export function ShoppingList({ ingredients }: Props) {
 
   const handleClearAll = () => {
     setSelectedItems(new Set());
+  };
+
+  const addToShoppingList = () => {
+    // Get existing shopping list from localStorage
+    const existing = localStorage.getItem("shoppingList");
+    const existingItems = existing ? JSON.parse(existing) : [];
+
+    // Add selected ingredients
+    const newItems = Array.from(selectedItems).map((index) => ({
+      id: `${Date.now()}-${index}`,
+      text: ingredients[index],
+      recipeTitle,
+      recipeSlug,
+      checked: false,
+    }));
+
+    // Combine and save
+    const combined = [...existingItems, ...newItems];
+    localStorage.setItem("shoppingList", JSON.stringify(combined));
+
+    // Navigate to shopping list page
+    router.push("/shopping-list");
   };
 
   return (
@@ -129,16 +155,16 @@ export function ShoppingList({ ingredients }: Props) {
 
             <div className="flex gap-2">
               <button
+                onClick={addToShoppingList}
+                className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+              >
+                Add to List
+              </button>
+              <button
                 onClick={handleCopyList}
                 className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
               >
                 Copy
-              </button>
-              <button
-                onClick={handlePrint}
-                className="flex-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-500"
-              >
-                Print
               </button>
               <button
                 onClick={handleClearAll}
