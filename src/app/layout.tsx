@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CategoryNav } from "./CategoryNav";
+import { FloatingChat } from "./FloatingChat";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -148,6 +149,11 @@ export default async function RootLayout({
             </div>
           </div>
         </footer>
+
+        {/* Floating Chat - Desktop Only */}
+        <div className="hidden lg:block">
+          <FloatingChat userId={user?.id || null} />
+        </div>
       </body>
     </html>
   );
