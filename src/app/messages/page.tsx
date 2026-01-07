@@ -22,40 +22,45 @@ export default async function MessagesPage({ searchParams }: Props) {
   // Get all conversations (users you've messaged with)
   const { data: sentMessages } = await supabase
     .from("messages")
-    .select("recipient_id, profiles!messages_recipient_id_fkey(id, display_name, avatar_url)")
+    .select("recipient_id")
     .eq("sender_id", userData.user.id)
     .order("created_at", { ascending: false });
 
   const { data: receivedMessages } = await supabase
     .from("messages")
-    .select("sender_id, profiles!messages_sender_id_fkey(id, display_name, avatar_url)")
+    .select("sender_id")
     .eq("recipient_id", userData.user.id)
     .order("created_at", { ascending: false });
 
   // Combine and deduplicate conversation partners
   const conversationMap = new Map();
 
+  // Collect unique user IDs
+  const userIds = new Set<string>();
   sentMessages?.forEach((msg: any) => {
-    const profile = msg.profiles;
-    if (!conversationMap.has(msg.recipient_id)) {
-      conversationMap.set(msg.recipient_id, {
-        id: msg.recipient_id,
-        display_name: profile?.display_name || null,
-        avatar_url: profile?.avatar_url || null,
-      });
-    }
+    userIds.add(msg.recipient_id);
+  });
+  receivedMessages?.forEach((msg: any) => {
+    userIds.add(msg.sender_id);
   });
 
-  receivedMessages?.forEach((msg: any) => {
-    const profile = msg.profiles;
-    if (!conversationMap.has(msg.sender_id)) {
-      conversationMap.set(msg.sender_id, {
-        id: msg.sender_id,
+  // Fetch profiles for all user IDs
+  if (userIds.size > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url")
+      .in("id", Array.from(userIds));
+
+    // Build conversation map with profiles
+    userIds.forEach((userId) => {
+      const profile = profiles?.find((p) => p.id === userId);
+      conversationMap.set(userId, {
+        id: userId,
         display_name: profile?.display_name || null,
         avatar_url: profile?.avatar_url || null,
       });
-    }
-  });
+    });
+  }
 
   const conversations = Array.from(conversationMap.entries()).map(([userId, profile]) => ({
     userId,
