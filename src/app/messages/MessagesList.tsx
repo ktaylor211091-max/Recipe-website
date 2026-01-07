@@ -66,7 +66,10 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
             (newMsg.sender_id === currentUserId && newMsg.recipient_id === selectedUserId) ||
             (newMsg.sender_id === selectedUserId && newMsg.recipient_id === currentUserId)
           ) {
-            setMessages((prev) => [...prev, newMsg]);
+            // Only add via realtime if WE didn't send it (we add our own messages manually)
+            if (newMsg.sender_id !== currentUserId) {
+              setMessages((prev) => [...prev, newMsg]);
+            }
             if (newMsg.sender_id === selectedUserId) {
               markAsRead();
             }
@@ -126,12 +129,8 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
       .single();
 
     if (!error && data) {
-      // Add message immediately (real-time will handle it too, but this ensures it shows)
-      setMessages((prev) => {
-        // Check if message already exists (from real-time)
-        if (prev.find(m => m.id === data.id)) return prev;
-        return [...prev, data];
-      });
+      // Add our sent message immediately
+      setMessages((prev) => [...prev, data]);
       setNewMessage("");
     }
     setLoading(false);

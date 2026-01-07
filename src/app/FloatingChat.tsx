@@ -61,9 +61,12 @@ export function FloatingChat({ userId }: { userId: string | null }) {
             loadConversations();
             loadUnreadCount();
             
-            // If we're viewing this conversation, add the message
+            // Only add if we're viewing this conversation AND we didn't send it
             if (selectedUserId && (newMsg.sender_id === selectedUserId || newMsg.recipient_id === selectedUserId)) {
-              setMessages((prev) => [...prev, newMsg]);
+              // Only add via realtime if WE didn't send it (we add our own messages manually)
+              if (newMsg.sender_id !== userId) {
+                setMessages((prev) => [...prev, newMsg]);
+              }
               if (newMsg.sender_id === selectedUserId) {
                 markAsRead();
               }
@@ -184,12 +187,8 @@ export function FloatingChat({ userId }: { userId: string | null }) {
       .single();
 
     if (!error && data) {
-      // Add message immediately (real-time will handle it too, but this ensures it shows)
-      setMessages((prev) => {
-        // Check if message already exists (from real-time)
-        if (prev.find(m => m.id === data.id)) return prev;
-        return [...prev, data];
-      });
+      // Add our sent message immediately
+      setMessages((prev) => [...prev, data]);
       setNewMessage("");
     }
     setLoading(false);
