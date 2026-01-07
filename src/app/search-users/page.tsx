@@ -29,22 +29,18 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
       .limit(20);
 
     if (profilesData) {
-      // Get user emails and recipe counts
+      // Get recipe counts
       const profilesWithDetails = await Promise.all(
         profilesData.map(async (profile) => {
-          const [userData, recipesData] = await Promise.all([
-            supabase.auth.admin.getUserById(profile.id),
-            supabase
-              .from("recipes")
-              .select("id", { count: "exact", head: true })
-              .eq("author_id", profile.id)
-              .eq("published", true),
-          ]);
+          const { count } = await supabase
+            .from("recipes")
+            .select("id", { count: "exact", head: true })
+            .eq("author_id", profile.id)
+            .eq("published", true);
 
           return {
             ...profile,
-            email: userData.data?.user?.email,
-            recipeCount: recipesData.count || 0,
+            recipeCount: count || 0,
           };
         })
       );
@@ -124,18 +120,16 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
                       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-2xl font-bold text-white">
-                        {(profile.display_name || profile.email || "U")[0].toUpperCase()}
+                        {(profile.display_name || "U")[0].toUpperCase()}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-bold text-neutral-900 truncate">
                           {profile.display_name || "Anonymous Chef"}
                         </h3>
-                        {profile.email && (
-                          <p className="text-xs text-neutral-500 truncate">
-                            @{profile.email.split("@")[0]}
-                          </p>
-                        )}
+                        <p className="text-xs text-neutral-500 truncate">
+                          @{profile.display_name?.toLowerCase().replace(/\s+/g, '') || profile.id.slice(0, 8)}
+                        </p>
                       </div>
                     </div>
 

@@ -31,9 +31,6 @@ export default async function UserProfilePage({ params }: Props) {
 
   const isOwnProfile = currentUserId === id;
 
-  // Get user's email
-  const { data: userData } = await supabase.auth.admin.getUserById(id);
-
   // Get stats
   const [recipesData, followersData, followingData, isFollowing] = await Promise.all([
     supabase
@@ -72,14 +69,14 @@ export default async function UserProfilePage({ params }: Props) {
           <div className="flex items-start gap-4">
             {/* Avatar */}
             <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-3xl font-bold text-white">
-              {(profile.display_name || userData?.user?.email || "U")[0].toUpperCase()}
+              {(profile.display_name || "U")[0].toUpperCase()}
             </div>
 
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-neutral-900">
                 {profile.display_name || "Anonymous Chef"}
               </h1>
-              <p className="text-sm text-neutral-500">@{userData?.user?.email?.split("@")[0] || "user"}</p>
+              <p className="text-sm text-neutral-500">@{profile.display_name?.toLowerCase().replace(/\s+/g, '') || id.slice(0, 8)}</p>
               
               {profile.bio && (
                 <p className="mt-3 text-neutral-700 leading-relaxed max-w-2xl">
