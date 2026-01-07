@@ -1,11 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { SUPABASE_CONFIG } from "./config";
 
 export function getSupabaseEnv() {
   // Try env vars first, then fall back to hardcoded config
   let url =
-    process.env.NEXT_PUBLIC_SUPABASE_URL?. trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ||
     process.env.EXPO_PUBLIC_SUPABASE_URL?.trim();
   
   let anonKey =

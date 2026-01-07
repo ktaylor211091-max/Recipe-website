@@ -116,3 +116,26 @@ body {
 img {
 	background-color: #f5f5f5;
 }
+
+/* Hide scrollbar on mobile category navigation */
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+/* Safe area insets for mobile devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+	body {
+		padding-bottom: calc(env(safe-area-inset-bottom) + 4rem);
+	}
+	
+	@media (min-width: 768px) {
+		body {
+			padding-bottom: 0;
+		}
+	}
+}

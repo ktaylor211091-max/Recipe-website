@@ -1,5 +1,4 @@
 import { createBrowserClient } from "@supabase/ssr";
-import { SUPABASE_CONFIG } from "./config";
 
 export function createSupabaseBrowserClient() {
   let url =
