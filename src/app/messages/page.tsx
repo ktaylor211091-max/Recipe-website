@@ -37,24 +37,22 @@ export default async function MessagesPage({ searchParams }: Props) {
 
   sentMessages?.forEach((msg: any) => {
     const profile = msg.profiles;
-    // Include even if profile is null or display_name is null
-    if (profile && !conversationMap.has(msg.recipient_id)) {
+    if (!conversationMap.has(msg.recipient_id)) {
       conversationMap.set(msg.recipient_id, {
-        id: profile.id,
-        display_name: profile.display_name || null,
-        avatar_url: profile.avatar_url || null,
+        id: msg.recipient_id,
+        display_name: profile?.display_name || null,
+        avatar_url: profile?.avatar_url || null,
       });
     }
   });
 
   receivedMessages?.forEach((msg: any) => {
     const profile = msg.profiles;
-    // Include even if profile is null or display_name is null
-    if (profile && !conversationMap.has(msg.sender_id)) {
+    if (!conversationMap.has(msg.sender_id)) {
       conversationMap.set(msg.sender_id, {
-        id: profile.id,
-        display_name: profile.display_name || null,
-        avatar_url: profile.avatar_url || null,
+        id: msg.sender_id,
+        display_name: profile?.display_name || null,
+        avatar_url: profile?.avatar_url || null,
       });
     }
   });
