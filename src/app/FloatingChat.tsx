@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -27,6 +27,15 @@ export function FloatingChat({ userId }: { userId: string | null }) {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (!userId) return;
@@ -34,7 +43,7 @@ export function FloatingChat({ userId }: { userId: string | null }) {
     loadConversations();
     loadUnreadCount();
 
-    // Subscribe to new messages
+    // Subscribe to new messages (both sent and received)
     const supabase = createSupabaseBrowserClient();
     const channel = supabase
       .channel("floating-messages")
@@ -44,13 +53,21 @@ export function FloatingChat({ userId }: { userId: string | null }) {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: `recipient_id=eq.${userId}`,
         },
-        () => {
-          loadConversations();
-          loadUnreadCount();
-          if (selectedUserId) {
-            loadMessages();
+        (payload) => {
+          const newMsg = payload.new as Message;
+          // If this message involves the current user
+          if (newMsg.sender_id === userId || newMsg.recipient_id === userId) {
+            loadConversations();
+            loadUnreadCount();
+            
+            // If we're viewing this conversation, add the message
+            if (selectedUserId && (newMsg.sender_id === selectedUserId || newMsg.recipient_id === selectedUserId)) {
+              setMessages((prev) => [...prev, newMsg]);
+              if (newMsg.sender_id === selectedUserId) {
+                markAsRead();
+              }
+            }
           }
         }
       )
@@ -59,7 +76,7 @@ export function FloatingChat({ userId }: { userId: string | null }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, selectedUserId]);
 
   useEffect(() => {
     if (selectedUserId && userId) {
@@ -167,7 +184,7 @@ export function FloatingChat({ userId }: { userId: string | null }) {
       .single();
 
     if (!error && data) {
-      setMessages([...messages, data]);
+      // Message will be added by real-time subscription
       setNewMessage("");
     }
     setLoading(false);
@@ -356,6 +373,7 @@ export function FloatingChat({ userId }: { userId: string | null }) {
                     </div>
                   ))
                 )}
+                <div ref={messagesEndRef} />
               </div>
 
               {/* Message Input */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -32,6 +32,15 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (!selectedUserId) return;
@@ -39,7 +48,7 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
     loadMessages();
     markAsRead();
 
-    // Subscribe to new messages
+    // Subscribe to new messages (both sent and received)
     const supabase = createSupabaseBrowserClient();
     const channel = supabase
       .channel("messages")
@@ -49,15 +58,18 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: `recipient_id=eq.${currentUserId}`,
         },
         (payload) => {
+          const newMsg = payload.new as Message;
+          // If this message is part of the current conversation
           if (
-            payload.new.sender_id === selectedUserId ||
-            payload.new.recipient_id === selectedUserId
+            (newMsg.sender_id === currentUserId && newMsg.recipient_id === selectedUserId) ||
+            (newMsg.sender_id === selectedUserId && newMsg.recipient_id === currentUserId)
           ) {
-            setMessages((prev) => [...prev, payload.new as Message]);
-            markAsRead();
+            setMessages((prev) => [...prev, newMsg]);
+            if (newMsg.sender_id === selectedUserId) {
+              markAsRead();
+            }
           }
         }
       )
@@ -114,7 +126,7 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
       .single();
 
     if (!error && data) {
-      setMessages([...messages, data]);
+      // Message will be added by real-time subscription
       setNewMessage("");
     }
     setLoading(false);
@@ -228,6 +240,7 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
                   );
                 })
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
