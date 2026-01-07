@@ -6,11 +6,11 @@ import { getTags } from "../admin/actions";
 import { createUserRecipe } from "./actions";
 
 type Props = {
-  searchParams: Promise<{ fork?: string }>;
+  searchParams: Promise<{ fork?: string; error?: string }>;
 };
 
 export default async function CreateRecipePage({ searchParams }: Props) {
-  const { fork: forkRecipeId } = await searchParams;
+  const { fork: forkRecipeId, error } = await searchParams;
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
@@ -50,6 +50,31 @@ export default async function CreateRecipePage({ searchParams }: Props) {
             : "Share your culinary creation with the community"}
         </p>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start gap-3">
+            <svg
+              className="h-5 w-5 shrink-0 text-red-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div className="flex-1">
+              <p className="font-medium text-red-900">Error</p>
+              <p className="mt-1 text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <form action={createUserRecipe} className="space-y-6">

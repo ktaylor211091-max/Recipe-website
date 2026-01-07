@@ -60,6 +60,12 @@ export async function createUserRecipe(formData: FormData) {
 
   // Upload image if provided
   if (imageFile && imageFile instanceof File && imageFile.size > 0) {
+    // Check file size (5MB limit)
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+    if (imageFile.size > MAX_FILE_SIZE) {
+      redirect(`/create-recipe?error=${encodeURIComponent("Image too large. Maximum size is 5MB. Please compress your image.")}`);
+    }
+
     const ext = imageFile.name.split(".").pop();
     const fileName = `${randomUUID()}.${ext}`;
 
@@ -72,9 +78,10 @@ export async function createUserRecipe(formData: FormData) {
 
     if (uploadError) {
       console.error("Image upload error:", uploadError);
-    } else {
-      image_path = fileName;
+      redirect(`/create-recipe?error=${encodeURIComponent("Failed to upload image. Please try again.")}`);
     }
+    
+    image_path = fileName;
   }
 
   // Insert recipe
