@@ -22,14 +22,15 @@ export async function updateProfile(formData: FormData) {
 
   const { error } = await supabase
     .from("profiles")
-    .update({
+    .upsert({
+      id: userRes.user.id,
       display_name: displayName || null,
       bio: bio || null,
       location: location || null,
       website: website || null,
       is_public: isPublic,
-    })
-    .eq("id", userRes.user.id);
+      role: "user",
+    });
 
   if (error) {
     console.error("Error updating profile:", error);
