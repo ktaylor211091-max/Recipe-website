@@ -14,6 +14,11 @@ declare
   breakfast_id uuid;
 begin
   select id into breakfast_id from public.categories where slug = 'breakfast';
+
+  if breakfast_id is null then
+    raise notice 'Skipping Breakfast subcategories: parent category missing';
+    return;
+  end if;
   
   insert into public.categories (name, slug, display_order, parent_category_id) values
     ('Pancakes & Waffles', 'pancakes-waffles', 11, breakfast_id),
@@ -29,6 +34,11 @@ declare
   lunch_id uuid;
 begin
   select id into lunch_id from public.categories where slug = 'lunch';
+
+  if lunch_id is null then
+    raise notice 'Skipping Lunch subcategories: parent category missing';
+    return;
+  end if;
   
   insert into public.categories (name, slug, display_order, parent_category_id) values
     ('Sandwiches', 'sandwiches', 21, lunch_id),
@@ -44,6 +54,11 @@ declare
   dinner_id uuid;
 begin
   select id into dinner_id from public.categories where slug = 'dinner';
+
+  if dinner_id is null then
+    raise notice 'Skipping Dinner subcategories: parent category missing';
+    return;
+  end if;
   
   insert into public.categories (name, slug, display_order, parent_category_id) values
     ('Pasta', 'pasta', 31, dinner_id),
@@ -61,6 +76,11 @@ declare
   dessert_id uuid;
 begin
   select id into dessert_id from public.categories where slug = 'dessert';
+
+  if dessert_id is null then
+    raise notice 'Skipping Dessert subcategories: parent category missing';
+    return;
+  end if;
   
   insert into public.categories (name, slug, display_order, parent_category_id) values
     ('Cakes', 'cakes', 41, dessert_id),
@@ -77,6 +97,11 @@ declare
   snacks_id uuid;
 begin
   select id into snacks_id from public.categories where slug = 'snacks';
+
+  if snacks_id is null then
+    raise notice 'Skipping Snacks subcategories: parent category missing';
+    return;
+  end if;
   
   insert into public.categories (name, slug, display_order, parent_category_id) values
     ('Dips & Spreads', 'dips-spreads', 51, snacks_id),

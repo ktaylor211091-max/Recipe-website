@@ -40,17 +40,28 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             return (
               <div
                 key={cat.id}
-                className="relative group"
+                className="relative group flex items-center"
                 onMouseEnter={() => setOpenDropdown(cat.id)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <Link
                   href={`/category/${cat.slug}`}
-                  className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900 touch-manipulation flex items-center gap-1"
+                  className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900 touch-manipulation"
                 >
                   {cat.name}
+                </Link>
+                <button
+                  type="button"
+                  aria-expanded={openDropdown === cat.id}
+                  aria-haspopup="menu"
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenDropdown((prev) => (prev === cat.id ? null : cat.id));
+                  }}
+                >
                   <svg
-                    className="w-4 h-4"
+                    className={`w-4 h-4 transition-transform ${openDropdown === cat.id ? "rotate-180" : "rotate-0"}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -62,7 +73,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
-                </Link>
+                </button>
                 {openDropdown === cat.id && (
                   <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 min-w-[200px]">
                     {subcategories.map((sub) => (

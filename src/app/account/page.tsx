@@ -261,9 +261,9 @@ export default async function AccountPage({
                       </div>
                     )}
                     <div className="p-4">
-                      {recipe.categories && (
+                      {recipe.category && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-700">
-                          {recipe.categories.name}
+                          {recipe.category}
                         </span>
                       )}
                       <h3 className="mt-2 font-semibold text-neutral-900 group-hover:text-emerald-600">
