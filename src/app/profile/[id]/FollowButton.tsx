@@ -30,6 +30,14 @@ export function FollowButton({ userId, initialIsFollowing }: { userId: string; i
             follower_id: user.id,
             following_id: userId,
           });
+        
+        // Create activity for following
+        await supabase.from("activities").insert({
+          user_id: user.id,
+          activity_type: "user_followed",
+          target_user_id: userId,
+        });
+        
         setIsFollowing(true);
       }
     });

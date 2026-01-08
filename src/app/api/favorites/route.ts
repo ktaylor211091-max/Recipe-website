@@ -47,6 +47,13 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
+    // Create activity for favoriting
+    await supabase.from("activities").insert({
+      user_id: userRes.user.id,
+      activity_type: "recipe_favorited",
+      recipe_id: recipeId,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error adding favorite:", error);

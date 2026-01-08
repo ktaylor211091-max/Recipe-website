@@ -8,7 +8,6 @@ type Activity = {
   activity_type: string;
   recipe_id: string | null;
   target_user_id: string | null;
-  comment_id: string | null;
   created_at: string;
   profiles: {
     display_name: string | null;
@@ -50,7 +49,6 @@ export default async function ActivityFeedPage() {
       activity_type,
       recipe_id,
       target_user_id,
-      comment_id,
       created_at,
       profiles!activities_user_id_fkey (display_name),
       recipes (title, slug),
@@ -67,7 +65,6 @@ export default async function ActivityFeedPage() {
     activity_type: a.activity_type,
     recipe_id: a.recipe_id,
     target_user_id: a.target_user_id,
-    comment_id: a.comment_id,
     created_at: a.created_at,
     profiles: Array.isArray(a.profiles) ? a.profiles[0] : a.profiles,
     recipes: Array.isArray(a.recipes) ? a.recipes[0] : a.recipes,
@@ -82,14 +79,12 @@ export default async function ActivityFeedPage() {
     switch (activity.activity_type) {
       case "recipe_created":
         return { text: `created`, highlight: recipeName, link: `/recipes/${activity.recipes?.slug}` };
-      case "recipe_liked":
-        return { text: `liked`, highlight: recipeName, link: `/recipes/${activity.recipes?.slug}` };
+      case "recipe_forked":
+        return { text: `forked`, highlight: recipeName, link: `/recipes/${activity.recipes?.slug}` };
       case "recipe_favorited":
         return { text: `favorited`, highlight: recipeName, link: `/recipes/${activity.recipes?.slug}` };
-      case "recipe_commented":
+      case "comment_posted":
         return { text: `commented on`, highlight: recipeName, link: `/recipes/${activity.recipes?.slug}` };
-      case "recipe_reviewed":
-        return { text: `reviewed`, highlight: recipeName, link: `/recipes/${activity.recipes?.slug}` };
       case "user_followed":
         return { text: `started following`, highlight: targetUserName, link: `/profile/${activity.target_user_id}` };
       default:
@@ -101,14 +96,12 @@ export default async function ActivityFeedPage() {
     switch (type) {
       case "recipe_created":
         return "✨";
-      case "recipe_liked":
-        return "❤️";
+      case "recipe_forked":
+        return "🍴";
       case "recipe_favorited":
         return "⭐";
-      case "recipe_commented":
+      case "comment_posted":
         return "💬";
-      case "recipe_reviewed":
-        return "⭐";
       case "user_followed":
         return "👥";
       default:

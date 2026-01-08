@@ -65,6 +65,15 @@ export function RecipeComments({ recipeId, comments, currentUserId }: RecipeComm
         setLocalComments([newComment, ...localComments]);
         setCommentText("");
         setReplyTo(null);
+
+        // Create activity for commenting (only for top-level comments)
+        if (!parentId) {
+          await supabase.from("activities").insert({
+            user_id: currentUserId,
+            activity_type: "comment_posted",
+            recipe_id: recipeId,
+          });
+        }
       }
     });
   };
