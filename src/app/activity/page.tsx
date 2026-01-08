@@ -41,7 +41,7 @@ export default async function ActivityFeedPage() {
   const followingIds = following?.map((f) => f.following_id) || [];
 
   // Get activities from followed users
-  const { data: activitiesRaw } = await supabase
+  const { data: activitiesRaw, error: activitiesError } = await supabase
     .from("activities")
     .select(`
       id,
@@ -54,9 +54,13 @@ export default async function ActivityFeedPage() {
       recipes (title, slug),
       target_profiles:profiles!activities_target_user_id_fkey (display_name)
     `)
-    .in("user_id", [...followingIds, userRes.user.id])
+    .in("user_id", followingIds.length > 0 ? [...followingIds, userRes.user.id] : [userRes.user.id])
     .order("created_at", { ascending: false })
     .limit(50);
+
+  if (activitiesError) {
+    console.error("Error fetching activities:", activitiesError);
+  }
 
   // Transform the data to match our Activity type
   const activities: Activity[] = (activitiesRaw || []).map((a: any) => ({
