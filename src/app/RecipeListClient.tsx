@@ -126,13 +126,13 @@ export function RecipeListClient({
     return Math.round(avg * 10) / 10;
   };
 
-  const renderStars = (rating: number | null) => {
+  const renderStars = (rating: number | null, reviewCount: number = 0) => {
     if (rating === null) return null;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
     
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         <div className="flex items-center gap-0.5">
           {[...Array(5)].map((_, i) => (
             <span key={i}>
@@ -159,6 +159,9 @@ export function RecipeListClient({
           ))}
         </div>
         <span className="text-xs font-medium text-neutral-600">{rating.toFixed(1)}</span>
+        {reviewCount > 0 && (
+          <span className="text-xs text-neutral-500">({reviewCount})</span>
+        )}
       </div>
     );
   };
@@ -229,7 +232,7 @@ export function RecipeListClient({
 
                         {avgRating !== null && (
                           <div className="mb-2">
-                            {renderStars(avgRating)}
+                            {renderStars(avgRating, r.recipe_reviews?.length || 0)}
                           </div>
                         )}
 
