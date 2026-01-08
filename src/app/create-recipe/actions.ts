@@ -15,7 +15,7 @@ function splitLines(input: string) {
 
 export async function createUserRecipe(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const categoryId = String(formData.get("category_id") ?? "");
+  const category = String(formData.get("category") ?? "");
   const description = String(formData.get("description") ?? "").trim();
   const ingredientsText = String(formData.get("ingredients") ?? "");
   const stepsText = String(formData.get("steps") ?? "");
@@ -34,7 +34,7 @@ export async function createUserRecipe(formData: FormData) {
   const imageFile = formData.get("image");
   const forkRecipeId = String(formData.get("fork_recipe_id") ?? "").trim();
 
-  if (!title || !categoryId) {
+  if (!title || !category) {
     redirect(`/create-recipe?error=${encodeURIComponent("Title and category are required")}`);
   }
 
@@ -91,7 +91,7 @@ export async function createUserRecipe(formData: FormData) {
       author_id: userRes.user.id,
       title,
       slug,
-      category_id: categoryId,
+      category: category,
       description: description || null,
       ingredients,
       steps,
