@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createNotification } from "@/lib/notifications";
 
 type Comment = {
   id: string;
@@ -18,9 +19,11 @@ type RecipeCommentsProps = {
   recipeId: string;
   comments: Comment[];
   currentUserId: string | null;
+  recipeAuthorId: string;
+  recipeName: string;
 };
 
-export function RecipeComments({ recipeId, comments, currentUserId }: RecipeCommentsProps) {
+export function RecipeComments({ recipeId, comments, currentUserId, recipeAuthorId, recipeName }: RecipeCommentsProps) {
   const [commentText, setCommentText] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -73,6 +76,33 @@ export function RecipeComments({ recipeId, comments, currentUserId }: RecipeComm
             activity_type: "comment_posted",
             recipe_id: recipeId,
           });
+        }
+
+        // Notify recipe author (if not commenting on own recipe)
+        if (currentUserId !== recipeAuthorId) {
+          await createNotification({
+            userId: recipeAuthorId,
+            type: "comment",
+            message: `Someone commented on your recipe "${recipeName}"`,
+            fromUserId: currentUserId,
+            recipeId: recipeId,
+            commentId: data.id,
+          });
+        }
+
+        // If it's a reply, notify the parent comment author
+        if (parentId) {
+          const parentComment = localComments.find((c) => c.id === parentId);
+          if (parentComment && parentComment.user_id !== currentUserId) {
+            await createNotification({
+              userId: parentComment.user_id,
+              type: "mention",
+              message: `Someone replied to your comment on "${recipeName}"`,
+              fromUserId: currentUserId,
+              recipeId: recipeId,
+              commentId: data.id,
+            });
+          }
         }
       }
     });

@@ -2,8 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { createNotification } from "@/lib/notifications";
 
-export function FollowButton({ userId, initialIsFollowing }: { userId: string; initialIsFollowing: boolean }) {
+export function FollowButton({ 
+  userId, 
+  initialIsFollowing, 
+  profileName 
+}: { 
+  userId: string; 
+  initialIsFollowing: boolean;
+  profileName: string;
+}) {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isPending, startTransition] = useTransition();
 
@@ -36,6 +45,14 @@ export function FollowButton({ userId, initialIsFollowing }: { userId: string; i
           user_id: user.id,
           activity_type: "user_followed",
           target_user_id: userId,
+        });
+        
+        // Notify the user being followed
+        await createNotification({
+          userId: userId,
+          type: "follow",
+          message: `${profileName || "Someone"} started following you`,
+          fromUserId: user.id,
         });
         
         setIsFollowing(true);

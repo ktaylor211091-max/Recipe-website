@@ -41,7 +41,7 @@ export default async function RecipePage({ params }: Props) {
   const { data: recipe } = await supabase
     .from("recipes")
     .select(
-      "id,title,slug,category,description,ingredients,steps,image_path,published,created_at,prep_time_minutes,cook_time_minutes,servings,notes,tips,calories,protein_grams,carbs_grams,fat_grams,fiber_grams",
+      "id,title,slug,category,description,ingredients,steps,image_path,published,created_at,prep_time_minutes,cook_time_minutes,servings,notes,tips,calories,protein_grams,carbs_grams,fat_grams,fiber_grams,author_id",
     )
     .eq("slug", slug)
     .eq("published", true)
@@ -452,6 +452,8 @@ export default async function RecipePage({ params }: Props) {
           recipeId={recipe.id}
           comments={comments}
           currentUserId={userRes?.user?.id || null}
+          recipeAuthorId={recipe.author_id}
+          recipeName={recipe.title}
         />
       </div>
     </main>

@@ -143,6 +143,7 @@ export default async function UserProfilePage({ params }: Props) {
                 <FollowButton
                   userId={id}
                   initialIsFollowing={!!isFollowing.data}
+                  profileName={profile.display_name || "Anonymous Chef"}
                 />
                 <Link
                   href={`/messages?user=${id}`}
