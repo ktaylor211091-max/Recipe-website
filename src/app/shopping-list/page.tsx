@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type ShoppingListItem = {
@@ -12,6 +12,10 @@ type ShoppingListItem = {
 };
 
 export default function ShoppingListPage() {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const [items, setItems] = useState<ShoppingListItem[]>(() => {
     if (typeof window === "undefined") return [];
     const saved = window.localStorage.getItem("shoppingList");
@@ -104,7 +108,7 @@ export default function ShoppingListPage() {
           <h1 className="text-4xl font-bold tracking-tight text-neutral-900">
             Shopping List
           </h1>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-neutral-600" suppressHydrationWarning>
             {items.length} item{items.length !== 1 ? "s" : ""} •{" "}
             {items.filter((i) => i.checked).length} checked
           </p>
@@ -160,7 +164,7 @@ export default function ShoppingListPage() {
                 Your Items
               </h2>
               <div className="space-y-2">
-                {items.map((item) => (
+                {(isMounted ? items : []).map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-colors hover:bg-neutral-50"
@@ -168,6 +172,7 @@ export default function ShoppingListPage() {
                     <input
                       type="checkbox"
                       id={`item-${item.id}`}
+                      name={`item-${item.id}`}
                       checked={item.checked}
                       onChange={() => toggleItem(item.id)}
                       className="h-5 w-5 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-500"
