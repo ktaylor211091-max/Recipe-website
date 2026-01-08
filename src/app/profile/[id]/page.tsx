@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { FollowButton } from "./FollowButton";
@@ -204,10 +205,11 @@ export default async function UserProfilePage({ params }: Props) {
                 >
                   <div className="relative overflow-hidden bg-neutral-100 aspect-[4/3]">
                     {imageUrl ? (
-                      <img
+                      <Image
                         src={imageUrl}
                         alt={recipe.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200">

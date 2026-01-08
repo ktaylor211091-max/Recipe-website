@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -42,11 +42,42 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
     scrollToBottom();
   }, [messages]);
 
+  const loadMessages = useCallback(async () => {
+    if (!selectedUserId) return;
+
+    const supabase = createSupabaseBrowserClient();
+    const { data } = await supabase
+      .from("messages")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${currentUserId},recipient_id.eq.${selectedUserId}),and(sender_id.eq.${selectedUserId},recipient_id.eq.${currentUserId})`
+      )
+      .order("created_at", { ascending: true });
+
+    if (data) {
+      setMessages(data);
+    }
+  }, [currentUserId, selectedUserId]);
+
+  const markAsRead = useCallback(async () => {
+    if (!selectedUserId) return;
+
+    const supabase = createSupabaseBrowserClient();
+    await supabase
+      .from("messages")
+      .update({ is_read: true })
+      .eq("recipient_id", currentUserId)
+      .eq("sender_id", selectedUserId)
+      .eq("is_read", false);
+  }, [currentUserId, selectedUserId]);
+
   useEffect(() => {
     if (!selectedUserId) return;
 
-    loadMessages();
-    markAsRead();
+    void (async () => {
+      await loadMessages();
+      await markAsRead();
+    })();
 
     // Subscribe to new messages (both sent and received)
     const supabase = createSupabaseBrowserClient();
@@ -81,36 +112,7 @@ export function MessagesList({ conversations, currentUserId, preselectedUserId }
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedUserId, currentUserId]);
-
-  const loadMessages = async () => {
-    if (!selectedUserId) return;
-
-    const supabase = createSupabaseBrowserClient();
-    const { data } = await supabase
-      .from("messages")
-      .select("*")
-      .or(
-        `and(sender_id.eq.${currentUserId},recipient_id.eq.${selectedUserId}),and(sender_id.eq.${selectedUserId},recipient_id.eq.${currentUserId})`
-      )
-      .order("created_at", { ascending: true });
-
-    if (data) {
-      setMessages(data);
-    }
-  };
-
-  const markAsRead = async () => {
-    if (!selectedUserId) return;
-
-    const supabase = createSupabaseBrowserClient();
-    await supabase
-      .from("messages")
-      .update({ is_read: true })
-      .eq("recipient_id", currentUserId)
-      .eq("sender_id", selectedUserId)
-      .eq("is_read", false);
-  };
+  }, [currentUserId, loadMessages, markAsRead, selectedUserId]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();

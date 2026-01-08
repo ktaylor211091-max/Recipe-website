@@ -25,7 +25,6 @@ type RecipeCommentsProps = {
 
 export function RecipeComments({ recipeId, comments, currentUserId, recipeAuthorId, recipeName }: RecipeCommentsProps) {
   const [commentText, setCommentText] = useState("");
-  const [replyTo, setReplyTo] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [localComments, setLocalComments] = useState(comments);
 
@@ -67,7 +66,6 @@ export function RecipeComments({ recipeId, comments, currentUserId, recipeAuthor
         };
         setLocalComments([newComment, ...localComments]);
         setCommentText("");
-        setReplyTo(null);
 
         // Create activity for commenting (only for top-level comments)
         if (!parentId) {

@@ -91,7 +91,7 @@ export async function GET() {
       },
       { status: 200 },
     );
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       {
         ok: false,

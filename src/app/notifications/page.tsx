@@ -22,6 +22,11 @@ type Notification = {
   };
 };
 
+type NotificationRow = Notification & {
+  from_user: Notification["from_user"] | Notification["from_user"][] | null;
+  recipe: Notification["recipe"] | Notification["recipe"][] | null;
+};
+
 export default async function NotificationsPage() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
@@ -53,7 +58,8 @@ export default async function NotificationsPage() {
     .order("created_at", { ascending: false });
 
   // Transform data to handle array responses
-  const notifications: Notification[] = (notificationsRaw || []).map((n: any) => ({
+  const normalizedRaw = (notificationsRaw ?? []) as NotificationRow[];
+  const notifications: Notification[] = normalizedRaw.map((n) => ({
     ...n,
     from_user: Array.isArray(n.from_user) ? n.from_user[0] : n.from_user,
     recipe: Array.isArray(n.recipe) ? n.recipe[0] : n.recipe,
@@ -83,7 +89,7 @@ export default async function NotificationsPage() {
             No notifications yet
           </h2>
           <p className="text-neutral-600 mb-6">
-            When people interact with your recipes, you'll see notifications here
+            When people interact with your recipes, you&apos;ll see notifications here
           </p>
           <Link
             href="/"

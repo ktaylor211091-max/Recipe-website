@@ -291,7 +291,7 @@ export default async function CreateRecipePage({ searchParams }: Props) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-neutral-700">
-                Cook's Notes
+                Cook&apos;s Notes
               </label>
               <textarea
                 name="notes"

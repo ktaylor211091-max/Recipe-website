@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 import { RecipeListClient } from "./RecipeListClient";
@@ -40,12 +41,9 @@ export default async function Home() {
           .from("recipes")
           .select("id,title,slug,category,author_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,recipe_reviews(rating)")
           .eq("published", true)
-          .limit(20)
-          .then(({ data }) => {
-            if (!data || data.length === 0) return null;
-            const randomIndex = Math.floor(Math.random() * data.length);
-            return data[randomIndex];
-          })
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .then(({ data }) => (data && data.length > 0 ? data[0] : null))
       : Promise.resolve(null),
   ]);
 
@@ -67,10 +65,11 @@ export default async function Home() {
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="relative aspect-[16/9] lg:aspect-auto">
               {featuredRecipe.image_path ? (
-                <img
+                <Image
                   src={`${SUPABASE_CONFIG.url}/storage/v1/object/public/recipe-images/${featuredRecipe.image_path}`}
                   alt={featuredRecipe.title}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-neutral-800">

@@ -14,7 +14,7 @@ type CreateActivityParams = {
   activityType: ActivityType;
   recipeId?: string;
   targetUserId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 };
 
 export async function createActivity({

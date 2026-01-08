@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -12,6 +13,44 @@ import { ForkButton } from "./ForkButton";
 
 type Props = {
   params: Promise<{ slug: string }>;
+};
+
+type RecipeTag = {
+  name: string;
+  slug: string;
+};
+
+type RecipeTagRow = {
+  tags: RecipeTag | RecipeTag[] | null;
+};
+
+type CommentRow = {
+  id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  parent_comment_id: string | null;
+  profiles: { display_name: string | null } | { display_name: string | null }[] | null;
+};
+
+type ForkRow = {
+  recipes:
+    | {
+        id: string;
+        title: string;
+        slug: string;
+        author_id: string;
+        profiles?: { display_name: string | null } | { display_name: string | null }[] | null;
+      }
+    | {
+        id: string;
+        title: string;
+        slug: string;
+        author_id: string;
+        profiles?: { display_name: string | null } | { display_name: string | null }[] | null;
+      }[]
+    | null;
+  forked_recipe_id?: string;
 };
 
 export default async function RecipePage({ params }: Props) {
@@ -57,7 +96,12 @@ export default async function RecipePage({ params }: Props) {
     .select("tag_id, tags(name, slug)")
     .eq("recipe_id", recipe.id);
 
-  const tags = recipeTags?.map((rt: any) => rt.tags).filter(Boolean) || [];
+  const tags = (recipeTags ?? [])
+    .map((rt: RecipeTagRow) => {
+      const tag = Array.isArray(rt.tags) ? rt.tags[0] : rt.tags;
+      return tag;
+    })
+    .filter(Boolean) as RecipeTag[];
 
   // Check if current user has favorited this recipe and get reviews
   const { data: userRes } = await supabase.auth.getUser();
@@ -109,7 +153,7 @@ export default async function RecipePage({ params }: Props) {
     .order("created_at", { ascending: false });
 
   // Transform comments to match type
-  const comments = (commentsRaw || []).map((c: any) => ({
+  const comments = (commentsRaw || []).map((c: CommentRow) => ({
     ...c,
     profiles: Array.isArray(c.profiles) ? c.profiles[0] : c.profiles,
   }));
@@ -128,14 +172,19 @@ export default async function RecipePage({ params }: Props) {
     .eq("original_recipe_id", recipe.id);
 
   const originalRecipe = forkInfo?.recipes ? (Array.isArray(forkInfo.recipes) ? forkInfo.recipes[0] : forkInfo.recipes) : null;
-  const recipeForks = forks?.map((f: any) => {
-    const recipeData = Array.isArray(f.recipes) ? f.recipes[0] : f.recipes;
-    const profileData = Array.isArray(recipeData?.profiles) ? recipeData.profiles[0] : recipeData?.profiles;
-    return {
-      ...recipeData,
-      author_name: profileData?.display_name || "Anonymous Chef",
-    };
-  }).filter(Boolean) || [];
+  const recipeForks = (forks ?? [])
+    .map((f: ForkRow) => {
+      const recipeData = Array.isArray(f.recipes) ? f.recipes[0] : f.recipes;
+      const profileData = Array.isArray(recipeData?.profiles)
+        ? recipeData.profiles[0]
+        : recipeData?.profiles;
+      if (!recipeData) return null;
+      return {
+        ...recipeData,
+        author_name: profileData?.display_name || "Anonymous Chef",
+      };
+    })
+    .filter((fork): fork is NonNullable<typeof fork> => fork !== null);
 
 
   const imageUrl = recipe.image_path
@@ -157,7 +206,7 @@ export default async function RecipePage({ params }: Props) {
             </div>
             {tags.length > 0 && (
               <>
-                {tags.map((tag: any) => (
+                {tags.map((tag) => (
                   <span 
                     key={tag.slug} 
                     className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700"
@@ -266,11 +315,12 @@ export default async function RecipePage({ params }: Props) {
         {/* Left column - Image and Ingredients */}
         <div className="space-y-6 lg:col-span-1">
           {imageUrl ? (
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-md">
-              <img
+            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-md relative w-full" style={{ aspectRatio: '4/3' }}>
+              <Image
                 src={imageUrl}
                 alt={recipe.title}
-                className="h-auto w-full"
+                fill
+                className="object-cover"
               />
             </div>
           ) : null}
@@ -420,7 +470,7 @@ export default async function RecipePage({ params }: Props) {
               Variations ({recipeForks.length})
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {recipeForks.map((fork: any) => (
+              {recipeForks.map((fork) => (
                 <Link
                   key={fork.id}
                   href={`/recipes/${fork.slug}`}

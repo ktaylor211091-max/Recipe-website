@@ -300,7 +300,7 @@ export async function updateRecipe(formData: FormData) {
   }
 
   // Build update object - only include image_path if we're updating it
-  const updateData: any = {
+  const updateData: Record<string, unknown> = {
     title,
     slug,
     category: category,

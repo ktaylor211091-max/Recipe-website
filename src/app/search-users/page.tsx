@@ -6,6 +6,16 @@ interface SearchUsersPageProps {
   searchParams: Promise<{ q?: string }>;
 }
 
+type ProfileRow = {
+  id: string;
+  display_name: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  is_public: boolean;
+};
+
+type ProfileResult = ProfileRow & { recipeCount: number };
+
 export default async function SearchUsersPage({ searchParams }: SearchUsersPageProps) {
   const { q: query } = await searchParams;
 
@@ -17,7 +27,7 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
   const { data: userRes } = await supabase.auth.getUser();
   const currentUserId = userRes?.user?.id;
 
-  let profiles: any[] = [];
+  let profiles: ProfileResult[] = [];
 
   if (query && query.trim()) {
     // Search for profiles by display name
@@ -31,7 +41,7 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
     if (profilesData) {
       // Get recipe counts
       const profilesWithDetails = await Promise.all(
-        profilesData.map(async (profile) => {
+        profilesData.map(async (profile: ProfileRow): Promise<ProfileResult> => {
           const { count } = await supabase
             .from("recipes")
             .select("id", { count: "exact", head: true })

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signOut } from "../login/actions";
@@ -252,11 +253,12 @@ export default async function AccountPage({
                     className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-all hover:shadow-md"
                   >
                     {imageUrl && (
-                      <div className="aspect-video w-full overflow-hidden bg-neutral-100">
-                        <img
+                      <div className="aspect-video w-full overflow-hidden bg-neutral-100 relative">
+                        <Image
                           src={imageUrl}
                           alt={recipe.title}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                          fill
+                          className="object-cover transition-transform group-hover:scale-105"
                         />
                       </div>
                     )}

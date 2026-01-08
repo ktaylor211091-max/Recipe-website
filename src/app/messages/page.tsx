@@ -6,6 +6,12 @@ type Props = {
   searchParams: Promise<{ user?: string }>;
 };
 
+type ConversationProfile = {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+};
+
 export default async function MessagesPage({ searchParams }: Props) {
   const { user: preselectedUserId } = await searchParams;
 
@@ -33,14 +39,14 @@ export default async function MessagesPage({ searchParams }: Props) {
     .order("created_at", { ascending: false });
 
   // Combine and deduplicate conversation partners
-  const conversationMap = new Map();
+  const conversationMap = new Map<string, ConversationProfile>();
 
   // Collect unique user IDs
   const userIds = new Set<string>();
-  sentMessages?.forEach((msg: any) => {
+  sentMessages?.forEach((msg: { recipient_id: string }) => {
     userIds.add(msg.recipient_id);
   });
-  receivedMessages?.forEach((msg: any) => {
+  receivedMessages?.forEach((msg: { sender_id: string }) => {
     userIds.add(msg.sender_id);
   });
 
@@ -64,7 +70,8 @@ export default async function MessagesPage({ searchParams }: Props) {
 
   const conversations = Array.from(conversationMap.entries()).map(([userId, profile]) => ({
     userId,
-    ...profile,
+    display_name: profile.display_name,
+    avatar_url: profile.avatar_url,
   }));
 
   // If preselected user is provided and not in conversations, add them

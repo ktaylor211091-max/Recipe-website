@@ -115,7 +115,7 @@ export default async function EditProfilePage() {
               placeholder="e.g., New York, NY"
             />
             <p className="mt-1 text-sm text-neutral-500">
-              Where you're cooking from
+              Where you&apos;re cooking from
             </p>
           </div>
 

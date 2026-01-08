@@ -13,7 +13,7 @@ type CategoriesClientProps = {
 };
 
 export function CategoriesClient({ initialCategories }: CategoriesClientProps) {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories] = useState(initialCategories);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -81,7 +81,7 @@ export default async function LoginPage({
 
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/signup"
                 className="font-medium text-emerald-600 hover:text-emerald-500 hover:underline"

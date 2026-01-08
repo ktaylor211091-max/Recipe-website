@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCategories } from "@/app/admin/categories/actions";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
@@ -67,10 +68,11 @@ export default async function CategoryPage({ params }: Props) {
               >
                 <div className="relative overflow-hidden bg-neutral-100 aspect-[4/3]">
                   {imageUrl ? (
-                    <img
+                    <Image
                       src={imageUrl}
                       alt={recipe.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect, notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { updateRecipe, getTags } from "../../../actions";
@@ -202,11 +203,14 @@ export default async function EditRecipePage({ params }: Props) {
                 Current Image
               </label>
               <div className="mt-2 flex items-center gap-4">
-                <img
-                  src={imageUrl}
-                  alt={recipe.title}
-                  className="h-24 w-24 rounded-md border border-neutral-200 object-cover"
-                />
+                <div className="relative h-24 w-24 rounded-md border border-neutral-200 overflow-hidden">
+                  <Image
+                    src={imageUrl}
+                    alt={recipe.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <p className="text-sm text-neutral-600">
                   Upload a new image below to replace this one.
                 </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 type ShoppingListItem = {
@@ -12,16 +12,18 @@ type ShoppingListItem = {
 };
 
 export default function ShoppingListPage() {
-  const [items, setItems] = useState<ShoppingListItem[]>([]);
-  const [newItem, setNewItem] = useState("");
-
-  useEffect(() => {
-    // Load from localStorage
-    const saved = localStorage.getItem("shoppingList");
-    if (saved) {
-      setItems(JSON.parse(saved));
+  const [items, setItems] = useState<ShoppingListItem[]>(() => {
+    if (typeof window === "undefined") return [];
+    const saved = window.localStorage.getItem("shoppingList");
+    if (!saved) return [];
+    try {
+      return JSON.parse(saved) as ShoppingListItem[];
+    } catch (error) {
+      console.error("Failed to parse shopping list from localStorage", error);
+      return [];
     }
-  }, []);
+  });
+  const [newItem, setNewItem] = useState("");
 
   const saveItems = (newItems: ShoppingListItem[]) => {
     setItems(newItems);
@@ -66,8 +68,6 @@ export default function ShoppingListPage() {
   };
 
   const handlePrint = () => {
-    const list = items.map(item => `${item.checked ? '☑' : '☐'} ${item.text}`).join("\n");
-    
     const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(`
@@ -96,10 +96,6 @@ export default function ShoppingListPage() {
       printWindow.print();
     }
   };
-
-  // Group items by recipe
-  const recipeItems = items.filter((item) => item.recipeTitle);
-  const manualItems = items.filter((item) => !item.recipeTitle);
 
   return (
     <main className="animate-fade-in">

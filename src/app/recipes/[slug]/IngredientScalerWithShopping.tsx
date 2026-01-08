@@ -102,35 +102,6 @@ export function IngredientScalerWithShopping({ initialServings, ingredients, rec
     alert("Shopping list copied to clipboard!");
   };
 
-  const handlePrint = () => {
-    const list = Array.from(selectedItems)
-      .sort((a, b) => a - b)
-      .map((i) => `• ${scaledIngredients[i]}`)
-      .join("\n");
-
-    const printWindow = window.open("", "_blank");
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Shopping List</title>
-            <style>
-              body { font-family: system-ui, sans-serif; padding: 20px; }
-              h1 { font-size: 24px; margin-bottom: 20px; }
-              pre { white-space: pre-wrap; line-height: 1.8; }
-            </style>
-          </head>
-          <body>
-            <h1>Shopping List</h1>
-            <pre>${list}</pre>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.print();
-    }
-  };
-
   const handleClearAll = () => {
     setSelectedItems(new Set());
     setShoppingMode(false);

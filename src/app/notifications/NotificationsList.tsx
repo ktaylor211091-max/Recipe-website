@@ -135,7 +135,7 @@ export function NotificationsList({
                       href={`/recipes/${notification.recipe.slug}`}
                       className="block text-xs text-emerald-600 hover:text-emerald-700 mt-1"
                     >
-                      "{notification.recipe.title}"
+                      {notification.recipe.title}
                     </Link>
                   )}
                   <p className="text-xs text-neutral-500 mt-2">

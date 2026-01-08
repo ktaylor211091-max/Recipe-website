@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCategories } from "../categories/actions";
@@ -36,7 +37,7 @@ async function AdminRecipes() {
 
   const role = profile?.data?.role ?? "(unknown)";
   
-  const [recipes, categories] = await Promise.all([
+  const [recipes] = await Promise.all([
     supabase
       .from("recipes")
       .select("*")
@@ -102,15 +103,18 @@ async function AdminRecipes() {
                 className="flex items-start gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4"
               >
                 {r.image_path ? (
-                  <img
-                    src={
-                      supabase.storage
-                        .from("recipe-images")
-                        .getPublicUrl(r.image_path).data.publicUrl
-                    }
-                    alt={r.title}
-                    className="h-20 w-20 rounded-md border border-neutral-200 object-cover"
-                  />
+                  <div className="relative h-20 w-20 rounded-md border border-neutral-200 overflow-hidden flex-shrink-0">
+                    <Image
+                      src={
+                        supabase.storage
+                          .from("recipe-images")
+                          .getPublicUrl(r.image_path).data.publicUrl
+                      }
+                      alt={r.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="flex h-20 w-20 items-center justify-center rounded-md border border-neutral-200 bg-neutral-100 text-xs text-neutral-500">
                     No image

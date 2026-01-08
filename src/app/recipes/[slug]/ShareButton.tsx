@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 type ShareButtonProps = {
   title: string;
@@ -9,17 +9,19 @@ type ShareButtonProps = {
 
 export function ShareButton({ title, slug }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
-  const [canShare, setCanShare] = useState(false);
-  const [url, setUrl] = useState("");
-
-  useEffect(() => {
-    setUrl(`${window.location.origin}/recipes/${slug}`);
-    setCanShare('share' in navigator);
-  }, [slug]);
+  const url = useMemo(
+    () => (typeof window !== "undefined" ? `${window.location.origin}/recipes/${slug}` : ""),
+    [slug]
+  );
+  const canShare = useMemo(
+    () => typeof navigator !== "undefined" && "share" in navigator,
+    []
+  );
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      const targetUrl = url || `${window.location.origin}/recipes/${slug}`;
+      await navigator.clipboard.writeText(targetUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -32,7 +34,7 @@ export function ShareButton({ title, slug }: ShareButtonProps) {
       try {
         await navigator.share({
           title: title,
-          url: url,
+          url: url || `${window.location.origin}/recipes/${slug}`,
         });
       } catch (err) {
         console.error("Share failed:", err);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -37,11 +37,95 @@ export function FloatingChat({ userId }: { userId: string | null }) {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
+  const loadConversations = useCallback(async () => {
     if (!userId) return;
 
-    loadConversations();
+    const supabase = createSupabaseBrowserClient();
+    const { data: sentMessages } = await supabase
+      .from("messages")
+      .select("recipient_id")
+      .eq("sender_id", userId);
+
+    const { data: receivedMessages } = await supabase
+      .from("messages")
+      .select("sender_id")
+      .eq("recipient_id", userId);
+
+    const userIds = new Set<string>();
+    sentMessages?.forEach((msg: { recipient_id: string }) => userIds.add(msg.recipient_id));
+    receivedMessages?.forEach((msg: { sender_id: string }) => userIds.add(msg.sender_id));
+
+    if (userIds.size > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, display_name, avatar_url")
+        .in("id", Array.from(userIds));
+
+      const convs = Array.from(userIds).map((id) => {
+        const profile = profiles?.find((p) => p.id === id);
+        return {
+          userId: id,
+          display_name: profile?.display_name || null,
+          avatar_url: profile?.avatar_url || null,
+        };
+      });
+
+      setConversations(convs);
+    } else {
+      setConversations([]);
+    }
+  }, [userId]);
+
+  const loadUnreadCount = useCallback(async () => {
+    if (!userId) return;
+
+    const supabase = createSupabaseBrowserClient();
+    const { count } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .eq("recipient_id", userId)
+      .eq("is_read", false);
+
+    setUnreadCount(count || 0);
+  }, [userId]);
+
+  const loadMessages = useCallback(async () => {
+    if (!selectedUserId || !userId) return;
+
+    const supabase = createSupabaseBrowserClient();
+    const { data } = await supabase
+      .from("messages")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${userId},recipient_id.eq.${selectedUserId}),and(sender_id.eq.${selectedUserId},recipient_id.eq.${userId})`
+      )
+      .order("created_at", { ascending: true });
+
+    if (data) {
+      setMessages(data);
+    }
+  }, [selectedUserId, userId]);
+
+  const markAsRead = useCallback(async () => {
+    if (!selectedUserId || !userId) return;
+
+    const supabase = createSupabaseBrowserClient();
+    await supabase
+      .from("messages")
+      .update({ is_read: true })
+      .eq("recipient_id", userId)
+      .eq("sender_id", selectedUserId)
+      .eq("is_read", false);
+
     loadUnreadCount();
+  }, [loadUnreadCount, selectedUserId, userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    void (async () => {
+      await loadConversations();
+      await loadUnreadCount();
+    })();
 
     // Subscribe to new messages (both sent and received)
     const supabase = createSupabaseBrowserClient();
@@ -79,96 +163,16 @@ export function FloatingChat({ userId }: { userId: string | null }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, selectedUserId]);
+  }, [loadConversations, loadUnreadCount, markAsRead, selectedUserId, userId]);
 
   useEffect(() => {
     if (selectedUserId && userId) {
-      loadMessages();
-      markAsRead();
+      void (async () => {
+        await loadMessages();
+        await markAsRead();
+      })();
     }
-  }, [selectedUserId, userId]);
-
-  const loadConversations = async () => {
-    if (!userId) return;
-
-    const supabase = createSupabaseBrowserClient();
-    
-    const { data: sentMessages } = await supabase
-      .from("messages")
-      .select("recipient_id")
-      .eq("sender_id", userId);
-
-    const { data: receivedMessages } = await supabase
-      .from("messages")
-      .select("sender_id")
-      .eq("recipient_id", userId);
-
-    const userIds = new Set<string>();
-    sentMessages?.forEach((msg: any) => userIds.add(msg.recipient_id));
-    receivedMessages?.forEach((msg: any) => userIds.add(msg.sender_id));
-
-    if (userIds.size > 0) {
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, display_name, avatar_url")
-        .in("id", Array.from(userIds));
-
-      const convs = Array.from(userIds).map((id) => {
-        const profile = profiles?.find((p) => p.id === id);
-        return {
-          userId: id,
-          display_name: profile?.display_name || null,
-          avatar_url: profile?.avatar_url || null,
-        };
-      });
-
-      setConversations(convs);
-    }
-  };
-
-  const loadUnreadCount = async () => {
-    if (!userId) return;
-
-    const supabase = createSupabaseBrowserClient();
-    const { count } = await supabase
-      .from("messages")
-      .select("*", { count: "exact", head: true })
-      .eq("recipient_id", userId)
-      .eq("is_read", false);
-
-    setUnreadCount(count || 0);
-  };
-
-  const loadMessages = async () => {
-    if (!selectedUserId || !userId) return;
-
-    const supabase = createSupabaseBrowserClient();
-    const { data } = await supabase
-      .from("messages")
-      .select("*")
-      .or(
-        `and(sender_id.eq.${userId},recipient_id.eq.${selectedUserId}),and(sender_id.eq.${selectedUserId},recipient_id.eq.${userId})`
-      )
-      .order("created_at", { ascending: true });
-
-    if (data) {
-      setMessages(data);
-    }
-  };
-
-  const markAsRead = async () => {
-    if (!selectedUserId || !userId) return;
-
-    const supabase = createSupabaseBrowserClient();
-    await supabase
-      .from("messages")
-      .update({ is_read: true })
-      .eq("recipient_id", userId)
-      .eq("sender_id", selectedUserId)
-      .eq("is_read", false);
-
-    loadUnreadCount();
-  };
+  }, [loadMessages, markAsRead, selectedUserId, userId]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();

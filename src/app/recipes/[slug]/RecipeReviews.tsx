@@ -32,8 +32,8 @@ export function RecipeReviews({
   const [reviewText, setReviewText] = useState(userReview?.review_text || "");
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [localReviews, setLocalReviews] = useState(reviews);
-  const [localAverage, setLocalAverage] = useState(averageRating);
+  const [localReviews] = useState(reviews);
+  const [localAverage] = useState(averageRating);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

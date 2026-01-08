@@ -21,6 +21,21 @@ type Activity = {
   } | null;
 };
 
+type ActivityRow = {
+  id: string;
+  user_id: string;
+  activity_type: string;
+  recipe_id: string | null;
+  target_user_id: string | null;
+  created_at: string;
+  recipes: { title: string; slug: string } | { title: string; slug: string }[] | null;
+};
+
+type Profile = {
+  id: string;
+  display_name: string | null;
+};
+
 export default async function ActivityFeedPage() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
@@ -61,7 +76,7 @@ export default async function ActivityFeedPage() {
   }
 
   // Fetch user profiles separately for display names
-  const userIds = (activitiesRaw || []).reduce((acc: string[], activity: any) => {
+  const userIds = (activitiesRaw || []).reduce((acc: string[], activity: ActivityRow) => {
     if (activity.user_id && !acc.includes(activity.user_id)) acc.push(activity.user_id);
     if (activity.target_user_id && !acc.includes(activity.target_user_id)) acc.push(activity.target_user_id);
     return acc;
@@ -75,12 +90,12 @@ export default async function ActivityFeedPage() {
     : { data: [] };
 
   // Transform the data to match our Activity type
-  const profilesMap = (profilesData || []).reduce((acc: Record<string, any>, profile: any) => {
+  const profilesMap = (profilesData || []).reduce((acc: Record<string, Profile>, profile: Profile) => {
     acc[profile.id] = profile;
     return acc;
   }, {});
 
-  const activities: Activity[] = (activitiesRaw || []).map((a: any) => ({
+  const activities: Activity[] = (activitiesRaw || []).map((a: ActivityRow) => ({
     id: a.id,
     user_id: a.user_id,
     activity_type: a.activity_type,
@@ -89,11 +104,10 @@ export default async function ActivityFeedPage() {
     created_at: a.created_at,
     profiles: profilesMap[a.user_id] || null,
     recipes: Array.isArray(a.recipes) ? a.recipes[0] : a.recipes,
-    target_profiles: profilesMap[a.target_user_id] || null,
+    target_profiles: a.target_user_id ? profilesMap[a.target_user_id] || null : null,
   }));
 
   const getActivityText = (activity: Activity) => {
-    const userName = activity.profiles?.display_name || "Someone";
     const recipeName = activity.recipes?.title || "a recipe";
     const targetUserName = activity.target_profiles?.display_name || "someone";
 
