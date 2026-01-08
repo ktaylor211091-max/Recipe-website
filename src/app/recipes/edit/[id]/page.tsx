@@ -19,10 +19,10 @@ async function updateUserRecipe(formData: FormData) {
 
   const id = formData.get("id") as string;
 
-  // Verify user owns the recipe
+  // Verify user owns the recipe (also get image_path for reuse)
   const { data: recipe } = await supabase
     .from("recipes")
-    .select("author_id")
+    .select("author_id, image_path")
     .eq("id", id)
     .single();
 
@@ -57,7 +57,7 @@ async function updateUserRecipe(formData: FormData) {
     .replace(/^-|-$/g, "");
 
   // Handle image upload
-  let imagePath = recipe.image_path;
+  let imagePath = recipe?.image_path || null;
   const imageFile = formData.get("image") as File;
   if (imageFile && imageFile.size > 0) {
     const ext = imageFile.name.split(".").pop();
