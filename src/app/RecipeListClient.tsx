@@ -20,6 +20,9 @@ type Recipe = {
     name: string;
     slug: string;
   };
+  recipe_reviews?: {
+    rating: number;
+  }[];
 };
 
 type RecipeListClientProps = {
@@ -117,6 +120,49 @@ export function RecipeListClient({
     return `${supabaseUrl}/storage/v1/object/public/${bucketName}/${imagePath}`;
   };
 
+  const getAverageRating = (reviews?: { rating: number }[] | null) => {
+    if (!reviews || reviews.length === 0) return null;
+    const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+    return Math.round(avg * 10) / 10;
+  };
+
+  const renderStars = (rating: number | null) => {
+    if (rating === null) return null;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    return (
+      <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-0.5">
+          {[...Array(5)].map((_, i) => (
+            <span key={i}>
+              {i < fullStars ? (
+                <svg className="h-4 w-4 text-yellow-400 fill-yellow-400" viewBox="0 0 20 20">
+                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                </svg>
+              ) : i === fullStars && hasHalfStar ? (
+                <svg className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20">
+                  <defs>
+                    <linearGradient id="half">
+                      <stop offset="50%" stopColor="#facc15" />
+                      <stop offset="50%" stopColor="#e5e7eb" />
+                    </linearGradient>
+                  </defs>
+                  <path fill="url(#half)" d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4 text-gray-300 fill-gray-300" viewBox="0 0 20 20">
+                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                </svg>
+              )}
+            </span>
+          ))}
+        </div>
+        <span className="text-xs font-medium text-neutral-600">{rating.toFixed(1)}</span>
+      </div>
+    );
+  };
+
   return (
     <>
       <RecipeSearch categories={categoryNames} onSearch={handleSearch} />
@@ -153,6 +199,7 @@ export function RecipeListClient({
                   const totalTime =
                     (r.prep_time_minutes ?? 0) + (r.cook_time_minutes ?? 0);
                   const imageUrl = getImageUrl(r.image_path);
+                  const avgRating = getAverageRating(r.recipe_reviews);
 
                   return (
                     <Link
@@ -179,6 +226,12 @@ export function RecipeListClient({
                         <h4 className="text-lg font-bold text-neutral-900 mb-2 leading-snug group-hover:text-emerald-600 transition-colors line-clamp-2">
                           {r.title}
                         </h4>
+
+                        {avgRating !== null && (
+                          <div className="mb-2">
+                            {renderStars(avgRating)}
+                          </div>
+                        )}
 
                         {r.description && (
                           <p className="text-sm text-neutral-600 mb-3 line-clamp-2 leading-relaxed">
