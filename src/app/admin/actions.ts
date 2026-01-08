@@ -50,7 +50,7 @@ export async function signOut() {
 
 export async function createRecipe(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
-  const categoryId = String(formData.get("category_id") ?? "").trim();
+  const category = String(formData.get("category") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const ingredientsText = String(formData.get("ingredients") ?? "");
   const stepsText = String(formData.get("steps") ?? "");
@@ -91,7 +91,7 @@ export async function createRecipe(formData: FormData) {
     redirect(`/admin?error=${encodeURIComponent("Title is required")}`);
   }
 
-  if (!categoryId) {
+  if (!category) {
     redirect(`/admin?error=${encodeURIComponent("Category is required")}`);
   }
 
@@ -144,7 +144,7 @@ export async function createRecipe(formData: FormData) {
   const { error } = await supabase.from("recipes").insert({
     title,
     slug,
-    category_id: categoryId,
+    category: category,
     description: description || null,
     ingredients,
     steps,
@@ -193,7 +193,7 @@ export async function createRecipe(formData: FormData) {
 export async function updateRecipe(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const title = String(formData.get("title") ?? "").trim();
-  const categoryId = String(formData.get("category_id") ?? "").trim();
+  const category = String(formData.get("category") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const ingredientsText = String(formData.get("ingredients") ?? "");
   const stepsText = String(formData.get("steps") ?? "");
@@ -233,7 +233,7 @@ export async function updateRecipe(formData: FormData) {
     redirect(`/admin/dashboard?error=${encodeURIComponent("Title is required")}`);
   }
 
-  if (!categoryId) {
+  if (!category) {
     redirect(`/admin/dashboard?error=${encodeURIComponent("Category is required")}`);
   }
 
@@ -303,7 +303,7 @@ export async function updateRecipe(formData: FormData) {
   const updateData: any = {
     title,
     slug,
-    category_id: categoryId,
+    category: category,
     description: description || null,
     ingredients,
     steps,
