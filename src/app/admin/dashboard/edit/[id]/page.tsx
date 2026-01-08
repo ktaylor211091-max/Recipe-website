@@ -100,14 +100,14 @@ export default async function EditRecipePage({ params }: Props) {
               Category *
             </label>
             <select
-              name="category_id"
+              name="category"
               required
-              defaultValue={recipe.category_id || ""}
+              defaultValue={recipe.category || ""}
               className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             >
               <option value="">Select a category</option>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
+                <option key={cat.id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
