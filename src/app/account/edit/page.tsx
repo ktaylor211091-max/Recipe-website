@@ -145,6 +145,7 @@ export default async function EditProfilePage() {
             <label className="flex items-start gap-3">
               <input
                 type="checkbox"
+                id="is_public"
                 name="is_public"
                 defaultChecked={profile?.is_public !== false}
                 className="mt-1 h-4 w-4 rounded border-neutral-300 text-emerald-600 focus:ring-2 focus:ring-emerald-500/20"

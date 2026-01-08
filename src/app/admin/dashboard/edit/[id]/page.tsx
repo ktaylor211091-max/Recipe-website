@@ -88,6 +88,7 @@ export default async function EditRecipePage({ params }: Props) {
               Title
             </label>
             <input
+              id="edit-title"
               name="title"
               type="text"
               required
@@ -101,6 +102,7 @@ export default async function EditRecipePage({ params }: Props) {
               Category *
             </label>
             <select
+              id="edit-category"
               name="category"
               required
               defaultValue={recipe.category || ""}
@@ -121,6 +123,7 @@ export default async function EditRecipePage({ params }: Props) {
                 Prep Time (minutes)
               </label>
               <input
+                id="edit-prep-time"
                 name="prep_time_minutes"
                 type="number"
                 min="0"
@@ -135,6 +138,7 @@ export default async function EditRecipePage({ params }: Props) {
                 Cook Time (minutes)
               </label>
               <input
+                id="edit-cook-time"
                 name="cook_time_minutes"
                 type="number"
                 min="0"
@@ -149,6 +153,7 @@ export default async function EditRecipePage({ params }: Props) {
                 Servings
               </label>
               <input
+                id="edit-servings"
                 name="servings"
                 type="number"
                 min="1"
@@ -164,6 +169,7 @@ export default async function EditRecipePage({ params }: Props) {
               Description
             </label>
             <textarea
+              id="edit-description"
               name="description"
               rows={3}
               defaultValue={recipe.description || ""}
@@ -176,6 +182,7 @@ export default async function EditRecipePage({ params }: Props) {
               Ingredients (one per line)
             </label>
             <textarea
+              id="edit-ingredients"
               name="ingredients"
               rows={6}
               required
@@ -189,6 +196,7 @@ export default async function EditRecipePage({ params }: Props) {
               Steps (one per line)
             </label>
             <textarea
+              id="edit-steps"
               name="steps"
               rows={8}
               required
@@ -223,6 +231,7 @@ export default async function EditRecipePage({ params }: Props) {
               {imageUrl ? "Replace Image (optional)" : "Image (optional)"}
             </label>
             <input
+              id="edit-image"
               name="image"
               type="file"
               accept="image/*"
@@ -238,6 +247,7 @@ export default async function EditRecipePage({ params }: Props) {
               Notes (optional)
             </label>
             <textarea
+              id="edit-notes"
               name="notes"
               rows={3}
               placeholder="Additional notes or comments about this recipe..."
@@ -251,6 +261,7 @@ export default async function EditRecipePage({ params }: Props) {
               Tips (optional)
             </label>
             <textarea
+              id="edit-tips"
               name="tips"
               rows={3}
               placeholder="Helpful tips for making this recipe..."
@@ -268,6 +279,7 @@ export default async function EditRecipePage({ params }: Props) {
                 <label key={tag.id} className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
+                    id={`edit-tag-${tag.id}`}
                     name="tags"
                     value={tag.id}
                     defaultChecked={selectedTagIds.has(tag.id)}
@@ -289,6 +301,7 @@ export default async function EditRecipePage({ params }: Props) {
                   Calories
                 </label>
                 <input
+                  id="edit-calories"
                   name="calories"
                   type="number"
                   min="0"
@@ -302,6 +315,7 @@ export default async function EditRecipePage({ params }: Props) {
                   Protein (g)
                 </label>
                 <input
+                  id="edit-protein"
                   name="protein_grams"
                   type="number"
                   min="0"
@@ -316,6 +330,7 @@ export default async function EditRecipePage({ params }: Props) {
                   Carbs (g)
                 </label>
                 <input
+                  id="edit-carbs"
                   name="carbs_grams"
                   type="number"
                   min="0"
@@ -330,6 +345,7 @@ export default async function EditRecipePage({ params }: Props) {
                   Fat (g)
                 </label>
                 <input
+                  id="edit-fat"
                   name="fat_grams"
                   type="number"
                   min="0"
@@ -344,6 +360,7 @@ export default async function EditRecipePage({ params }: Props) {
                   Fiber (g)
                 </label>
                 <input
+                  id="edit-fiber"
                   name="fiber_grams"
                   type="number"
                   min="0"
@@ -359,6 +376,7 @@ export default async function EditRecipePage({ params }: Props) {
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-neutral-700">
               <input
+                id="edit-published"
                 name="published"
                 type="checkbox"
                 defaultChecked={recipe.published}

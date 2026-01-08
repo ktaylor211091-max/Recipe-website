@@ -244,6 +244,7 @@ export default async function AdminDashboard() {
                 Title
               </label>
               <input
+                id="admin-recipe-title"
                 name="title"
                 type="text"
                 required
@@ -256,6 +257,7 @@ export default async function AdminDashboard() {
                 Category *
               </label>
               <select
+                id="admin-recipe-category"
                 name="category"
                 required
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -275,6 +277,7 @@ export default async function AdminDashboard() {
                   Prep Time (minutes)
                 </label>
                 <input
+                  id="admin-prep-time"
                   name="prep_time_minutes"
                   type="number"
                   min="0"
@@ -288,6 +291,7 @@ export default async function AdminDashboard() {
                   Cook Time (minutes)
                 </label>
                 <input
+                  id="admin-cook-time"
                   name="cook_time_minutes"
                   type="number"
                   min="0"
@@ -301,6 +305,7 @@ export default async function AdminDashboard() {
                   Servings
                 </label>
                 <input
+                  id="admin-servings"
                   name="servings"
                   type="number"
                   min="1"
@@ -315,6 +320,7 @@ export default async function AdminDashboard() {
                 Description
               </label>
               <textarea
+                id="admin-description"
                 name="description"
                 rows={3}
                 className="mt-1 block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -326,6 +332,7 @@ export default async function AdminDashboard() {
                 Ingredients (one per line)
               </label>
               <textarea
+                id="admin-ingredients"
                 name="ingredients"
                 rows={6}
                 required
@@ -338,6 +345,7 @@ export default async function AdminDashboard() {
                 Steps (one per line)
               </label>
               <textarea
+                id="admin-steps"
                 name="steps"
                 rows={8}
                 required
@@ -350,6 +358,7 @@ export default async function AdminDashboard() {
                 Notes (optional)
               </label>
               <textarea
+                id="admin-notes"
                 name="notes"
                 rows={3}
                 placeholder="Additional notes or comments about this recipe..."
@@ -362,6 +371,7 @@ export default async function AdminDashboard() {
                 Tips (optional)
               </label>
               <textarea
+                id="admin-tips"
                 name="tips"
                 rows={3}
                 placeholder="Helpful tips for making this recipe..."
@@ -378,6 +388,7 @@ export default async function AdminDashboard() {
                   <label key={tag.id} className="flex items-center gap-2 text-sm">
                     <input
                       type="checkbox"
+                      id={`admin-tag-${tag.id}`}
                       name="tags"
                       value={tag.id}
                       className="rounded border-neutral-300"
@@ -398,6 +409,7 @@ export default async function AdminDashboard() {
                     Calories
                   </label>
                   <input
+                    id="admin-calories"
                     name="calories"
                     type="number"
                     min="0"
@@ -410,6 +422,7 @@ export default async function AdminDashboard() {
                     Protein (g)
                   </label>
                   <input
+                    id="admin-protein"
                     name="protein_grams"
                     type="number"
                     min="0"
@@ -423,6 +436,7 @@ export default async function AdminDashboard() {
                     Carbs (g)
                   </label>
                   <input
+                    id="admin-carbs"
                     name="carbs_grams"
                     type="number"
                     min="0"
@@ -436,6 +450,7 @@ export default async function AdminDashboard() {
                     Fat (g)
                   </label>
                   <input
+                    id="admin-fat"
                     name="fat_grams"
                     type="number"
                     min="0"
@@ -449,6 +464,7 @@ export default async function AdminDashboard() {
                     Fiber (g)
                   </label>
                   <input
+                    id="admin-fiber"
                     name="fiber_grams"
                     type="number"
                     min="0"
@@ -463,6 +479,7 @@ export default async function AdminDashboard() {
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-neutral-700">
                 <input
+                  id="admin-published"
                   name="published"
                   type="checkbox"
                   className="rounded border-neutral-300"
@@ -476,6 +493,7 @@ export default async function AdminDashboard() {
                 Image (optional)
               </label>
               <input
+                id="admin-image"
                 name="image"
                 type="file"
                 accept="image/*"

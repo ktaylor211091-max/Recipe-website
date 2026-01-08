@@ -44,6 +44,7 @@ export default async function LoginPage({
                 Email
               </div>
               <input
+                id="login-email"
                 name="email"
                 type="email"
                 required
@@ -57,6 +58,7 @@ export default async function LoginPage({
                 Password
               </div>
               <input
+                id="login-password"
                 name="password"
                 type="password"
                 required

@@ -276,6 +276,7 @@ export default async function CreateRecipePage({ searchParams }: Props) {
                   <label key={tag.id} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
+                      id={`tag-${tag.id}`}
                       name="tags"
                       value={tag.id}
                       className="rounded border-neutral-300 text-emerald-600 focus:ring-emerald-500"
@@ -332,6 +333,7 @@ export default async function CreateRecipePage({ searchParams }: Props) {
           {/* Publish Option */}
           <div className="flex items-center gap-2">
             <input
+              id="published-checkbox"
               name="published"
               type="checkbox"
               defaultChecked

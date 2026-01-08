@@ -76,6 +76,7 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
           <div className="flex gap-2">
             <input
               type="text"
+              id="user-search-input"
               name="q"
               defaultValue={query || ""}
               placeholder="Search by name..."

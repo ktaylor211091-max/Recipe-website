@@ -95,6 +95,7 @@ export function CategoriesClient({ initialCategories }: CategoriesClientProps) {
               </label>
               <input
                 type="text"
+                id="new-category-name"
                 name="name"
                 required
                 className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-neutral-900 focus:outline-none"
@@ -107,6 +108,7 @@ export function CategoriesClient({ initialCategories }: CategoriesClientProps) {
               </label>
               <input
                 type="number"
+                id="new-category-order"
                 name="display_order"
                 defaultValue={categories.length}
                 className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-neutral-900 focus:outline-none"
@@ -150,6 +152,7 @@ export function CategoriesClient({ initialCategories }: CategoriesClientProps) {
                     </label>
                     <input
                       type="text"
+                      id={`cat-name-${cat.id}`}
                       name="name"
                       defaultValue={cat.name}
                       required
@@ -162,6 +165,7 @@ export function CategoriesClient({ initialCategories }: CategoriesClientProps) {
                     </label>
                     <input
                       type="number"
+                      id={`cat-order-${cat.id}`}
                       name="display_order"
                       defaultValue={cat.display_order}
                       className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-neutral-900 focus:outline-none"

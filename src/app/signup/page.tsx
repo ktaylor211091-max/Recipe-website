@@ -51,6 +51,7 @@ export default async function SignUpPage({
                 Email
               </div>
               <input
+                id="signup-email"
                 name="email"
                 type="email"
                 required
@@ -64,6 +65,7 @@ export default async function SignUpPage({
                 Password
               </div>
               <input
+                id="signup-password"
                 name="password"
                 type="password"
                 required
@@ -81,6 +83,7 @@ export default async function SignUpPage({
                 Confirm Password
               </div>
               <input
+                id="signup-confirm-password"
                 name="confirmPassword"
                 type="password"
                 required

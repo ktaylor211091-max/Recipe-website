@@ -45,6 +45,7 @@ export default async function AdminSignInPage({
                 Email
               </div>
               <input
+                id="admin-email"
                 name="email"
                 type="email"
                 required
@@ -58,6 +59,7 @@ export default async function AdminSignInPage({
                 Password
               </div>
               <input
+                id="admin-password"
                 name="password"
                 type="password"
                 required

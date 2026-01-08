@@ -167,6 +167,7 @@ export default function ShoppingListPage() {
                   >
                     <input
                       type="checkbox"
+                      id={`item-${item.id}`}
                       checked={item.checked}
                       onChange={() => toggleItem(item.id)}
                       className="h-5 w-5 rounded border-neutral-300 text-emerald-600 focus:ring-emerald-500"
@@ -225,6 +226,7 @@ export default function ShoppingListPage() {
               <div>
                 <input
                   type="text"
+                  id="new-item-input"
                   value={newItem}
                   onChange={(e) => setNewItem(e.target.value)}
                   placeholder="e.g., Milk, Eggs, Bread..."
