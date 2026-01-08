@@ -9,6 +9,7 @@ type RecipeRow = {
   title: string;
   slug: string;
   category_id: string;
+  author_id: string;
   description: string | null;
   image_path: string | null;
   prep_time_minutes: number | null;
@@ -22,6 +23,9 @@ type RecipeRow = {
   recipe_reviews?: {
     rating: number;
   }[];
+  profiles?: {
+    display_name: string | null;
+  };
 };
 
 export default async function Home() {
@@ -31,7 +35,7 @@ export default async function Home() {
     supabase
       ? supabase
           .from("recipes")
-          .select("id,title,slug,category_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,categories(name,slug),recipe_reviews(rating)")
+          .select("id,title,slug,category_id,author_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,categories(name,slug),recipe_reviews(rating),profiles(display_name)")
           .eq("published", true)
           .order("created_at", { ascending: false })
           .returns<RecipeRow[]>()
@@ -41,7 +45,7 @@ export default async function Home() {
     supabase
       ? supabase
           .from("recipes")
-          .select("id,title,slug,category_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,categories(name,slug),recipe_reviews(rating)")
+          .select("id,title,slug,category_id,author_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,categories(name,slug),recipe_reviews(rating),profiles(display_name)")
           .eq("published", true)
           .limit(20)
           .then(({ data }) => {
