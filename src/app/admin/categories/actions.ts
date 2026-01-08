@@ -111,17 +111,25 @@ export async function deleteCategory(id: string) {
   }
 
   // Check if category has recipes
-  const { data: recipes } = await supabase
-    .from("recipes")
-    .select("id")
-    .eq("category_id", id)
-    .limit(1);
+  const { data: categoryData } = await supabase
+    .from("categories")
+    .select("name")
+    .eq("id", id)
+    .single();
 
-  if (recipes && recipes.length > 0) {
-    return {
-      error:
-        "Cannot delete category with existing recipes. Please reassign or delete those recipes first.",
-    };
+  if (categoryData?.name) {
+    const { data: recipes } = await supabase
+      .from("recipes")
+      .select("id")
+      .eq("category", categoryData.name)
+      .limit(1);
+
+    if (recipes && recipes.length > 0) {
+      return {
+        error:
+          "Cannot delete category with existing recipes. Please reassign or delete those recipes first.",
+      };
+    }
   }
 
   const { error } = await supabase.from("categories").delete().eq("id", id);

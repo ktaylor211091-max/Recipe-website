@@ -111,6 +111,19 @@ export async function createRecipe(formData: FormData) {
   const ingredients = splitLines(ingredientsText);
   const steps = splitLines(stepsText);
 
+  // Get the category ID for the selected category name
+  const { data: categoryData } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("name", category)
+    .single();
+
+  if (!categoryData) {
+    redirect(`/admin?error=${encodeURIComponent("Selected category not found")}`);
+  }
+
+  const categoryId = categoryData.id;
+
   let image_path: string | null = null;
   if (imageFile instanceof File && imageFile.size > 0) {
     // Check file size (5MB limit)
@@ -145,6 +158,7 @@ export async function createRecipe(formData: FormData) {
     title,
     slug,
     category: category,
+    category_id: categoryId,
     description: description || null,
     ingredients,
     steps,
@@ -253,6 +267,19 @@ export async function updateRecipe(formData: FormData) {
   const ingredients = splitLines(ingredientsText);
   const steps = splitLines(stepsText);
 
+  // Get the category ID for the selected category name
+  const { data: categoryData } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("name", category)
+    .single();
+
+  if (!categoryData) {
+    redirect(`/admin/dashboard?error=${encodeURIComponent("Selected category not found")}`);
+  }
+
+  const categoryId = categoryData.id;
+
   // Handle new image upload if provided
   let image_path: string | null | undefined = undefined; // undefined means "don't update"
   
@@ -304,6 +331,7 @@ export async function updateRecipe(formData: FormData) {
     title,
     slug,
     category: category,
+    category_id: categoryId,
     description: description || null,
     ingredients,
     steps,

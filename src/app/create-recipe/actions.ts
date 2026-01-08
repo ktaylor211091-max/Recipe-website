@@ -56,6 +56,19 @@ export async function createUserRecipe(formData: FormData) {
   const ingredients = splitLines(ingredientsText);
   const steps = splitLines(stepsText);
 
+  // Get the category ID for the selected category name
+  const { data: categoryData } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("name", category)
+    .single();
+
+  if (!categoryData) {
+    redirect(`/create-recipe?error=${encodeURIComponent("Selected category not found")}`);
+  }
+
+  const categoryId = categoryData.id;
+
   let image_path: string | null = null;
 
   // Upload image if provided
@@ -92,6 +105,7 @@ export async function createUserRecipe(formData: FormData) {
       title,
       slug,
       category: category,
+      category_id: categoryId,
       description: description || null,
       ingredients,
       steps,
