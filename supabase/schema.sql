@@ -140,3 +140,18 @@ on public.recipes
 for delete
 to authenticated
 using (public.is_admin());
+
+-- Authors can update their own recipes
+create policy "recipes: author update own"
+on public.recipes
+for update
+to authenticated
+using (author_id = auth.uid())
+with check (author_id = auth.uid());
+
+-- Authors can delete their own recipes
+create policy "recipes: author delete own"
+on public.recipes
+for delete
+to authenticated
+using (author_id = auth.uid());

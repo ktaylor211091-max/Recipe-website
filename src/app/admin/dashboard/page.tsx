@@ -27,15 +27,22 @@ async function AdminRecipes() {
   }
 
   const { data: userRes } = await supabase.auth.getUser();
-  const profile = userRes?.user
-    ? await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userRes.user.id)
-        .single()
-    : null;
+  if (!userRes?.user) {
+    redirect("/admin");
+  }
+
+  const profile = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userRes.user.id)
+    .single();
 
   const role = profile?.data?.role ?? "(unknown)";
+  
+  // Redirect non-admins
+  if (role !== "admin") {
+    redirect("/account");
+  }
   
   const [recipes] = await Promise.all([
     supabase

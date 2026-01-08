@@ -105,6 +105,7 @@ export default async function RecipePage({ params }: Props) {
 
   // Check if current user has favorited this recipe and get reviews
   const { data: userRes } = await supabase.auth.getUser();
+  const isAuthor = userRes?.user?.id === recipe.author_id;
   let isFavorite = false;
   let userReview = null;
   
@@ -245,6 +246,50 @@ export default async function RecipePage({ params }: Props) {
             <ForkButton recipeId={recipe.id} recipeTitle={recipe.title} />
           )}
           <PrintButton />
+          {isAuthor && (
+            <>
+              <Link
+                href={`/recipes/edit/${recipe.id}`}
+                className="rounded-xl border-2 border-amber-200 bg-white px-4 py-2.5 text-sm font-semibold text-amber-700 transition-all hover:bg-amber-50 hover:border-amber-300 hover:shadow-md"
+              >
+                Edit
+              </Link>
+              <form action={async () => {
+                "use server";
+                const supabase = await createSupabaseServerClient();
+                if (!supabase) return;
+                
+                const { data: userRes } = await supabase.auth.getUser();
+                if (!userRes?.user) return;
+                
+                // Verify user is the author
+                const { data: recipe } = await supabase
+                  .from("recipes")
+                  .select("author_id")
+                  .eq("slug", slug)
+                  .single();
+                
+                if (recipe?.author_id === userRes.user.id) {
+                  await supabase
+                    .from("recipes")
+                    .delete()
+                    .eq("slug", slug);
+                }
+              }}>
+                <button
+                  type="submit"
+                  className="rounded-xl border-2 border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-700 transition-all hover:bg-red-50 hover:border-red-300 hover:shadow-md"
+                  onClick={(e) => {
+                    if (!confirm("Are you sure you want to delete this recipe? This action cannot be undone.")) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              </form>
+            </>
+          )}
           <Link
             className="rounded-xl border-2 border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-700 transition-all hover:bg-indigo-50 hover:border-indigo-300 hover:shadow-md"
             href="/"
