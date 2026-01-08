@@ -8,7 +8,6 @@ export type Category = {
   name: string;
   slug: string;
   display_order: number;
-  parent_category_id: string | null;
   created_at: string;
   updated_at: string;
 };
