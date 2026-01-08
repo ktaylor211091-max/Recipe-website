@@ -9,7 +9,7 @@ type Recipe = {
   id: string;
   title: string;
   slug: string;
-  category_id: string;
+  category: string;
   author_id: string;
   description: string | null;
   image_path: string | null;
@@ -17,10 +17,6 @@ type Recipe = {
   cook_time_minutes: number | null;
   servings: number | null;
   created_at: string;
-  categories?: {
-    name: string;
-    slug: string;
-  };
   recipe_reviews?: {
     rating: number;
   }[];
@@ -53,7 +49,7 @@ export function RecipeListClient({
   const filteredAndSortedRecipes = useMemo(() => {
     let filtered = recipes.filter((r) => {
       const matchesCategory =
-        selectedCategoryId === "all" || r.category_id === selectedCategoryId;
+        selectedCategoryId === "all" || r.category === selectedCategoryId;
       const matchesQuery =
         !searchQuery ||
         r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -86,26 +82,30 @@ export function RecipeListClient({
   const byCategory = useMemo(() => {
     const grouped: Record<string, Recipe[]> = {};
     
-    // Group filtered recipes by category
+    // Group filtered recipes by category (using category name as key)
     filteredAndSortedRecipes.forEach((r) => {
-      const cat = categories.find((c) => c.id === r.category_id);
-      if (cat) {
-        if (!grouped[cat.id]) {
-          grouped[cat.id] = [];
-        }
-        grouped[cat.id].push(r);
+      const categoryName = r.category || "General";
+      if (!grouped[categoryName]) {
+        grouped[categoryName] = [];
       }
+      grouped[categoryName].push(r);
     });
     
     return grouped;
-  }, [filteredAndSortedRecipes, categories]);
+  }, [filteredAndSortedRecipes]);
 
   // Get categories that have recipes, in display order
   const categoriesWithRecipes = useMemo(() => {
+    const categoriesInRecipes = new Set(
+      filteredAndSortedRecipes.map((r) => r.category || "General")
+    );
+    
+    // Filter categories table to only those that have recipes
+    // and sort by display_order
     return categories
-      .filter((cat) => byCategory[cat.id] && byCategory[cat.id].length > 0)
+      .filter((cat) => categoriesInRecipes.has(cat.name))
       .sort((a, b) => a.display_order - b.display_order);
-  }, [categories, byCategory]);
+  }, [categories, filteredAndSortedRecipes]);
 
   const handleSearch = (query: string, categoryName: string, sortOption: string) => {
     setSearchQuery(query);
@@ -114,8 +114,8 @@ export function RecipeListClient({
     if (categoryName === "all") {
       setSelectedCategoryId("all");
     } else {
-      const cat = categories.find((c) => c.name === categoryName);
-      setSelectedCategoryId(cat?.id || "all");
+      // Since we're using category name directly, set it as the selected category
+      setSelectedCategoryId(categoryName);
     }
   };
 
@@ -197,12 +197,12 @@ export function RecipeListClient({
                   {cat.name}
                 </h3>
                 <p className="text-sm text-neutral-500 mt-1">
-                  {byCategory[cat.id].length} {byCategory[cat.id].length === 1 ? "recipe" : "recipes"}
+                  {byCategory[cat.name]?.length || 0} {(byCategory[cat.name]?.length || 0) === 1 ? "recipe" : "recipes"}
                 </p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {byCategory[cat.id].map((r) => {
+                {(byCategory[cat.name] || []).map((r) => {
                   const totalTime =
                     (r.prep_time_minutes ?? 0) + (r.cook_time_minutes ?? 0);
                   const imageUrl = getImageUrl(r.image_path);
