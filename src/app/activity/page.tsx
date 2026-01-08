@@ -50,7 +50,9 @@ export default async function ActivityFeedPage() {
       recipe_id,
       target_user_id,
       created_at,
-      recipes (title, slug)
+      profiles (display_name),
+      recipes (title, slug),
+      target_profiles:profiles!activities_target_profile_fk (display_name)
     `)
     .in("user_id", followingIds.length > 0 ? [...followingIds, userRes.user.id] : [userRes.user.id])
     .order("created_at", { ascending: false })
