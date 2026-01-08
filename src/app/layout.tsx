@@ -4,6 +4,7 @@ import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CategoryNav } from "./CategoryNav";
 import { FloatingChat } from "./FloatingChat";
+import { NotificationBell } from "./NotificationBell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default async function RootLayout({
   const supabase = await createSupabaseServerClient();
   let user = null;
   let isAdmin = false;
+  let unreadNotificationCount = 0;
 
   if (supabase) {
     const { data: userRes } = await supabase.auth.getUser();
@@ -34,6 +36,14 @@ export default async function RootLayout({
         .eq("id", user.id)
         .single();
       isAdmin = profile?.role === "admin";
+
+      // Get unread notification count
+      const { count } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false);
+      unreadNotificationCount = count || 0;
     }
   }
 
@@ -52,6 +62,7 @@ export default async function RootLayout({
               <div className="hidden md:flex items-center gap-3">
                 {user ? (
                   <>
+                    <NotificationBell initialUnreadCount={unreadNotificationCount} />
                     <Link
                       href="/search-users"
                       className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
@@ -129,7 +140,7 @@ export default async function RootLayout({
         {/* Mobile Bottom Navigation */}
         {user ? (
           <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white">
-            <div className="grid grid-cols-4 h-16">
+            <div className="grid grid-cols-5 h-16">
               <Link
                 href="/search-users"
                 className="flex flex-col items-center justify-center gap-1 text-neutral-600 hover:text-emerald-600 active:bg-neutral-50 transition-colors"
@@ -149,11 +160,25 @@ export default async function RootLayout({
                 <span className="text-xs font-medium">Messages</span>
               </Link>
               <Link
+                href="/notifications"
+                className="flex flex-col items-center justify-center gap-1 text-neutral-600 hover:text-emerald-600 active:bg-neutral-50 transition-colors relative"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {unreadNotificationCount > 0 && (
+                  <span className="absolute top-0 right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
+                  </span>
+                )}
+                <span className="text-xs font-medium">Alerts</span>
+              </Link>
+              <Link
                 href="/activity"
                 className="flex flex-col items-center justify-center gap-1 text-neutral-600 hover:text-emerald-600 active:bg-neutral-50 transition-colors"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 <span className="text-xs font-medium">Activity</span>
               </Link>
