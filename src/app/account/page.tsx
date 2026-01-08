@@ -10,15 +10,11 @@ type FavoriteRecipe = {
     id: string;
     title: string;
     slug: string;
-    category_id: string;
+    category: string;
     description: string | null;
     image_path: string | null;
     prep_time_minutes: number | null;
     cook_time_minutes: number | null;
-    categories: {
-      name: string;
-      slug: string;
-    } | null;
   };
 };
 
@@ -85,15 +81,11 @@ export default async function AccountPage({
         id,
         title,
         slug,
-        category_id,
+        category,
         description,
         image_path,
         prep_time_minutes,
-        cook_time_minutes,
-        categories (
-          name,
-          slug
-        )
+        cook_time_minutes
       )
     `)
     .eq("user_id", user.id)
