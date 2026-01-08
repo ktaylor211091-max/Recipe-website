@@ -50,9 +50,7 @@ export default async function ActivityFeedPage() {
       recipe_id,
       target_user_id,
       created_at,
-      profiles (display_name),
-      recipes (title, slug),
-      target_profiles:profiles!activities_target_profile_fk (display_name)
+      recipes (title, slug)
     `)
     .in("user_id", followingIds.length > 0 ? [...followingIds, userRes.user.id] : [userRes.user.id])
     .order("created_at", { ascending: false })
@@ -62,7 +60,26 @@ export default async function ActivityFeedPage() {
     console.error("Error fetching activities:", activitiesError);
   }
 
+  // Fetch user profiles separately for display names
+  const userIds = (activitiesRaw || []).reduce((acc: string[], activity: any) => {
+    if (activity.user_id && !acc.includes(activity.user_id)) acc.push(activity.user_id);
+    if (activity.target_user_id && !acc.includes(activity.target_user_id)) acc.push(activity.target_user_id);
+    return acc;
+  }, []);
+
+  const { data: profilesData } = userIds.length > 0
+    ? await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .in("id", userIds)
+    : { data: [] };
+
   // Transform the data to match our Activity type
+  const profilesMap = (profilesData || []).reduce((acc: Record<string, any>, profile: any) => {
+    acc[profile.id] = profile;
+    return acc;
+  }, {});
+
   const activities: Activity[] = (activitiesRaw || []).map((a: any) => ({
     id: a.id,
     user_id: a.user_id,
@@ -70,9 +87,9 @@ export default async function ActivityFeedPage() {
     recipe_id: a.recipe_id,
     target_user_id: a.target_user_id,
     created_at: a.created_at,
-    profiles: Array.isArray(a.profiles) ? a.profiles[0] : a.profiles,
+    profiles: profilesMap[a.user_id] || null,
     recipes: Array.isArray(a.recipes) ? a.recipes[0] : a.recipes,
-    target_profiles: Array.isArray(a.target_profiles) ? a.target_profiles[0] : a.target_profiles,
+    target_profiles: profilesMap[a.target_user_id] || null,
   }));
 
   const getActivityText = (activity: Activity) => {
