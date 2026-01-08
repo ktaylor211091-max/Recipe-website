@@ -20,9 +20,6 @@ type Recipe = {
   recipe_reviews?: {
     rating: number;
   }[];
-  profiles?: {
-    display_name: string | null;
-  };
 };
 
 type RecipeListClientProps = {
@@ -233,10 +230,6 @@ export function RecipeListClient({
                         <h4 className="text-lg font-bold text-neutral-900 mb-2 leading-snug group-hover:text-emerald-600 transition-colors line-clamp-2">
                           {r.title}
                         </h4>
-
-                        {r.profiles?.display_name && (
-                          <p className="text-xs text-neutral-500 mb-2">by {r.profiles.display_name}</p>
-                        )}
 
                         {avgRating !== null && (
                           <div className="mb-2">
