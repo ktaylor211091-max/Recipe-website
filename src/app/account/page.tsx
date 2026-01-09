@@ -313,42 +313,6 @@ export default async function AccountPage({
                             >
                               Edit
                             </Link>
-                            <form action={async () => {
-                              "use server";
-                              const supabase = await createSupabaseServerClient();
-                              if (!supabase) return;
-                              
-                              const { data: userRes } = await supabase.auth.getUser();
-                              if (!userRes?.user) return;
-                              
-                              // Verify user owns the recipe
-                              const { data: recipeCheck } = await supabase
-                                .from("recipes")
-                                .select("author_id")
-                                .eq("id", recipe.id)
-                                .single();
-                              
-                              if (recipeCheck?.author_id === userRes.user.id) {
-                                await supabase
-                                  .from("recipes")
-                                  .delete()
-                                  .eq("id", recipe.id);
-                              }
-                              
-                              redirect("/account");
-                            }}>
-                              <button
-                                type="submit"
-                                className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-700 transition-colors hover:bg-red-50"
-                                onClick={(e) => {
-                                  if (!confirm(`Are you sure you want to delete "${recipe.title}"? This action cannot be undone.`)) {
-                                    e.preventDefault();
-                                  }
-                                }}
-                              >
-                                Delete
-                              </button>
-                            </form>
                           </div>
                         </div>
                       </div>
