@@ -17,12 +17,21 @@ export function DeleteButton({ recipeId, recipeTitle }: Props) {
     if (confirm(`Are you sure you want to delete "${recipeTitle}"? This action cannot be undone.`)) {
       startTransition(async () => {
         const supabase = createSupabaseBrowserClient();
+        
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        
         await supabase
           .from("recipes")
           .delete()
           .eq("id", recipeId);
         
-        router.push("/account");
+        // Redirect to user's profile
+        if (user) {
+          router.push(`/profile/${user.id}`);
+        } else {
+          router.push("/");
+        }
       });
     }
   };

@@ -23,6 +23,6 @@ export async function deleteRecipe(slug: string) {
       .delete()
       .eq("slug", slug);
     
-    redirect("/account");
+    redirect(`/profile/${userRes.user.id}`);
   }
 }
