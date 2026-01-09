@@ -82,10 +82,10 @@ export default async function RootLayout({
                       Activity
                     </Link>
                     <Link
-                      href={`/profile/${user.id}`}
+                      href="/account"
                       className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
                     >
-                      Profile
+                      Account
                     </Link>
                     <Link
                       href="/create-recipe"
@@ -183,13 +183,13 @@ export default async function RootLayout({
                 <span className="text-xs font-medium">Activity</span>
               </Link>
               <Link
-                href={`/profile/${user.id}`}
+                href="/account"
                 className="flex flex-col items-center justify-center gap-1 text-neutral-600 hover:text-emerald-600 active:bg-neutral-50 transition-colors"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="text-xs font-medium">Profile</span>
+                <span className="text-xs font-medium">Account</span>
               </Link>
             </div>
           </nav>
