@@ -382,7 +382,7 @@ export default async function RecipePage({ params }: Props) {
       </div>
 
       {/* Nutritional Information */}
-      {(recipe.calories || recipe.protein_grams || recipe.carbs_grams || recipe.fat_grams || recipe.fiber_grams) && (
+      {(recipe.calories != null || recipe.protein_grams != null || recipe.carbs_grams != null || recipe.fat_grams != null || recipe.fiber_grams != null) && (
         <div className="mt-6">
           <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-md">
             <div className="mb-4 flex items-center gap-2">
@@ -393,31 +393,31 @@ export default async function RecipePage({ params }: Props) {
               <span className="text-sm text-neutral-500">(per serving)</span>
             </div>
             <div className="grid gap-4 sm:grid-cols-5">
-              {recipe.calories && (
+              {recipe.calories != null && (
                 <div className="rounded-xl bg-gradient-to-br from-red-50 to-orange-50 p-4">
                   <div className="text-sm font-medium text-neutral-600">Calories</div>
                   <div className="text-2xl font-bold text-neutral-900">{recipe.calories}</div>
                 </div>
               )}
-              {recipe.protein_grams && (
+              {recipe.protein_grams != null && (
                 <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
                   <div className="text-sm font-medium text-neutral-600">Protein</div>
                   <div className="text-2xl font-bold text-neutral-900">{recipe.protein_grams}g</div>
                 </div>
               )}
-              {recipe.carbs_grams && (
+              {recipe.carbs_grams != null && (
                 <div className="rounded-xl bg-gradient-to-br from-amber-50 to-yellow-50 p-4">
                   <div className="text-sm font-medium text-neutral-600">Carbs</div>
                   <div className="text-2xl font-bold text-neutral-900">{recipe.carbs_grams}g</div>
                 </div>
               )}
-              {recipe.fat_grams && (
+              {recipe.fat_grams != null && (
                 <div className="rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 p-4">
                   <div className="text-sm font-medium text-neutral-600">Fat</div>
                   <div className="text-2xl font-bold text-neutral-900">{recipe.fat_grams}g</div>
                 </div>
               )}
-              {recipe.fiber_grams && (
+              {recipe.fiber_grams != null && (
                 <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-green-50 p-4">
                   <div className="text-sm font-medium text-neutral-600">Fiber</div>
                   <div className="text-2xl font-bold text-neutral-900">{recipe.fiber_grams}g</div>
