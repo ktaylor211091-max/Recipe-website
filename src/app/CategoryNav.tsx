@@ -24,7 +24,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
   }, {} as Record<string, Category[]>);
 
   return (
-    <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
+    <nav className="relative z-10 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
       <div className="flex items-center gap-4 md:gap-6 overflow-x-auto px-4 md:px-0 scrollbar-hide">
         <Link
           href="/"

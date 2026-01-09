@@ -42,7 +42,7 @@ export function MobileMenu({ user, isAdmin }: MobileMenuProps) {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-b border-neutral-200 md:hidden shadow-lg z-40">
+        <div className="absolute top-full left-0 right-0 bg-white border-b border-neutral-200 md:hidden shadow-lg z-30">
           <div className="mx-auto max-w-7xl px-4 py-4 space-y-2">
             {user ? (
               <>
