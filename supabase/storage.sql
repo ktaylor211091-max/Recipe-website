@@ -2,42 +2,45 @@
 -- In Supabase Dashboard: Storage → Buckets → New bucket → name "recipe-images"
 -- Make it PUBLIC so images have public URLs.
 
--- Restrict uploads to admins.
+-- Allow authenticated users to upload images.
+-- Users can only update/delete their own uploads.
 -- NOTE: storage policies apply to storage.objects.
 -- Safe to re-run: drops then creates.
 
 drop policy if exists "recipe-images: admin upload" on storage.objects;
-create policy "recipe-images: admin upload"
+drop policy if exists "recipe-images: authenticated upload" on storage.objects;
+create policy "recipe-images: authenticated upload"
 on storage.objects
 for insert
 to authenticated
 with check (
   bucket_id = 'recipe-images'
-  and public.is_admin()
 );
 
 drop policy if exists "recipe-images: admin update" on storage.objects;
-create policy "recipe-images: admin update"
+drop policy if exists "recipe-images: authenticated update" on storage.objects;
+create policy "recipe-images: authenticated update"
 on storage.objects
 for update
 to authenticated
 using (
   bucket_id = 'recipe-images'
-  and public.is_admin()
+  and owner = auth.uid()
 )
 with check (
   bucket_id = 'recipe-images'
-  and public.is_admin()
+  and owner = auth.uid()
 );
 
 drop policy if exists "recipe-images: admin delete" on storage.objects;
-create policy "recipe-images: admin delete"
+drop policy if exists "recipe-images: authenticated delete" on storage.objects;
+create policy "recipe-images: authenticated delete"
 on storage.objects
 for delete
 to authenticated
 using (
   bucket_id = 'recipe-images'
-  and public.is_admin()
+  and owner = auth.uid()
 );
 
 -- Public can read recipe images (bucket must be public)
