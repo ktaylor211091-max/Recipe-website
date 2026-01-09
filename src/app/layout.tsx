@@ -3,7 +3,6 @@ import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CategoryNav } from "./CategoryNav";
-import { FloatingChat } from "./FloatingChat";
 import { NotificationBell } from "./NotificationBell";
 import { MobileMenu } from "./MobileMenu";
 import { FloatingActionButton } from "./FloatingActionButton";
@@ -241,11 +240,6 @@ export default async function RootLayout({
             </div>
           </div>
         </footer>
-
-        {/* Floating Chat - Desktop Only */}
-        <div className="hidden lg:block">
-          <FloatingChat userId={user?.id || null} />
-        </div>
 
         {/* Floating Action Button - Logged in users */}
         {user && <FloatingActionButton userId={user.id} />}
