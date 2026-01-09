@@ -6,6 +6,7 @@ import { CategoryNav } from "./CategoryNav";
 import { NotificationBell } from "./NotificationBell";
 import { MobileMenu } from "./MobileMenu";
 import { FloatingActionButton } from "./FloatingActionButton";
+import { ToastProvider } from "./Toast";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-white pb-16 md:pb-0">
+        <ToastProvider>
         <header className="relative z-50 border-b border-neutral-200 bg-white">
           <div className="mx-auto max-w-7xl px-4 md:px-6">
             <div className="flex items-center justify-between py-4">
@@ -243,6 +245,7 @@ export default async function RootLayout({
 
         {/* Floating Action Button - Logged in users */}
         {user && <FloatingActionButton userId={user.id} />}
+        </ToastProvider>
       </body>
     </html>
   );

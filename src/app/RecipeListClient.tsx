@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import { RecipeSearch } from "./RecipeSearch";
+import { EmptyState } from "./EmptyState";
 import type { Category } from "./admin/categories/actions";
 
 type Recipe = {
@@ -173,21 +174,19 @@ export function RecipeListClient({
       <RecipeSearch categories={categoryNames} onSearch={handleSearch} />
 
       {filteredAndSortedRecipes.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-neutral-200 bg-neutral-50 p-12 text-center">
-          <div className="text-5xl mb-4">🔍</div>
-          <p className="text-lg font-medium text-neutral-700">
-            {searchQuery || selectedCategoryId !== "all"
-              ? "No recipes match your search"
-              : "No published recipes yet"}
-          </p>
-          {searchQuery && (
-            <p className="mt-2 text-sm text-neutral-500">
-              Try adjusting your search terms
-            </p>
-          )}
-        </div>
+        <EmptyState
+          illustration="search"
+          title={searchQuery || selectedCategoryId !== "all" ? "No recipes found" : "No published recipes yet"}
+          description={
+            searchQuery || selectedCategoryId !== "all"
+              ? "Try adjusting your search terms or filters to find what you're looking for."
+              : "Recipes will appear here once they are published."
+          }
+          actionLabel={searchQuery || selectedCategoryId !== "all" ? undefined : "Create Recipe"}
+          actionHref={searchQuery || selectedCategoryId !== "all" ? undefined : "/create-recipe"}
+        />
       ) : (
-        <div className="space-y-12">
+        <div className="space-y-16">
           {categoriesWithRecipes.map((cat) => (
             <div key={cat.id} id={cat.slug}>
               <div className="mb-6 border-b border-neutral-200 pb-3">

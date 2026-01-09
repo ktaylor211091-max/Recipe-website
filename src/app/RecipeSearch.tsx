@@ -48,8 +48,8 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
   };
 
   return (
-    <div className="mb-12">
-      <div className="flex flex-col gap-4">
+    <div className="mb-16">
+      <div className="flex flex-col gap-5">
         {/* Search Bar with Suggestions */}
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">

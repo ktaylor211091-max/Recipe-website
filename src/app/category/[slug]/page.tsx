@@ -4,6 +4,7 @@ import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCategories } from "@/app/admin/categories/actions";
 import { Breadcrumb } from "@/app/Breadcrumb";
+import { EmptyState } from "@/app/EmptyState";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 
 type Props = {
@@ -39,20 +40,22 @@ export default async function CategoryPage({ params }: Props) {
       <Breadcrumb items={[{ label: category.name }]} />
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-neutral-900 mb-2">
+        <h1 className="text-4xl font-bold text-neutral-900 mb-3">
           {category.name}
         </h1>
-        <p className="text-neutral-600">
+        <p className="text-lg text-neutral-600">
           {recipes?.length || 0} {recipes?.length === 1 ? "recipe" : "recipes"}
         </p>
       </div>
 
       {!recipes || recipes.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 p-12 text-center">
-          <div className="text-6xl mb-4">🍳</div>
-          <h3 className="text-xl font-bold text-neutral-900 mb-2">No recipes yet</h3>
-          <p className="text-neutral-500">Check back soon for {category.name.toLowerCase()} recipes!</p>
-        </div>
+        <EmptyState
+          illustration="category"
+          title={`No ${category.name.toLowerCase()} recipes yet`}
+          description={`Be the first to share a delicious ${category.name.toLowerCase()} recipe with the community!`}
+          actionLabel="Create Recipe"
+          actionHref="/create-recipe"
+        />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {recipes.map((recipe) => {

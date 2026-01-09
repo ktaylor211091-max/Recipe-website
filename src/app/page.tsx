@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 import { RecipeListClient } from "./RecipeListClient";
 import { CategoryDiscovery } from "./CategoryDiscovery";
+import { EmptyState } from "./EmptyState";
 import { getCategories } from "./admin/categories/actions";
 
 type RecipeRow = {
@@ -55,7 +56,7 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="space-y-12">
+    <main className="space-y-16">
       {/* Page Heading */}
       <section className="py-12 text-center">
         <h1 className="text-6xl font-bold tracking-tight text-neutral-900 mb-4 leading-none sm:text-7xl">
@@ -141,16 +142,18 @@ export default async function Home() {
 
       {/* Latest Recipes Section */}
       <section>
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-bold text-neutral-900">Latest Recipes</h3>
+        <div className="mb-8 flex items-center justify-between">
+          <h3 className="text-3xl font-bold text-neutral-900">Latest Recipes</h3>
         </div>
 
         {!recipes || recipes.length === 0 ? (
-          <div className="rounded-lg border-2 border-dashed border-neutral-200 bg-neutral-50 p-16 text-center">
-            <div className="text-5xl mb-4">🍳</div>
-            <h3 className="text-xl font-bold text-neutral-900 mb-2">No recipes yet</h3>
-            <p className="text-neutral-500">Check back soon for delicious recipes!</p>
-          </div>
+          <EmptyState
+            illustration="recipe"
+            title="No recipes yet"
+            description="Be the first to share a delicious recipe with the community!"
+            actionLabel="Create Recipe"
+            actionHref="/create-recipe"
+          />
         ) : (
           <RecipeListClient
             recipes={recipes}

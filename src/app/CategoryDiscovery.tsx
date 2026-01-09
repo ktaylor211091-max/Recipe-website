@@ -34,17 +34,17 @@ export function CategoryDiscovery({ categories }: CategoryDiscoveryProps) {
   }
 
   return (
-    <section className="py-12">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-neutral-900 mb-2">
+    <section className="py-16">
+      <div className="mb-10">
+        <h2 className="text-4xl font-bold text-neutral-900 mb-3">
           Browse Categories
         </h2>
-        <p className="text-neutral-600">
+        <p className="text-lg text-neutral-600">
           Explore delicious recipes by category
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4">
         {parentCategories.map((category) => {
           const emoji = categoryEmojis[category.slug] || "🍳";
 
