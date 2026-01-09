@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCategories } from "@/app/admin/categories/actions";
 import { getTags } from "@/app/admin/actions";
+import { DeleteButton } from "./DeleteButton";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -520,6 +521,7 @@ export default async function EditRecipePage({ params }: Props) {
             >
               Cancel
             </Link>
+            <DeleteButton recipeId={recipe.id} recipeTitle={recipe.title} />
           </div>
         </form>
       </div>
