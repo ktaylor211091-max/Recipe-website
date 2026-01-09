@@ -42,8 +42,14 @@ export default async function Home() {
           .select("id,title,slug,category,author_id,description,image_path,prep_time_minutes,cook_time_minutes,servings,created_at,recipe_reviews(rating)")
           .eq("published", true)
           .order("created_at", { ascending: false })
-          .limit(1)
-          .then(({ data }) => (data && data.length > 0 ? data[0] : null))
+          .limit(100)
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              const randomIndex = Math.floor(Math.random() * data.length);
+              return data[randomIndex];
+            }
+            return null;
+          })
       : Promise.resolve(null),
   ]);
 
