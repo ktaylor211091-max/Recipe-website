@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCategories } from "@/app/admin/categories/actions";
+import { Breadcrumb } from "@/app/Breadcrumb";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 
 type Props = {
@@ -34,10 +35,10 @@ export default async function CategoryPage({ params }: Props) {
 
   return (
     <main>
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb items={[{ label: category.name }]} />
+
       <div className="mb-8">
-        <Link href="/" className="text-sm text-emerald-600 hover:text-emerald-700 mb-2 inline-block">
-          ← Back to all recipes
-        </Link>
         <h1 className="text-4xl font-bold text-neutral-900 mb-2">
           {category.name}
         </h1>

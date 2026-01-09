@@ -5,6 +5,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CategoryNav } from "./CategoryNav";
 import { FloatingChat } from "./FloatingChat";
 import { NotificationBell } from "./NotificationBell";
+import { MobileMenu } from "./MobileMenu";
+import { FloatingActionButton } from "./FloatingActionButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -91,7 +93,7 @@ export default async function RootLayout({
                       href="/create-recipe"
                       className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
                     >
-                      Create Recipe
+                      ✨ Create Recipe
                     </Link>
                     {isAdmin && (
                       <Link
@@ -119,15 +121,8 @@ export default async function RootLayout({
                   </>
                 )}
               </div>
-              {/* Mobile: Show only Create Recipe button */}
-              {user && (
-                <Link
-                  href="/create-recipe"
-                  className="md:hidden rounded-md bg-emerald-600 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-emerald-500"
-                >
-                  Create
-                </Link>
-              )}
+              {/* Mobile Menu */}
+              <MobileMenu user={user} isAdmin={isAdmin} />
             </div>
             <CategoryNav categories={categories} />
           </div>
@@ -251,6 +246,9 @@ export default async function RootLayout({
         <div className="hidden lg:block">
           <FloatingChat userId={user?.id || null} />
         </div>
+
+        {/* Floating Action Button - Logged in users */}
+        {user && <FloatingActionButton userId={user.id} />}
       </body>
     </html>
   );

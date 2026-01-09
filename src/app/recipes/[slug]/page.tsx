@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { Breadcrumb } from "@/app/Breadcrumb";
 import { PrintButton } from "./PrintButton";
 import { ShareButton } from "./ShareButton";
 import { IngredientScalerWithShopping } from "./IngredientScalerWithShopping";
@@ -196,6 +197,14 @@ export default async function RecipePage({ params }: Props) {
 
   return (
     <main className="animate-fade-in">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb
+        items={[
+          { label: recipe.category || "Recipes", href: recipe.category ? `/category/${recipe.category.toLowerCase().replace(/\s+/g, "-")}` : "/recipes" },
+          { label: recipe.title },
+        ]}
+      />
+
       {/* Header with actions */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div className="flex-1">

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 import { RecipeListClient } from "./RecipeListClient";
+import { CategoryDiscovery } from "./CategoryDiscovery";
 import { getCategories } from "./admin/categories/actions";
 
 type RecipeRow = {
@@ -134,6 +135,9 @@ export default async function Home() {
           <b> NEXT_PUBLIC_SUPABASE_ANON_KEY</b>.
         </div>
       )}
+
+      {/* Category Discovery Section */}
+      <CategoryDiscovery categories={categories} />
 
       {/* Latest Recipes Section */}
       <section>
