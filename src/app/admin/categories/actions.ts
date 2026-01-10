@@ -38,6 +38,7 @@ export async function createCategory(formData: FormData) {
 
   const name = formData.get("name") as string;
   const displayOrder = parseInt(formData.get("display_order") as string) || 0;
+  const parentCategoryId = formData.get("parent_category_id") as string;
 
   if (!name || name.trim().length === 0) {
     return { error: "Category name is required" };
@@ -54,6 +55,7 @@ export async function createCategory(formData: FormData) {
     name: name.trim(),
     slug,
     display_order: displayOrder,
+    parent_category_id: parentCategoryId || null,
   });
 
   if (error) {
@@ -74,6 +76,7 @@ export async function updateCategory(id: string, formData: FormData) {
 
   const name = formData.get("name") as string;
   const displayOrder = parseInt(formData.get("display_order") as string) || 0;
+  const parentCategoryId = formData.get("parent_category_id") as string;
 
   if (!name || name.trim().length === 0) {
     return { error: "Category name is required" };
@@ -92,6 +95,7 @@ export async function updateCategory(id: string, formData: FormData) {
       name: name.trim(),
       slug,
       display_order: displayOrder,
+      parent_category_id: parentCategoryId || null,
     })
     .eq("id", id);
 
