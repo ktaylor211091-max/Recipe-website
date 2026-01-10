@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/app/Breadcrumb";
+import { Button } from "@/components";
 import { PrintButton } from "./PrintButton";
 import { ShareButton } from "./ShareButton";
 import { IngredientScalerWithShopping } from "./IngredientScalerWithShopping";
@@ -249,26 +250,24 @@ export default async function RecipePage({ params }: Props) {
             </p>
           ) : null}
         </div>
-        <div className="flex shrink-0 gap-2 print:hidden">
+        <div className="flex shrink-0 gap-2 print:hidden flex-wrap">
           <FavoriteButton recipeId={recipe.id} initialIsFavorite={isFavorite} />
           {userRes?.user && (
             <ForkButton recipeId={recipe.id} recipeTitle={recipe.title} />
           )}
           <PrintButton />
           {isAuthor && (
-            <Link
-              href={`/recipes/edit/${recipe.id}`}
-              className="rounded-xl border-2 border-amber-200 bg-white px-4 py-2.5 text-sm font-semibold text-amber-700 transition-all hover:bg-amber-50 hover:border-amber-300 hover:shadow-md"
-            >
-              Edit
-            </Link>
+            <Button variant="outline" size="md" asChild>
+              <Link href={`/recipes/edit/${recipe.id}`}>
+                Edit
+              </Link>
+            </Button>
           )}
-          <Link
-            className="rounded-xl border-2 border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-700 transition-all hover:bg-indigo-50 hover:border-indigo-300 hover:shadow-md"
-            href="/"
-          >
-            Back
-          </Link>
+          <Button variant="outline" size="md" asChild>
+            <Link href="/">
+              Back
+            </Link>
+          </Button>
         </div>
       </div>
 
