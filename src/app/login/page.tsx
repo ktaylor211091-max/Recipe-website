@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { Input, Button } from "@/components";
 import { signIn } from "./actions";
 
 export default async function LoginPage({
@@ -39,33 +40,23 @@ export default async function LoginPage({
 
         <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg">
           <form action={signIn} className="space-y-4">
-            <label className="block">
-              <div className="mb-2 text-sm font-medium text-neutral-700">
-                Email
-              </div>
-              <input
-                id="login-email"
-                name="email"
-                type="email"
-                required
-                placeholder="you@example.com"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              />
-            </label>
+            <Input
+              id="login-email"
+              name="email"
+              type="email"
+              required
+              label="Email"
+              placeholder="you@example.com"
+            />
 
-            <label className="block">
-              <div className="mb-2 text-sm font-medium text-neutral-700">
-                Password
-              </div>
-              <input
-                id="login-password"
-                name="password"
-                type="password"
-                required
-                placeholder="••••••••"
-                className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-              />
-            </label>
+            <Input
+              id="login-password"
+              name="password"
+              type="password"
+              required
+              label="Password"
+              placeholder="••••••••"
+            />
 
             {errorMessage ? (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -73,12 +64,14 @@ export default async function LoginPage({
               </div>
             ) : null}
 
-            <button
+            <Button
               type="submit"
-              className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              variant="primary"
+              size="lg"
+              className="w-full"
             >
               Sign In
-            </button>
+            </Button>
           </form>
 
           <div className="mt-6 text-center">

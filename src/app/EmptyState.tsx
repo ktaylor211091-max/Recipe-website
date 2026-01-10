@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components";
 
 type EmptyStateProps = {
   icon?: string;
@@ -89,15 +90,14 @@ export function EmptyState({
 
       {/* Action Button */}
       {actionLabel && actionHref && (
-        <Link
-          href={actionHref}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-500 active:scale-95"
-        >
-          <span>{actionLabel}</span>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
+        <Button variant="primary" size="md" asChild>
+          <Link href={actionHref} className="flex items-center gap-2">
+            <span>{actionLabel}</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </Button>
       )}
     </div>
   );

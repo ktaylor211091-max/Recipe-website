@@ -7,6 +7,7 @@ import { NotificationBell } from "./NotificationBell";
 import { MobileMenu } from "./MobileMenu";
 import { FloatingActionButton } from "./FloatingActionButton";
 import { ToastProvider } from "./Toast";
+import { Button } from "@/components";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -66,59 +67,35 @@ export default async function RootLayout({
                 {user ? (
                   <>
                     <NotificationBell initialUnreadCount={unreadNotificationCount} />
-                    <Link
-                      href="/search-users"
-                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                    >
-                      Find Chefs
-                    </Link>
-                    <Link
-                      href="/messages"
-                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                    >
-                      Messages
-                    </Link>
-                    <Link
-                      href="/activity"
-                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                    >
-                      Activity
-                    </Link>
-                    <Link
-                      href="/account"
-                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                    >
-                      Account
-                    </Link>
-                    <Link
-                      href="/create-recipe"
-                      className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
-                    >
-                      ✨ Create Recipe
-                    </Link>
+                    <Button variant="outline" size="md" asChild>
+                      <Link href="/search-users">Find Chefs</Link>
+                    </Button>
+                    <Button variant="outline" size="md" asChild>
+                      <Link href="/messages">Messages</Link>
+                    </Button>
+                    <Button variant="outline" size="md" asChild>
+                      <Link href="/activity">Activity</Link>
+                    </Button>
+                    <Button variant="outline" size="md" asChild>
+                      <Link href="/account">Account</Link>
+                    </Button>
+                    <Button variant="primary" size="md" asChild>
+                      <Link href="/create-recipe">✨ Create Recipe</Link>
+                    </Button>
                     {isAdmin && (
-                      <Link
-                        href="/admin/dashboard"
-                        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
-                      >
-                        Admin
-                      </Link>
+                      <Button variant="secondary" size="md" asChild>
+                        <Link href="/admin/dashboard">Admin</Link>
+                      </Button>
                     )}
                   </>
                 ) : (
                   <>
-                    <Link
-                      href="/login"
-                      className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
-                    >
-                      Sign Up
-                    </Link>
+                    <Button variant="outline" size="md" asChild>
+                      <Link href="/login">Sign In</Link>
+                    </Button>
+                    <Button variant="primary" size="md" asChild>
+                      <Link href="/signup">Sign Up</Link>
+                    </Button>
                   </>
                 )}
               </div>

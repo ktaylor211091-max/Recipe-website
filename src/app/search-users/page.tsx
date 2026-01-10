@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { Input, Button } from "@/components";
 
 interface SearchUsersPageProps {
   searchParams: Promise<{ q?: string }>;
@@ -74,18 +75,15 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
       <div className="mb-8">
         <form action="/search-users" method="get" className="max-w-2xl">
           <div className="flex gap-2">
-            <input
+            <Input
               type="text"
               id="user-search-input"
               name="q"
               defaultValue={query || ""}
               placeholder="Search by name..."
-              className="flex-1 rounded-lg border border-neutral-300 px-4 py-3 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              className="flex-1"
             />
-            <button
-              type="submit"
-              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-500"
-            >
+            <Button type="submit" variant="primary" size="lg">
               <svg
                 className="h-5 w-5"
                 fill="none"
@@ -99,7 +97,7 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </button>
+            </Button>
           </div>
         </form>
       </div>
