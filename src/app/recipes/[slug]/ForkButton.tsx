@@ -23,7 +23,7 @@ export function ForkButton({ recipeId, recipeTitle }: ForkButtonProps) {
       onClick={handleFork}
       disabled={isForking}
       isLoading={isForking}
-      variant="outline"
+      variant="purple"
       size="md"
       title={`Create your own variation of "${recipeTitle}"`}
     >

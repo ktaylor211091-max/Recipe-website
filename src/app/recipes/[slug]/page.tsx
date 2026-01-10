@@ -257,13 +257,13 @@ export default async function RecipePage({ params }: Props) {
           )}
           <PrintButton />
           {isAuthor && (
-            <Button variant="outline" size="md" asChild>
+            <Button variant="amber" size="md" asChild>
               <Link href={`/recipes/edit/${recipe.id}`}>
                 Edit
               </Link>
             </Button>
           )}
-          <Button variant="outline" size="md" asChild>
+          <Button variant="indigo" size="md" asChild>
             <Link href="/">
               Back
             </Link>

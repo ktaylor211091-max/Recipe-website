@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "outline" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "danger" | "outline" | "ghost" | "purple" | "amber" | "indigo";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -20,6 +20,9 @@ const variantStyles = {
   outline:
     "bg-white text-neutral-700 hover:bg-neutral-50 border border-neutral-300 hover:border-neutral-400",
   ghost: "bg-transparent text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100",
+  purple: "bg-white text-purple-700 hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-300",
+  amber: "bg-white text-amber-700 hover:bg-amber-50 border-2 border-amber-200 hover:border-amber-300",
+  indigo: "bg-white text-indigo-700 hover:bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-300",
 };
 
 const sizeStyles = {
