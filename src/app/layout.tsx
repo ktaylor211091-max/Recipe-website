@@ -11,8 +11,32 @@ import { Button } from "@/components";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Recipe Website",
-  description: "A simple recipe website with an admin uploader.",
+  title: "Recipe Website - Discover & Share Recipes",
+  description: "Discover delicious recipes from talented chefs. Share your favorite recipes, rate dishes, and build your cooking community.",
+  openGraph: {
+    title: "Recipe Website - Discover & Share Recipes",
+    description: "Discover delicious recipes from talented chefs. Share your favorite recipes, rate dishes, and build your cooking community.",
+    type: "website",
+    url: "https://recipe-website.vercel.app",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Recipe Website",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Recipe Website - Discover & Share Recipes",
+    description: "Discover delicious recipes from talented chefs.",
+    images: ["/og-image.png"],
+  },
+  keywords: ["recipes", "cooking", "food", "chef", "cuisine"],
+  authors: [{ name: "Recipe Website Team" }],
+  viewport: "width=device-width, initial-scale=1",
+  themeColor: "#16a34a",
 };
 
 export default async function RootLayout({

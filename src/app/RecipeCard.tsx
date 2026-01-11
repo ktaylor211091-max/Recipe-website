@@ -13,6 +13,8 @@ type RecipeCardProps = {
   cook_time_minutes: number | null;
   servings: number | null;
   ratings?: number[];
+  author_name?: string;
+  author_id?: string;
 };
 
 export function RecipeCard({
@@ -25,6 +27,8 @@ export function RecipeCard({
   cook_time_minutes,
   servings,
   ratings = [],
+  author_name = "Unknown",
+  author_id,
 }: RecipeCardProps) {
   const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : null;
   const totalTime = (prep_time_minutes || 0) + (cook_time_minutes || 0);
@@ -69,6 +73,17 @@ export function RecipeCard({
           <h3 className="font-bold text-lg text-neutral-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">
             {title}
           </h3>
+
+          {/* Author Info */}
+          {author_name && author_id && (
+            <Link
+              href={`/profile/${author_id}`}
+              className="text-xs text-neutral-500 hover:text-emerald-600 transition-colors mb-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              By <span className="font-medium">{author_name}</span>
+            </Link>
+          )}
 
           {/* Description */}
           {description && (

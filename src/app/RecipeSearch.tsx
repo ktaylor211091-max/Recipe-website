@@ -4,7 +4,17 @@ import { useState, useMemo } from "react";
 
 type RecipeSearchProps = {
   categories: string[];
-  onSearch: (query: string, category: string, sortBy: string, dietary?: string[]) => void;
+  onSearch: (
+    query: string,
+    category: string,
+    sortBy: string,
+    filters?: {
+      dietary?: string[];
+      difficulty?: string;
+      maxPrepTime?: number;
+      maxCalories?: number;
+    }
+  ) => void;
 };
 
 const dietaryOptions = [
@@ -16,12 +26,21 @@ const dietaryOptions = [
   { id: "low-carb", label: "Low-Carb", emoji: "🥩" },
 ];
 
+const difficultyOptions = [
+  { id: "easy", label: "Easy", emoji: "😊" },
+  { id: "medium", label: "Medium", emoji: "🤔" },
+  { id: "hard", label: "Hard", emoji: "💪" },
+];
+
 export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
+  const [difficulty, setDifficulty] = useState<string>("");
+  const [maxPrepTime, setMaxPrepTime] = useState<number>(0);
+  const [maxCalories, setMaxCalories] = useState<number>(0);
 
   const suggestions = useMemo(() => {
     if (query.length < 2) return [];
@@ -31,12 +50,13 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
     );
   }, [query, categories]);
 
-  const handleChange = (newQuery?: string, newCategory?: string, newSort?: string, newDietary?: string[]) => {
-    const q = newQuery !== undefined ? newQuery : query;
-    const c = newCategory !== undefined ? newCategory : selectedCategory;
-    const s = newSort !== undefined ? newSort : sortBy;
-    const d = newDietary !== undefined ? newDietary : selectedDietary;
-    onSearch(q, c, s, d);
+  const handleChange = () => {
+    onSearch(query, selectedCategory, sortBy, {
+      dietary: selectedDietary,
+      difficulty: difficulty || undefined,
+      maxPrepTime: maxPrepTime > 0 ? maxPrepTime : undefined,
+      maxCalories: maxCalories > 0 ? maxCalories : undefined,
+    });
   };
 
   const toggleDietary = (dietary: string) => {
@@ -44,7 +64,12 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
       ? selectedDietary.filter((d) => d !== dietary)
       : [...selectedDietary, dietary];
     setSelectedDietary(updated);
-    handleChange(undefined, undefined, undefined, updated);
+    setTimeout(handleChange, 0);
+  };
+
+  const handleDifficultyChange = (newDifficulty: string) => {
+    setDifficulty(newDifficulty === difficulty ? "" : newDifficulty);
+    setTimeout(handleChange, 0);
   };
 
   return (
@@ -73,7 +98,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
-              handleChange(e.target.value, undefined, undefined);
+              setTimeout(handleChange, 0);
             }}
             className="w-full rounded-lg border border-neutral-300 bg-white py-3 pl-11 pr-4 text-base focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
             autoComplete="off"
@@ -87,7 +112,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
                   key={suggestion}
                   onClick={() => {
                     setQuery(suggestion);
-                    handleChange(suggestion);
+                    setTimeout(handleChange, 0);
                   }}
                   className="w-full text-left px-4 py-2 hover:bg-neutral-50 transition-colors text-sm"
                 >
@@ -104,7 +129,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
             value={selectedCategory}
             onChange={(e) => {
               setSelectedCategory(e.target.value);
-              handleChange(undefined, e.target.value, undefined);
+              setTimeout(handleChange, 0);
             }}
             className="rounded-lg border border-neutral-300 bg-white px-4 py-3 text-base focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200 sm:w-48"
           >
@@ -120,7 +145,7 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
             value={sortBy}
             onChange={(e) => {
               setSortBy(e.target.value);
-              handleChange(undefined, undefined, e.target.value);
+              setTimeout(handleChange, 0);
             }}
             className="rounded-lg border border-neutral-300 bg-white px-4 py-3 text-base focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200 sm:w-48"
           >
@@ -154,27 +179,98 @@ export function RecipeSearch({ categories, onSearch }: RecipeSearchProps) {
           </button>
         </div>
 
-        {/* Advanced Filters - Dietary Options */}
+        {/* Advanced Filters */}
         {showAdvanced && (
-          <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-sm font-semibold text-neutral-900 mb-3">
-              🥗 Dietary Preferences
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {dietaryOptions.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => toggleDietary(option.id)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                    selectedDietary.includes(option.id)
-                      ? "bg-emerald-600 text-white shadow-md"
-                      : "bg-white border border-neutral-300 text-neutral-700 hover:border-emerald-300 hover:bg-emerald-50"
-                  }`}
+          <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 space-y-4">
+            {/* Dietary Preferences */}
+            <div>
+              <p className="text-sm font-semibold text-neutral-900 mb-3">
+                🥗 Dietary Preferences
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {dietaryOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => toggleDietary(option.id)}
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                      selectedDietary.includes(option.id)
+                        ? "bg-emerald-600 text-white shadow-md"
+                        : "bg-white border border-neutral-300 text-neutral-700 hover:border-emerald-300 hover:bg-emerald-50"
+                    }`}
+                  >
+                    <span>{option.emoji}</span>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Difficulty Level */}
+            <div>
+              <p className="text-sm font-semibold text-neutral-900 mb-3">
+                🎯 Difficulty Level
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {difficultyOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => handleDifficultyChange(option.id)}
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                      difficulty === option.id
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-white border border-neutral-300 text-neutral-700 hover:border-blue-300 hover:bg-blue-50"
+                    }`}
+                  >
+                    <span>{option.emoji}</span>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Time and Calorie Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-neutral-900 mb-2 block">
+                  ⏱️ Max Prep Time
+                </label>
+                <select
+                  value={maxPrepTime}
+                  onChange={(e) => {
+                    setMaxPrepTime(parseInt(e.target.value));
+                    setTimeout(handleChange, 0);
+                  }}
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
                 >
-                  <span>{option.emoji}</span>
-                  {option.label}
-                </button>
-              ))}
+                  <option value="0">Any</option>
+                  <option value="15">15 minutes</option>
+                  <option value="30">30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">1 hour</option>
+                  <option value="90">1.5 hours</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-neutral-900 mb-2 block">
+                  🔥 Max Calories
+                </label>
+                <select
+                  value={maxCalories}
+                  onChange={(e) => {
+                    setMaxCalories(parseInt(e.target.value));
+                    setTimeout(handleChange, 0);
+                  }}
+                  className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                >
+                  <option value="0">Any</option>
+                  <option value="200">200 cal</option>
+                  <option value="400">400 cal</option>
+                  <option value="600">600 cal</option>
+                  <option value="800">800 cal</option>
+                  <option value="1000">1000 cal</option>
+                </select>
+              </div>
             </div>
           </div>
         )}
