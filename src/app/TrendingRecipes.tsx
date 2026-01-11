@@ -63,9 +63,9 @@ export async function TrendingRecipes() {
   if (trendingRecipes.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-rose-400 text-white px-6 py-10 sm:px-8 lg:px-12">
+    <section className="relative overflow-hidden rounded-2xl bg-rose-500 text-white px-6 py-10 sm:px-8 lg:px-12">
       <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden>
-        <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-rose-300 blur-[140px]" />
+        <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-rose-400 blur-[140px]" />
       </div>
 
       <div className="relative mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -127,7 +127,7 @@ export async function TrendingRecipes() {
               </h3>
               <div className="flex items-center gap-2 text-xs text-neutral-200/80">
                 <span className="h-1 w-1 rounded-full bg-emerald-300" aria-hidden />
-                <span>Fan favorite</span>
+                <span>Fan favourite</span>
               </div>
             </div>
           </Link>
