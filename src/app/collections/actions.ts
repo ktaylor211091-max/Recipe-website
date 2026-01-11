@@ -42,12 +42,14 @@ export async function getCollections(): Promise<Collection[]> {
 export async function createCollection(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    return { error: "Supabase client not configured" };
+    console.error("Supabase client not configured");
+    return;
   }
 
   const { data: userData } = await supabase.auth.getUser();
   if (!userData?.user) {
-    return { error: "Not authenticated" };
+    console.error("Not authenticated");
+    return;
   }
 
   const name = formData.get("name") as string;
@@ -55,7 +57,8 @@ export async function createCollection(formData: FormData) {
   const isPublic = formData.get("is_public") === "true";
 
   if (!name || name.trim().length === 0) {
-    return { error: "Collection name is required" };
+    console.error("Collection name is required");
+    return;
   }
 
   const { error } = await supabase.from("recipe_collections").insert({
@@ -67,11 +70,10 @@ export async function createCollection(formData: FormData) {
 
   if (error) {
     console.error("Error creating collection:", error);
-    return { error: error.message };
+    return;
   }
 
   revalidatePath("/collections");
-  return { success: true };
 }
 
 export async function addRecipeToCollection(recipeId: string, collectionId: string) {
@@ -140,17 +142,20 @@ export async function removeRecipeFromCollection(recipeId: string, collectionId:
 export async function deleteCollection(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    return { error: "Supabase client not configured" };
+    console.error("Supabase client not configured");
+    return;
   }
 
   const { data: userData } = await supabase.auth.getUser();
   if (!userData?.user) {
-    return { error: "Not authenticated" };
+    console.error("Not authenticated");
+    return;
   }
 
   const id = formData.get("id") as string;
   if (!id) {
-    return { error: "Collection id is required" };
+    console.error("Collection id is required");
+    return;
   }
 
   const { error } = await supabase
@@ -161,9 +166,8 @@ export async function deleteCollection(formData: FormData) {
 
   if (error) {
     console.error("Error deleting collection:", error);
-    return { error: error.message };
+    return;
   }
 
   revalidatePath("/collections");
-  return { success: true };
 }
