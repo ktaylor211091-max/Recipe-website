@@ -66,7 +66,6 @@ export async function TrendingRecipes() {
     <section className="relative overflow-hidden rounded-2xl bg-rose-950 text-white px-6 py-10 sm:px-8 lg:px-12">
       <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden>
         <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-rose-500 blur-[140px]" />
-        <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-orange-400 blur-[160px]" />
       </div>
 
       <div className="relative mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -77,7 +76,7 @@ export async function TrendingRecipes() {
           </div>
           <h2 className="text-3xl font-bold leading-tight sm:text-4xl">Trending Recipes</h2>
           <p className="text-sm text-neutral-200 max-w-2xl">
-            Most-loved recipes right now, picked by ratings. Bold flavors, crowd-pleasers, zero filler.
+            Most-loved recipes right now, picked by ratings. Bold flavours, crowd-pleasers, zero filler.
           </p>
         </div>
         <Link
