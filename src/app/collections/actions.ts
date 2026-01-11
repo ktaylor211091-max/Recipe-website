@@ -137,7 +137,7 @@ export async function removeRecipeFromCollection(recipeId: string, collectionId:
   return { success: true };
 }
 
-export async function deleteCollection(id: string) {
+export async function deleteCollection(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
     return { error: "Supabase client not configured" };
@@ -146,6 +146,11 @@ export async function deleteCollection(id: string) {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData?.user) {
     return { error: "Not authenticated" };
+  }
+
+  const id = formData.get("id") as string;
+  if (!id) {
+    return { error: "Collection id is required" };
   }
 
   const { error } = await supabase

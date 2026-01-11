@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type ShoppingListItem = {
   id: string;
@@ -12,11 +13,13 @@ type ShoppingListItem = {
 };
 
 export default function ShoppingListPage() {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  const [items, setItems] = useState<ShoppingListItem[]>(() => {
+  const [client, setClient] = useState<ReturnType<typeof createSupabaseBrowserClient> | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [items, setItems] = useState<ShoppingListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newItem, setNewItem] = useState("");
+
+  const loadLocal = () => {
     if (typeof window === "undefined") return [];
     const saved = window.localStorage.getItem("shoppingList");
     if (!saved) return [];
@@ -26,27 +29,73 @@ export default function ShoppingListPage() {
       console.error("Failed to parse shopping list from localStorage", error);
       return [];
     }
-  });
-  const [newItem, setNewItem] = useState("");
-
-  const saveItems = (newItems: ShoppingListItem[]) => {
-    setItems(newItems);
-    localStorage.setItem("shoppingList", JSON.stringify(newItems));
   };
 
-  const toggleItem = (id: string) => {
+  useEffect(() => {
+    const sb = createSupabaseBrowserClient();
+    setClient(sb);
+    sb.auth.getUser().then(({ data }) => {
+      const uid = data.user?.id || null;
+      setUserId(uid);
+      if (uid) {
+        sb
+          .from("shopping_list")
+          .select("id, text, recipe_title, recipe_slug, checked")
+          .eq("user_id", uid)
+          .order("created_at", { ascending: true })
+          .then(({ data: rows, error }) => {
+            if (!error && rows) {
+              setItems(
+                rows.map((r) => ({
+                  id: r.id,
+                  text: r.text,
+                  recipeTitle: r.recipe_title || undefined,
+                  recipeSlug: r.recipe_slug || undefined,
+                  checked: r.checked,
+                }))
+              );
+            } else {
+              setItems(loadLocal());
+            }
+            setLoading(false);
+          });
+      } else {
+        setItems(loadLocal());
+        setLoading(false);
+      }
+    });
+  }, []);
+
+  const persistLocal = (newItems: ShoppingListItem[]) => {
+    setItems(newItems);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("shoppingList", JSON.stringify(newItems));
+    }
+  };
+
+  const toggleItem = async (id: string) => {
     const updated = items.map((item) =>
       item.id === id ? { ...item, checked: !item.checked } : item
     );
-    saveItems(updated);
+    setItems(updated);
+    if (client && userId) {
+      await client.from("shopping_list").update({ checked: updated.find((i) => i.id === id)?.checked || false }).eq("id", id).eq("user_id", userId);
+    } else {
+      persistLocal(updated);
+    }
   };
 
-  const deleteItem = (id: string) => {
+  const deleteItem = async (id: string) => {
     const updated = items.filter((item) => item.id !== id);
-    saveItems(updated);
+    setItems(updated);
+    if (client && userId) {
+      await client.from("shopping_list").delete().eq("id", id).eq("user_id", userId);
+    } else {
+      persistLocal(updated);
+    }
   };
 
-  const addManualItem = (e: React.FormEvent) => {
+  const addManualItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newItem.trim()) return;
 
@@ -56,20 +105,58 @@ export default function ShoppingListPage() {
       checked: false,
     };
 
-    saveItems([...items, newItemObj]);
+    setItems((prev) => [...prev, newItemObj]);
+    if (client && userId) {
+      const { data } = await client
+        .from("shopping_list")
+        .insert({
+          user_id: userId,
+          text: newItemObj.text,
+          recipe_title: newItemObj.recipeTitle || null,
+          recipe_slug: newItemObj.recipeSlug || null,
+          checked: false,
+        })
+        .select("id")
+        .single();
+      if (data?.id) {
+        setItems((prev) => prev.map((i) => (i.id === newItemObj.id ? { ...i, id: data.id } : i)));
+      }
+    } else {
+      persistLocal([...items, newItemObj]);
+    }
     setNewItem("");
   };
 
   const clearAll = () => {
     if (confirm("Clear entire shopping list?")) {
-      saveItems([]);
+      setItems([]);
+      if (client && userId) {
+        client.from("shopping_list").delete().eq("user_id", userId);
+      } else {
+        persistLocal([]);
+      }
     }
   };
 
   const clearChecked = () => {
     const updated = items.filter((item) => !item.checked);
-    saveItems(updated);
+    setItems(updated);
+    if (client && userId) {
+      client.from("shopping_list").delete().eq("user_id", userId).eq("checked", true);
+    } else {
+      persistLocal(updated);
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="animate-fade-in">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm text-neutral-700">
+          Loading your shopping list...
+        </div>
+      </main>
+    );
+  }
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
@@ -164,7 +251,7 @@ export default function ShoppingListPage() {
                 Your Items
               </h2>
               <div className="space-y-2">
-                {(isMounted ? items : []).map((item) => (
+                {items.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 transition-colors hover:bg-neutral-50"

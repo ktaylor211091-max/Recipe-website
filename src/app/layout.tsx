@@ -101,15 +101,26 @@ export default async function RootLayout({
                       <Link href="/activity">Activity</Link>
                     </Button>
                     <Button variant="outline" size="md" asChild>
+                      <Link href="/notifications">Notifications</Link>
+                    </Button>
+                    <Button variant="outline" size="md" asChild>
+                      <Link href="/collections">Collections</Link>
+                    </Button>
+                    <Button variant="outline" size="md" asChild>
                       <Link href="/account">Account</Link>
                     </Button>
                     <Button variant="primary" size="md" asChild>
                       <Link href="/create-recipe">✨ Create Recipe</Link>
                     </Button>
                     {isAdmin && (
-                      <Button variant="secondary" size="md" asChild>
-                        <Link href="/admin/dashboard">Admin</Link>
-                      </Button>
+                      <>
+                        <Button variant="secondary" size="md" asChild>
+                          <Link href="/admin/dashboard">Admin</Link>
+                        </Button>
+                        <Button variant="secondary" size="md" asChild>
+                          <Link href="/admin/analytics">Analytics</Link>
+                        </Button>
+                      </>
                     )}
                   </>
                 ) : (

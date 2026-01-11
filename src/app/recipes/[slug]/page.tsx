@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Breadcrumb } from "@/app/Breadcrumb";
 import { Button } from "@/components";
-import { PrintButton } from "./PrintButton";
+import { RecipePrintButton } from "./RecipePrintButton";
 import { ShareButton } from "./ShareButton";
 import { IngredientScalerWithShopping } from "./IngredientScalerWithShopping";
 import { FavoriteButton } from "./FavoriteButton";
@@ -255,7 +255,18 @@ export default async function RecipePage({ params }: Props) {
           {userRes?.user && (
             <ForkButton recipeId={recipe.id} recipeTitle={recipe.title} />
           )}
-          <PrintButton />
+          <RecipePrintButton
+            recipe={{
+              title: recipe.title,
+              description: recipe.description,
+              category: recipe.category,
+              prep_time_minutes: recipe.prep_time_minutes,
+              cook_time_minutes: recipe.cook_time_minutes,
+              servings: recipe.servings,
+              ingredients: recipe.ingredients,
+              steps: recipe.steps,
+            }}
+          />
           {isAuthor && (
             <Button variant="amber" size="md" asChild>
               <Link href={`/recipes/edit/${recipe.id}`}>

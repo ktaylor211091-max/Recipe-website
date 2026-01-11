@@ -6,6 +6,7 @@ import { RecipeListClient } from "./RecipeListClient";
 import { CategoryDiscovery } from "./CategoryDiscovery";
 import { EmptyState } from "./EmptyState";
 import { getCategories } from "./admin/categories/actions";
+import { TrendingRecipes } from "./TrendingRecipes";
 
 type RecipeRow = {
   id: string;
@@ -139,6 +140,9 @@ export default async function Home() {
 
       {/* Category Discovery Section */}
       <CategoryDiscovery categories={categories} />
+
+      {/* Trending Recipes */}
+      <TrendingRecipes />
 
       {/* Latest Recipes Section */}
       <section>
