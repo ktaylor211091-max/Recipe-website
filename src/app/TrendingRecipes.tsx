@@ -63,10 +63,10 @@ export async function TrendingRecipes() {
   if (trendingRecipes.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-neutral-900 text-white px-6 py-10 sm:px-8 lg:px-12">
-      <div className="pointer-events-none absolute inset-0 opacity-60" aria-hidden>
-        <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-emerald-500 blur-[120px]" />
-        <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-orange-500 blur-[140px]" />
+    <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-950 via-red-900 to-rose-800 text-white px-6 py-10 sm:px-8 lg:px-12">
+      <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden>
+        <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-rose-500 blur-[140px]" />
+        <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-orange-400 blur-[160px]" />
       </div>
 
       <div className="relative mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -75,7 +75,7 @@ export async function TrendingRecipes() {
             <span>Trending</span>
             <span className="text-emerald-100">This week</span>
           </div>
-          <h2 className="text-3xl font-bold leading-tight sm:text-4xl">🔥 Trending Recipes</h2>
+          <h2 className="text-3xl font-bold leading-tight sm:text-4xl">Trending Recipes</h2>
           <p className="text-sm text-neutral-200 max-w-2xl">
             Most-loved recipes right now, picked by ratings. Bold flavors, crowd-pleasers, zero filler.
           </p>
@@ -94,7 +94,7 @@ export async function TrendingRecipes() {
           <Link
             key={recipe.id}
             href={`/recipes/${recipe.slug}`}
-            className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/60 hover:bg-white/10"
+            className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] transition-all duration-300 hover:-translate-y-1 hover:border-rose-300/60 hover:bg-white/10"
           >
             <div className="relative aspect-video overflow-hidden">
               {recipe.image_path ? (
@@ -113,7 +113,6 @@ export async function TrendingRecipes() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               <div className="absolute top-3 left-3 flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur">
                 <span className="flex items-center gap-1 text-emerald-100">
-                  <span>🔥</span>
                   <span>{recipe.avg_rating?.toFixed(1)}</span>
                 </span>
                 <span className="text-neutral-200">{recipe.rating_count} ratings</span>
