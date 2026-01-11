@@ -34,7 +34,7 @@ export default function Error({
             Try again
           </Button>
           <Button
-            variant="default"
+            variant="primary"
             size="md"
             onClick={() => (window.location.href = "/")}
             className="flex-1"
