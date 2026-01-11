@@ -63,7 +63,7 @@ export async function TrendingRecipes() {
   if (trendingRecipes.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-950 via-red-900 to-rose-800 text-white px-6 py-10 sm:px-8 lg:px-12">
+    <section className="relative overflow-hidden rounded-2xl bg-rose-950 text-white px-6 py-10 sm:px-8 lg:px-12">
       <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden>
         <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-rose-500 blur-[140px]" />
         <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-orange-400 blur-[160px]" />
