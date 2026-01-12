@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { CategoryNav, NotificationBell, MobileMenu, FloatingActionButton } from "@/components/layout";
+import { CategoryNav, NotificationBell, MobileMenu, FloatingActionButton, AccountMenu } from "@/components/layout";
 import { ToastProvider, Button } from "@/components";
 import "./globals.css";
 
@@ -83,41 +83,17 @@ export default async function RootLayout({
                 </div>
               </Link>
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-4">
                 {user ? (
                   <>
                     <NotificationBell initialUnreadCount={unreadNotificationCount} />
                     <Button variant="outline" size="md" asChild>
                       <Link href="/search-users">Find Chefs</Link>
                     </Button>
-                    <Button variant="outline" size="md" asChild>
-                      <Link href="/messages">Messages</Link>
-                    </Button>
-                    <Button variant="outline" size="md" asChild>
-                      <Link href="/activity">Activity</Link>
-                    </Button>
-                    <Button variant="outline" size="md" asChild>
-                      <Link href="/notifications">Notifications</Link>
-                    </Button>
-                    <Button variant="outline" size="md" asChild>
-                      <Link href="/collections">Collections</Link>
-                    </Button>
-                    <Button variant="outline" size="md" asChild>
-                      <Link href="/account">Account</Link>
-                    </Button>
                     <Button variant="primary" size="md" asChild>
                       <Link href="/create-recipe">✨ Create Recipe</Link>
                     </Button>
-                    {isAdmin && (
-                      <>
-                        <Button variant="secondary" size="md" asChild>
-                          <Link href="/admin/dashboard">Admin</Link>
-                        </Button>
-                        <Button variant="secondary" size="md" asChild>
-                          <Link href="/admin/analytics">Analytics</Link>
-                        </Button>
-                      </>
-                    )}
+                    <AccountMenu isAdmin={isAdmin} />
                   </>
                 ) : (
                   <>
