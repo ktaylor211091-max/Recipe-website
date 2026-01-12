@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { Breadcrumb } from "@/app/Breadcrumb";
+import { Breadcrumb } from "@/components/layout";
 import { Button } from "@/components";
 import { RecipePrintButton } from "./RecipePrintButton";
 import { ShareButton } from "./ShareButton";

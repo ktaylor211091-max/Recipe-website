@@ -2,11 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
-import { RecipeListClient } from "./RecipeListClient";
-import { CategoryDiscovery } from "./CategoryDiscovery";
-import { EmptyState } from "./EmptyState";
+import { RecipeListClient, TrendingRecipes } from "@/features/recipes/components";
+import { CategoryDiscovery } from "@/features/categories/components";
+import { EmptyState } from "@/components";
 import { getCategories } from "./admin/categories/actions";
-import { TrendingRecipes } from "./TrendingRecipes";
 
 type RecipeRow = {
   id: string;

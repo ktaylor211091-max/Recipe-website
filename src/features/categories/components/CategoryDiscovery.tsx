@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Category } from "./admin/categories/actions";
+import type { Category } from "@/app/admin/categories/actions";
 
 type CategoryDiscoveryProps = {
   categories: Category[];

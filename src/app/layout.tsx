@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { CategoryNav } from "./CategoryNav";
-import { NotificationBell } from "./NotificationBell";
-import { MobileMenu } from "./MobileMenu";
-import { FloatingActionButton } from "./FloatingActionButton";
-import { ToastProvider } from "./Toast";
-import { Button } from "@/components";
+import { CategoryNav, NotificationBell, MobileMenu, FloatingActionButton } from "@/components/layout";
+import { ToastProvider, Button } from "@/components";
 import "./globals.css";
 
 export const metadata: Metadata = {

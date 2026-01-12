@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import type { Category } from "./admin/categories/actions";
+import type { Category } from "@/app/admin/categories/actions";
 
 type CategoryNavProps = {
   categories: Category[];

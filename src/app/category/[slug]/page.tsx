@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCategories } from "@/app/admin/categories/actions";
-import { Breadcrumb } from "@/app/Breadcrumb";
-import { EmptyState } from "@/app/EmptyState";
+import { Breadcrumb } from "@/components/layout";
+import { EmptyState } from "@/components";
 import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 
 type Props = {

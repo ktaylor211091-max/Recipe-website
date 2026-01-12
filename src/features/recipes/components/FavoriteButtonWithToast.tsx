@@ -1,6 +1,6 @@
 "use client";
 
-import { useToast } from "./Toast";
+import { useToast } from "@/components";
 import { useState } from "react";
 
 type FavoriteButtonWithToastProps = {

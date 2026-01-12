@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import { RecipeSearch } from "./RecipeSearch";
-import { EmptyState } from "./EmptyState";
-import type { Category } from "./admin/categories/actions";
+import { EmptyState } from "@/components";
+import type { Category } from "@/app/admin/categories/actions";
 
 type Recipe = {
   id: string;
