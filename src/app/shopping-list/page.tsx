@@ -246,7 +246,7 @@ export default function ShoppingListPage() {
               </Link>
             </div>
           ) : (
-            <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-bold text-neutral-900">
                 Your Items
               </h2>

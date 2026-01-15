@@ -132,7 +132,7 @@ export function RecipeReviews({
   };
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-md">
+    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-md">
       <div className="mb-6">
         <h2 className="text-xl font-bold text-neutral-900 mb-4">
           Ratings & Reviews

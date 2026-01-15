@@ -27,7 +27,7 @@ export default async function LoginPage({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-sky-50 px-4">
+    <main className="flex min-h-screen items-center justify-center bg-white px-4">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
@@ -38,7 +38,7 @@ export default async function LoginPage({
           </p>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-lg">
+        <div className="rounded-xl border border-neutral-200 bg-white p-8 shadow-lg">
           <form action={signIn} className="space-y-4">
             <Input
               id="login-email"

@@ -218,7 +218,7 @@ export function RecipeComments({ recipeId, comments, currentUserId, recipeAuthor
   };
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
       <h2 className="mb-6 text-xl font-bold text-neutral-900">
         Comments ({localComments.length})
       </h2>

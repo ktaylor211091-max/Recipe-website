@@ -98,17 +98,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #171717;
+	background: #a3a3a3;
 	border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: #000;
+	background: #737373;
 }
 
 /* Better focus styles */
 *:focus-visible {
-	outline: 2px solid #000;
+	outline: 2px solid #16a34a;
 	outline-offset: 4px;
 }
 

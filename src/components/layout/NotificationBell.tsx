@@ -112,15 +112,15 @@ export function NotificationBell({ initialUnreadCount }: NotificationBellProps) 
   const getNotificationColor = (type: string) => {
     switch (type) {
       case "comment":
-        return "bg-blue-50 border-blue-200";
+        return "bg-sky-50 border-sky-200";
       case "follow":
-        return "bg-purple-50 border-purple-200";
+        return "bg-emerald-50 border-emerald-200";
       case "message":
-        return "bg-green-50 border-green-200";
+        return "bg-emerald-50 border-emerald-200";
       case "rating":
-        return "bg-yellow-50 border-yellow-200";
+        return "bg-amber-50 border-amber-200";
       default:
-        return "bg-gray-50 border-gray-200";
+        return "bg-neutral-50 border-neutral-200";
     }
   };
 
@@ -180,7 +180,7 @@ export function NotificationBell({ initialUnreadCount }: NotificationBellProps) 
                   <div
                     key={notif.id}
                     className={`border-l-4 border-transparent p-3 cursor-pointer transition-colors hover:bg-neutral-50 ${
-                      notif.read ? "opacity-75" : "bg-blue-50 border-l-blue-600"
+                      notif.read ? "opacity-75" : "bg-emerald-50 border-l-emerald-600"
                     }`}
                     onClick={() => {
                       if (!notif.read) markAsRead(notif.id);
