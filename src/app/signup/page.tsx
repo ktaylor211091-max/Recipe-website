@@ -85,9 +85,3 @@ export default async function SignUpPage({
     </main>
   );
 }
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
