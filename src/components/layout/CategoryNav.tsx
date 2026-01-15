@@ -24,18 +24,17 @@ export function CategoryNav({ categories }: CategoryNavProps) {
   }, {} as Record<string, Category[]>);
 
   return (
-    <nav className="relative z-50 border-t border-neutral-100 py-3">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="flex items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible scrollbar-hide">
-          <Link
-            href="/"
-            className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation"
-          >
-            All Recipes
-          </Link>
-          {parentCategories.map((cat) => {
-            const subcategories = subcategoriesMap[cat.id] || [];
-            const hasSubcategories = subcategories.length > 0;
+    <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
+      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible px-4 md:px-0 scrollbar-hide">
+        <Link
+          href="/"
+          className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation"
+        >
+          All Recipes
+        </Link>
+        {parentCategories.map((cat) => {
+          const subcategories = subcategoriesMap[cat.id] || [];
+          const hasSubcategories = subcategories.length > 0;
 
           if (hasSubcategories) {
             return (
@@ -102,7 +101,6 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             </Link>
           );
         })}
-        </div>
       </div>
     </nav>
   );
