@@ -1,0 +1,13 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /admin
+Disallow: /account
+Disallow: /api/
+Disallow: /messages
+Disallow: /notifications
+
+# Sitemap
+Sitemap: https://recipe-website.vercel.app/sitemap.xml

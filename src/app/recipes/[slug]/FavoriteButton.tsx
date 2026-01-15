@@ -49,6 +49,8 @@ export function FavoriteButton({ recipeId, initialIsFavorite }: Props) {
       variant={isFavorite ? "danger" : "outline"}
       size="md"
       title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+      aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+      aria-pressed={isFavorite}
     >
       {!isPending && (
         <svg

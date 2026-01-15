@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { Input, Button } from "@/components";
 import { signUp } from "./actions";
+import { SignUpForm } from "@/features/auth/components/SignUpForm";
 
 export default async function SignUpPage({
   searchParams,
@@ -46,58 +46,19 @@ export default async function SignUpPage({
         </div>
 
         <div className="rounded-xl border border-neutral-200 bg-white p-8 shadow-lg">
-          <form action={signUp} className="space-y-4">
-            <Input
-              id="signup-email"
-              name="email"
-              type="email"
-              required
-              label="Email"
-              placeholder="you@example.com"
-            />
+          {errorMessage && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              {errorMessage}
+            </div>
+          )}
 
-            <Input
-              id="signup-password"
-              name="password"
-              type="password"
-              required
-              minLength={6}
-              label="Password"
-              placeholder="••••••••"
-              helperText="Must be at least 6 characters"
-            />
-
-            <Input
-              id="signup-confirm-password"
-              name="confirmPassword"
-              type="password"
-              required
-              minLength={6}
-              label="Confirm Password"
-              placeholder="••••••••"
-            />
-
-            {errorMessage ? (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-                {errorMessage}
-              </div>
-            ) : null}
-
-            {successMessage ? (
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-                {successMessage}
-              </div>
-            ) : null}
-
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full"
-            >
-              Create Account
-            </Button>
-          </form>
+          {successMessage && (
+            <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              {successMessage}
+            </div>
+          )}
+          
+          <SignUpForm signUpAction={signUp} />
 
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
@@ -118,6 +79,12 @@ export default async function SignUpPage({
             >
               ← Back to home
             </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
           </div>
         </div>
       </div>

@@ -139,3 +139,141 @@ img {
 		}
 	}
 }
+
+/* Mobile-specific improvements */
+
+/* Prevent text overflow with very long words */
+.break-anywhere {
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+
+/* Username/content overflow handling */
+.truncate-safe {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+/* Long message/comment text handling */
+.preserve-breaks {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+/* Prevent layout shift from long usernames */
+.username-container {
+	min-width: 0;
+	flex-shrink: 1;
+}
+
+/* Better touch targets on mobile */
+@media (max-width: 768px) {
+	button, a {
+		min-height: 44px;
+		min-width: 44px;
+	}
+	
+	/* Prevent zoom on input focus in iOS */
+	input[type="text"],
+	input[type="email"],
+	input[type="password"],
+	input[type="search"],
+	textarea,
+	select {
+		font-size: 16px;
+	}
+}
+
+/* Keyboard handling for mobile */
+@media (max-width: 768px) {
+	/* Fix keyboard covering input issue */
+	input:focus,
+	textarea:focus {
+		scroll-margin-bottom: 200px;
+	}
+}
+
+/* Image optimization loading states */
+img[data-loading="lazy"] {
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+img[data-loading="lazy"].loaded {
+	opacity: 1;
+}
+
+/* Skeleton loading shimmer effect */
+@keyframes shimmer {
+	0% {
+		background-position: -1000px 0;
+	}
+	100% {
+		background-position: 1000px 0;
+	}
+}
+
+.skeleton-shimmer {
+	background: linear-gradient(
+		90deg,
+		#f0f0f0 0%,
+		#f8f8f8 50%,
+		#f0f0f0 100%
+	);
+	background-size: 1000px 100%;
+	animation: shimmer 2s infinite;
+}
+
+/* Accessibility improvements */
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/* Skip to main content link for keyboard users */
+.skip-link {
+	position: absolute;
+	top: -40px;
+	left: 0;
+	background: #000;
+	color: #fff;
+	padding: 8px;
+	text-decoration: none;
+	z-index: 100;
+}
+
+.skip-link:focus {
+	top: 0;
+}
+
+/* Prevent layout shift from images */
+.aspect-ratio-box {
+	position: relative;
+	overflow: hidden;
+}
+
+.aspect-ratio-box::before {
+	content: '';
+	display: block;
+	padding-bottom: var(--aspect-ratio, 75%);
+}
+
+.aspect-ratio-box > * {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { Input, Button } from "@/components";
 import { signIn } from "./actions";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 
 export default async function LoginPage({
   searchParams,
@@ -39,40 +39,13 @@ export default async function LoginPage({
         </div>
 
         <div className="rounded-xl border border-neutral-200 bg-white p-8 shadow-lg">
-          <form action={signIn} className="space-y-4">
-            <Input
-              id="login-email"
-              name="email"
-              type="email"
-              required
-              label="Email"
-              placeholder="you@example.com"
-            />
-
-            <Input
-              id="login-password"
-              name="password"
-              type="password"
-              required
-              label="Password"
-              placeholder="••••••••"
-            />
-
-            {errorMessage ? (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-                {errorMessage}
-              </div>
-            ) : null}
-
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full"
-            >
-              Sign In
-            </Button>
-          </form>
+          {errorMessage && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              {errorMessage}
+            </div>
+          )}
+          
+          <LoginForm signInAction={signIn} />
 
           <div className="mt-6 text-center">
             <p className="text-sm text-neutral-600">
