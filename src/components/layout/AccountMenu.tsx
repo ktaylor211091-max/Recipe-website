@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components";
+import { signOut } from "@/app/login/actions";
 
 type AccountMenuProps = {
   isAdmin?: boolean;
@@ -56,10 +57,11 @@ export function AccountMenu({ isAdmin = false }: AccountMenuProps) {
             className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
             onClick={() => setIsOpen(false)}
           >
-            Profile Settings
+            Account Settings
           </Link>
           <div className="border-t border-neutral-100 my-1"></div>
           
+          <p className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase">Communication</p>
           <Link
             href="/messages"
             className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
@@ -74,12 +76,15 @@ export function AccountMenu({ isAdmin = false }: AccountMenuProps) {
           >
             Activity
           </Link>
+          
+          <div className="border-t border-neutral-100 my-1"></div>
+          <p className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase">Manage</p>
           <Link
-            href="/notifications"
+            href="/shopping-list"
             className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
             onClick={() => setIsOpen(false)}
           >
-            Notifications
+            Shopping List
           </Link>
           <Link
             href="/collections"
@@ -89,25 +94,40 @@ export function AccountMenu({ isAdmin = false }: AccountMenuProps) {
             Collections
           </Link>
 
+          <div className="border-t border-neutral-100 my-1"></div>
+          <p className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase">Community</p>
+          <Link
+            href="/search-users"
+            className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
+            onClick={() => setIsOpen(false)}
+          >
+            Find Chefs
+          </Link>
+
           {isAdmin && (
             <>
               <div className="border-t border-neutral-100 my-1"></div>
+              <p className="px-4 py-1 text-xs font-semibold text-amber-700 uppercase">Admin</p>
               <Link
                 href="/admin/dashboard"
                 className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
                 onClick={() => setIsOpen(false)}
               >
-                Admin Dashboard
-              </Link>
-              <Link
-                href="/admin/analytics"
-                className="block px-4 py-2 text-sm text-amber-700 hover:bg-amber-50"
-                onClick={() => setIsOpen(false)}
-              >
-                Analytics
+                Dashboard
               </Link>
             </>
           )}
+
+          <div className="border-t border-neutral-100 my-1"></div>
+          <button
+            onClick={() => {
+              signOut();
+              setIsOpen(false);
+            }}
+            className="w-full block px-4 py-2 text-sm text-red-700 hover:bg-red-50 text-left"
+          >
+            Sign Out
+          </button>
         </div>
       )}
     </div>

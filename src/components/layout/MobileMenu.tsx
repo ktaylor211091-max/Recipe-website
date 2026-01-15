@@ -71,13 +71,6 @@ export function MobileMenu({ user, isAdmin }: MobileMenuProps) {
                   >
                     Find Chefs
                   </Link>
-                  <Link
-                    href="/messages"
-                    className="block w-full rounded-lg px-4 py-3 text-neutral-700 hover:bg-neutral-100 transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Messages
-                  </Link>
                 </div>
                 <div className="border-t border-neutral-200 my-2 pt-2">
                   <p className="text-xs font-semibold text-neutral-500 px-4 py-2 uppercase">
@@ -88,7 +81,7 @@ export function MobileMenu({ user, isAdmin }: MobileMenuProps) {
                     className="block w-full rounded-lg px-4 py-3 text-neutral-700 hover:bg-neutral-100 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
-                    My Account
+                    Settings
                   </Link>
                   {isAdmin && (
                     <Link

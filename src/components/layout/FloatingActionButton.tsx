@@ -33,22 +33,6 @@ export function FloatingActionButton({ userId }: FloatingActionButtonProps) {
             <span className="text-xl">🛒</span>
             <span className="text-sm font-medium text-neutral-700">Shopping List</span>
           </Link>
-          <Link
-            href="/messages"
-            className="flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-lg hover:shadow-xl transition-shadow hover:bg-neutral-50"
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="text-xl">💬</span>
-            <span className="text-sm font-medium text-neutral-700">Messages</span>
-          </Link>
-          <Link
-            href="/account"
-            className="flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-lg hover:shadow-xl transition-shadow hover:bg-neutral-50"
-            onClick={() => setIsOpen(false)}
-          >
-            <span className="text-xl">👤</span>
-            <span className="text-sm font-medium text-neutral-700">My Profile</span>
-          </Link>
         </div>
       )}
 

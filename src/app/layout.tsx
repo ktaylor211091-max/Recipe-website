@@ -87,9 +87,6 @@ export default async function RootLayout({
                 {user ? (
                   <>
                     <NotificationBell initialUnreadCount={unreadNotificationCount} />
-                    <Button variant="outline" size="md" asChild>
-                      <Link href="/search-users">Find Chefs</Link>
-                    </Button>
                     <Button variant="primary" size="md" asChild>
                       <Link href="/create-recipe">✨ Create Recipe</Link>
                     </Button>
@@ -122,13 +119,13 @@ export default async function RootLayout({
           <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white">
             <div className="grid grid-cols-5 h-16">
               <Link
-                href="/search-users"
+                href="/"
                 className="flex flex-col items-center justify-center gap-1 text-neutral-600 hover:text-emerald-600 active:bg-neutral-50 transition-colors"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4m0 0l4-4" />
                 </svg>
-                <span className="text-xs font-medium">Find Chefs</span>
+                <span className="text-xs font-medium">Home</span>
               </Link>
               <Link
                 href="/messages"
@@ -151,7 +148,7 @@ export default async function RootLayout({
                     {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
                   </span>
                 )}
-                <span className="text-xs font-medium">Alerts</span>
+                <span className="text-xs font-medium">Notifications</span>
               </Link>
               <Link
                 href="/activity"
@@ -163,13 +160,13 @@ export default async function RootLayout({
                 <span className="text-xs font-medium">Activity</span>
               </Link>
               <Link
-                href="/account"
+                href={`/profile/${user?.id}`}
                 className="flex flex-col items-center justify-center gap-1 text-neutral-600 hover:text-emerald-600 active:bg-neutral-50 transition-colors"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="text-xs font-medium">Account</span>
+                <span className="text-xs font-medium">Profile</span>
               </Link>
             </div>
           </nav>
@@ -210,7 +207,7 @@ export default async function RootLayout({
                 </Link>
                 {user ? (
                   <Link href="/account" className="hover:text-neutral-900">
-                    My Account
+                    Account Settings
                   </Link>
                 ) : (
                   <>
