@@ -25,7 +25,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
 
   return (
     <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
-      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto overflow-y-visible px-4 md:px-0 scrollbar-hide">
+      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto overflow-y-visible px-4 md:px-0 scrollbar-hide pb-2 md:pb-0">
         <Link
           href="/"
           className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation"
@@ -40,7 +40,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             return (
               <div
                 key={cat.id}
-                className="relative group flex items-center static md:relative"
+                className="relative group flex items-center"
                 onMouseEnter={() => setOpenDropdown(cat.id)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
@@ -75,12 +75,13 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   </svg>
                 </button>
                 {openDropdown === cat.id && (
-                  <div className="fixed md:absolute top-auto md:top-full left-4 md:left-0 right-4 md:right-auto mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 md:min-w-[200px] z-[9999]">
+                  <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 min-w-[200px] max-w-[90vw] z-[9999]">
                     {subcategories.map((sub) => (
                       <Link
                         key={sub.id}
                         href={`/category/${sub.slug}`}
-                        className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
+                        className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
+                        onClick={() => setOpenDropdown(null)}
                       >
                         {sub.name}
                       </Link>
