@@ -24,8 +24,8 @@ export function CategoryNav({ categories }: CategoryNavProps) {
   }, {} as Record<string, Category[]>);
 
   return (
-    <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
-      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto overflow-y-visible px-4 md:px-0 scrollbar-hide pb-2 md:pb-0">
+    <nav className="relative z-[100] border-t border-neutral-100 py-3 -mx-4 md:mx-0 mb-4">
+      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto px-4 md:px-0 scrollbar-hide">
         <Link
           href="/"
           className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation"
@@ -40,7 +40,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             return (
               <div
                 key={cat.id}
-                className="relative group flex items-center"
+                className="relative flex items-center"
                 onMouseEnter={() => setOpenDropdown(cat.id)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
@@ -54,7 +54,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   type="button"
                   aria-expanded={openDropdown === cat.id}
                   aria-haspopup="menu"
-                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 md:hover:bg-neutral-100"
                   onClick={(e) => {
                     e.preventDefault();
                     setOpenDropdown((prev) => (prev === cat.id ? null : cat.id));
@@ -75,7 +75,11 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   </svg>
                 </button>
                 {openDropdown === cat.id && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 min-w-[200px] max-w-[90vw] z-[9999]">
+                  <div 
+                    className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 min-w-[200px] max-w-[90vw] z-[200]"
+                    onMouseEnter={() => setOpenDropdown(cat.id)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
                     {subcategories.map((sub) => (
                       <Link
                         key={sub.id}
