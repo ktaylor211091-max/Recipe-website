@@ -8,6 +8,7 @@ export { colors, typography, spacing } from "./ui/designSystem";
 // Toast & UI components
 export { ToastProvider, useToast } from "./ui/Toast";
 export { EmptyState } from "./ui/EmptyState";
+export { LazyImage } from "./ui/LazyImage";
 export { 
   RecipeCardSkeleton, 
   RecipeListSkeleton, 

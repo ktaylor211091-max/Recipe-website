@@ -39,24 +39,26 @@ export default async function SearchUsersPage({ searchParams }: SearchUsersPageP
       .ilike("display_name", `%${query}%`)
       .limit(20);
 
-    if (profilesData) {
-      // Get recipe counts
-      const profilesWithDetails = await Promise.all(
-        profilesData.map(async (profile: ProfileRow): Promise<ProfileResult> => {
-          const { count } = await supabase
-            .from("recipes")
-            .select("id", { count: "exact", head: true })
-            .eq("author_id", profile.id)
-            .eq("published", true);
+    if (profilesData && profilesData.length > 0) {
+      // Get recipe counts for all profiles in a single query (fixes N+1 problem)
+      const profileIds = profilesData.map(p => p.id);
+      const { data: recipeCounts } = await supabase
+        .from("recipes")
+        .select("author_id")
+        .eq("published", true)
+        .in("author_id", profileIds);
 
-          return {
-            ...profile,
-            recipeCount: count || 0,
-          };
-        })
-      );
+      // Create a map of author_id -> recipe count
+      const countMap = new Map<string, number>();
+      recipeCounts?.forEach(recipe => {
+        countMap.set(recipe.author_id, (countMap.get(recipe.author_id) || 0) + 1);
+      });
 
-      profiles = profilesWithDetails;
+      // Combine profile data with recipe counts
+      profiles = profilesData.map((profile): ProfileResult => ({
+        ...profile,
+        recipeCount: countMap.get(profile.id) || 0,
+      }));
     }
   }
 
