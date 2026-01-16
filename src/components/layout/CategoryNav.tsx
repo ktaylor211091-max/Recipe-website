@@ -75,17 +75,30 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   </svg>
                 </button>
                 {openDropdown === cat.id && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 min-w-[200px] z-[9999]">
-                    {subcategories.map((sub) => (
-                      <Link
-                        key={sub.id}
-                        href={`/category/${sub.slug}`}
-                        className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
+                  <>
+                    {/* Mobile backdrop - tap outside to close */}
+                    <div 
+                      className="fixed inset-0 bg-black/20 z-[60] md:hidden"
+                      onClick={() => setOpenDropdown(null)}
+                    />
+                    {/* Dropdown menu */}
+                    <div 
+                      className="fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full mt-0 md:mt-1 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]"
+                      onMouseEnter={() => setOpenDropdown(cat.id)}
+                      onMouseLeave={() => setOpenDropdown(null)}
+                    >
+                      {subcategories.map((sub) => (
+                        <Link
+                          key={sub.id}
+                          href={`/category/${sub.slug}`}
+                          className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             );
