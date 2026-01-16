@@ -14,7 +14,6 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
   },
   compress: true,
-  swcMinify: true,
 };
 
 export default nextConfig;
