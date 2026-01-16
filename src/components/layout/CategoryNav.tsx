@@ -24,8 +24,8 @@ export function CategoryNav({ categories }: CategoryNavProps) {
   }, {} as Record<string, Category[]>);
 
   return (
-    <nav className="relative border-t border-neutral-100 py-3 -mx-4 md:mx-0">
-      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto px-4 md:px-0 scrollbar-hide">
+    <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
+      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible px-4 md:px-0 scrollbar-hide">
         <Link
           href="/"
           className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation"
@@ -40,7 +40,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             return (
               <div
                 key={cat.id}
-                className="relative flex items-center"
+                className="relative group flex items-center"
                 onMouseEnter={() => setOpenDropdown(cat.id)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
@@ -54,7 +54,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   type="button"
                   aria-expanded={openDropdown === cat.id}
                   aria-haspopup="menu"
-                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 md:hover:bg-neutral-100"
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   onClick={(e) => {
                     e.preventDefault();
                     setOpenDropdown((prev) => (prev === cat.id ? null : cat.id));
@@ -75,29 +75,17 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   </svg>
                 </button>
                 {openDropdown === cat.id && (
-                  <>
-                    {/* Backdrop for mobile to close dropdown when clicking outside */}
-                    <div 
-                      className="fixed inset-0 z-[60] md:hidden"
-                      onClick={() => setOpenDropdown(null)}
-                    />
-                    <div 
-                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 rounded-lg shadow-2xl py-2 min-w-[200px] max-w-[90vw] z-[70]"
-                      onMouseEnter={() => setOpenDropdown(cat.id)}
-                      onMouseLeave={() => setOpenDropdown(null)}
-                    >
-                      {subcategories.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          href={`/category/${sub.slug}`}
-                          className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
+                  <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 min-w-[200px] z-[9999]">
+                    {subcategories.map((sub) => (
+                      <Link
+                        key={sub.id}
+                        href={`/category/${sub.slug}`}
+                        className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
                 )}
               </div>
             );

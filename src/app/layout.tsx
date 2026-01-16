@@ -74,7 +74,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-white pb-16 md:pb-0">
         <ToastProvider>
-        <header className="relative z-50 border-b border-neutral-200 bg-white sticky top-0">
+        <header className="relative z-50 border-b border-neutral-200 bg-white">
           <div className="mx-auto max-w-7xl px-4 md:px-6">
             <div className="flex items-center justify-between py-4">
               <Link href="/" className="group flex items-center gap-3">
