@@ -24,7 +24,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
   }, {} as Record<string, Category[]>);
 
   return (
-    <nav className="relative z-[100] border-t border-neutral-100 py-3 -mx-4 md:mx-0 mb-4">
+    <nav className="relative border-t border-neutral-100 py-3 -mx-4 md:mx-0">
       <div className="flex items-center gap-4 md:gap-6 overflow-x-auto px-4 md:px-0 scrollbar-hide">
         <Link
           href="/"
@@ -75,22 +75,29 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                   </svg>
                 </button>
                 {openDropdown === cat.id && (
-                  <div 
-                    className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 min-w-[200px] max-w-[90vw] z-[200]"
-                    onMouseEnter={() => setOpenDropdown(cat.id)}
-                    onMouseLeave={() => setOpenDropdown(null)}
-                  >
-                    {subcategories.map((sub) => (
-                      <Link
-                        key={sub.id}
-                        href={`/category/${sub.slug}`}
-                        className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
-                        onClick={() => setOpenDropdown(null)}
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
+                  <>
+                    {/* Backdrop for mobile to close dropdown when clicking outside */}
+                    <div 
+                      className="fixed inset-0 z-[60] md:hidden"
+                      onClick={() => setOpenDropdown(null)}
+                    />
+                    <div 
+                      className="absolute top-full left-0 mt-2 bg-white border border-neutral-200 rounded-lg shadow-2xl py-2 min-w-[200px] max-w-[90vw] z-[70]"
+                      onMouseEnter={() => setOpenDropdown(cat.id)}
+                      onMouseLeave={() => setOpenDropdown(null)}
+                    >
+                      {subcategories.map((sub) => (
+                        <Link
+                          key={sub.id}
+                          href={`/category/${sub.slug}`}
+                          className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
             );
