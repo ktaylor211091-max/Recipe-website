@@ -34,7 +34,7 @@ export function CategoryDiscovery({ categories }: CategoryDiscoveryProps) {
   }
 
   return (
-    <section className="py-16">
+    <section>
       <div className="mb-10">
         <h2 className="text-4xl font-bold text-neutral-900 mb-3">
           Browse Categories
