@@ -25,12 +25,12 @@ export function CategoryNav({ categories }: CategoryNavProps) {
 
   return (
     <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
-      <div className="flex items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible px-4 md:px-0 scrollbar-hide">
+      <div className="flex items-center gap-2 md:gap-6 overflow-x-auto md:overflow-visible px-4 md:px-0 scrollbar-hide">
         <Link
           href="/"
-          className="whitespace-nowrap text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation"
+          className="whitespace-nowrap text-xs sm:text-sm font-medium text-neutral-900 hover:text-neutral-600 touch-manipulation flex-shrink-0"
         >
-          All Recipes
+          All
         </Link>
         {parentCategories.map((cat) => {
           const subcategories = subcategoriesMap[cat.id] || [];
@@ -44,7 +44,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
               >
                 <Link
                   href={`/category/${cat.slug}`}
-                  className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900 touch-manipulation"
+                  className="whitespace-nowrap text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 touch-manipulation flex-shrink-0"
                 >
                   {cat.name}
                 </Link>
@@ -102,7 +102,7 @@ export function CategoryNav({ categories }: CategoryNavProps) {
             <Link
               key={cat.id}
               href={`/category/${cat.slug}`}
-              className="whitespace-nowrap text-sm font-medium text-neutral-600 hover:text-neutral-900 touch-manipulation"
+              className="whitespace-nowrap text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 touch-manipulation flex-shrink-0"
             >
               {cat.name}
             </Link>
