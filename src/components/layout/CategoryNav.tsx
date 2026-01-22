@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import type { Category } from "@/app/admin/categories/actions";
 
 type CategoryNavProps = {
@@ -8,6 +9,8 @@ type CategoryNavProps = {
 };
 
 export function CategoryNav({ categories }: CategoryNavProps) {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
   // Separate parent categories from subcategories
   const parentCategories = categories.filter((cat) => !cat.parent_category_id);
   const subcategoriesMap = categories.reduce((acc, cat) => {
@@ -48,8 +51,8 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                 <button
                   type="button"
                   aria-haspopup="menu"
-                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  tabIndex={-1}
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 md:pointer-events-none"
+                  onClick={() => setOpenDropdown((prev) => (prev === cat.id ? null : cat.id))}
                 >
                   <svg
                     className="w-4 h-4 transition-transform group-hover:rotate-180"
@@ -65,20 +68,32 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                     />
                   </svg>
                 </button>
-                {/* Dropdown menu - CSS hover only, hidden by default on desktop */}
-                <div 
-                  className="hidden md:group-hover:block fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full md:mt-0 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]"
-                >
-                  {subcategories.map((sub) => (
-                    <Link
-                      key={sub.id}
-                      href={`/category/${sub.slug}`}
-                      className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
-                    >
-                      {sub.name}
-                    </Link>
-                  ))}
-                </div>
+                {/* Mobile backdrop */}
+                {openDropdown === cat.id && (
+                  <div 
+                    className="fixed inset-0 bg-black/20 z-[60] md:hidden"
+                    onClick={() => setOpenDropdown(null)}
+                  />
+                )}
+                {/* Dropdown menu - CSS hover on desktop, JS state on mobile */}
+                {(openDropdown === cat.id || true) && (
+                  <div 
+                    className={`${
+                      openDropdown === cat.id ? "block" : "hidden"
+                    } md:hidden md:group-hover:block fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full md:mt-0 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]`}
+                  >
+                    {subcategories.map((sub) => (
+                      <Link
+                        key={sub.id}
+                        href={`/category/${sub.slug}`}
+                        className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
+                        onClick={() => setOpenDropdown(null)}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           }
