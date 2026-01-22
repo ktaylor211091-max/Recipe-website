@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import type { Category } from "@/app/admin/categories/actions";
 
 type CategoryNavProps = {
@@ -9,8 +8,6 @@ type CategoryNavProps = {
 };
 
 export function CategoryNav({ categories }: CategoryNavProps) {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
   // Separate parent categories from subcategories
   const parentCategories = categories.filter((cat) => !cat.parent_category_id);
   const subcategoriesMap = categories.reduce((acc, cat) => {
@@ -41,8 +38,6 @@ export function CategoryNav({ categories }: CategoryNavProps) {
               <div
                 key={cat.id}
                 className="relative group flex items-center"
-                onMouseEnter={() => setOpenDropdown(cat.id)}
-                onMouseLeave={() => setOpenDropdown(null)}
               >
                 <Link
                   href={`/category/${cat.slug}`}
@@ -52,16 +47,12 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                 </Link>
                 <button
                   type="button"
-                  aria-expanded={openDropdown === cat.id}
                   aria-haspopup="menu"
                   className="ml-1 flex h-6 w-6 items-center justify-center rounded-full text-neutral-500 hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown((prev) => (prev === cat.id ? null : cat.id));
-                  }}
+                  tabIndex={-1}
                 >
                   <svg
-                    className={`w-4 h-4 transition-transform ${openDropdown === cat.id ? "rotate-180" : "rotate-0"}`}
+                    className="w-4 h-4 transition-transform group-hover:rotate-180"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -74,32 +65,20 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                     />
                   </svg>
                 </button>
-                {openDropdown === cat.id && (
-                  <>
-                    {/* Mobile backdrop - tap outside to close */}
-                    <div 
-                      className="fixed inset-0 bg-black/20 z-[60] md:hidden"
-                      onClick={() => setOpenDropdown(null)}
-                    />
-                    {/* Dropdown menu */}
-                    <div 
-                      className="fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full mt-0 md:mt-1 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]"
-                      onMouseEnter={() => setOpenDropdown(cat.id)}
-                      onMouseLeave={() => setOpenDropdown(null)}
+                {/* Dropdown menu - CSS hover only, hidden by default on desktop */}
+                <div 
+                  className="hidden md:group-hover:block fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full md:mt-0 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]"
+                >
+                  {subcategories.map((sub) => (
+                    <Link
+                      key={sub.id}
+                      href={`/category/${sub.slug}`}
+                      className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
                     >
-                      {subcategories.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          href={`/category/${sub.slug}`}
-                          className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900 whitespace-nowrap"
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                )}
+                      {sub.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             );
           }
