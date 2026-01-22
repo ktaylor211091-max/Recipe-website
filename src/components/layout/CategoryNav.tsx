@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import type { Category } from "@/app/admin/categories/actions";
 
 type CategoryNavProps = {
@@ -10,7 +10,6 @@ type CategoryNavProps = {
 
 export function CategoryNav({ categories }: CategoryNavProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Separate parent categories from subcategories
   const parentCategories = categories.filter((cat) => !cat.parent_category_id);
@@ -23,19 +22,6 @@ export function CategoryNav({ categories }: CategoryNavProps) {
     }
     return acc;
   }, {} as Record<string, Category[]>);
-
-  const handleMouseEnter = (catId: string) => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-    }
-    setOpenDropdown(catId);
-  };
-
-  const handleMouseLeave = () => {
-    closeTimeoutRef.current = setTimeout(() => {
-      setOpenDropdown(null);
-    }, 150);
-  };
 
   return (
     <nav className="relative z-50 border-t border-neutral-100 py-3 -mx-4 md:mx-0">
@@ -55,8 +41,8 @@ export function CategoryNav({ categories }: CategoryNavProps) {
               <div
                 key={cat.id}
                 className="relative group flex items-center"
-                onMouseEnter={() => handleMouseEnter(cat.id)}
-                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => setOpenDropdown(cat.id)}
+                onMouseLeave={() => setOpenDropdown(null)}
               >
                 <Link
                   href={`/category/${cat.slug}`}
@@ -97,9 +83,9 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                     />
                     {/* Dropdown menu */}
                     <div 
-                      className="fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full md:mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]"
-                      onMouseEnter={() => handleMouseEnter(cat.id)}
-                      onMouseLeave={handleMouseLeave}
+                      className="fixed md:absolute left-4 right-4 md:left-0 md:right-auto top-[140px] md:top-full mt-0 md:mt-1 bg-white border border-neutral-200 rounded-lg shadow-xl py-2 md:min-w-[200px] z-[70]"
+                      onMouseEnter={() => setOpenDropdown(cat.id)}
+                      onMouseLeave={() => setOpenDropdown(null)}
                     >
                       {subcategories.map((sub) => (
                         <Link
