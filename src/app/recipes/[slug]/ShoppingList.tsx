@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Props = {
   ingredients: string[];
@@ -38,13 +39,8 @@ export function ShoppingList({ ingredients, recipeTitle, recipeSlug }: Props) {
     setSelectedItems(new Set());
   };
 
-  const addToShoppingList = () => {
-    // Get existing shopping list from localStorage
-    const existing = localStorage.getItem("shoppingList");
-    const existingItems = existing ? JSON.parse(existing) : [];
-
-    // Add selected ingredients
-    const newItems = Array.from(selectedItems).map((index) => ({
+  const addToShoppingList = async () => {
+    const selectedIngredients = Array.from(selectedItems).map((index) => ({
       id: `${Date.now()}-${index}`,
       text: ingredients[index],
       recipeTitle,
@@ -52,11 +48,26 @@ export function ShoppingList({ ingredients, recipeTitle, recipeSlug }: Props) {
       checked: false,
     }));
 
-    // Combine and save
-    const combined = [...existingItems, ...newItems];
-    localStorage.setItem("shoppingList", JSON.stringify(combined));
+    const supabase = createSupabaseBrowserClient();
+    const { data: userRes } = await supabase.auth.getUser();
+    const userId = userRes?.user?.id;
 
-    // Navigate to shopping list page
+    if (userId) {
+      await supabase.from("shopping_list").insert(
+        selectedIngredients.map((item) => ({
+          user_id: userId,
+          text: item.text,
+          recipe_title: item.recipeTitle,
+          recipe_slug: item.recipeSlug,
+          checked: false,
+        }))
+      );
+    } else {
+      const existing = localStorage.getItem("shoppingList");
+      const existingItems = existing ? JSON.parse(existing) : [];
+      localStorage.setItem("shoppingList", JSON.stringify([...existingItems, ...selectedIngredients]));
+    }
+
     router.push("/shopping-list");
   };
 
