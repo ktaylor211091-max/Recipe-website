@@ -26,6 +26,24 @@ async function requireSupabase() {
   return supabase;
 }
 
+/** Verify the caller is an authenticated admin — redirects otherwise */
+async function requireAdmin() {
+  const supabase = await requireSupabase();
+  const { data: userRes } = await supabase.auth.getUser();
+  if (!userRes?.user) {
+    redirect(`/admin?error=${encodeURIComponent("You must be signed in as an admin")}`);
+  }
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userRes.user.id)
+    .single();
+  if (profile?.role !== "admin") {
+    redirect(`/admin?error=${encodeURIComponent("Access denied: admin only")}`);
+  }
+  return supabase;
+}
+
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -100,7 +118,7 @@ export async function createRecipe(formData: FormData) {
     redirect(`/admin?error=${encodeURIComponent("Could not create a slug")}`);
   }
 
-  const supabase = await requireSupabase();
+  const supabase = await requireAdmin();
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes.user;
 
@@ -242,7 +260,7 @@ export async function updateRecipe(formData: FormData) {
     redirect(`/admin/dashboard?error=${encodeURIComponent("Could not create a slug")}`);
   }
 
-  const supabase = await requireSupabase();
+  const supabase = await requireAdmin();
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes.user;
 
@@ -355,7 +373,7 @@ export async function togglePublish(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const nextPublished = String(formData.get("published") ?? "") === "true";
 
-  const supabase = await requireSupabase();
+  const supabase = await requireAdmin();
   const { error } = await supabase
     .from("recipes")
     .update({ published: nextPublished })
@@ -374,7 +392,7 @@ export async function togglePublish(formData: FormData) {
 export async function deleteRecipe(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 
-  const supabase = await requireSupabase();
+  const supabase = await requireAdmin();
 
   // Best-effort: delete associated image from Storage first (if any).
   const { data: existing } = await supabase
@@ -403,7 +421,7 @@ export async function deleteRecipe(formData: FormData) {
 export async function removeRecipeImage(formData: FormData) {
   const id = String(formData.get("id") ?? "");
 
-  const supabase = await requireSupabase();
+  const supabase = await requireAdmin();
 
   const { data: existing, error: fetchError } = await supabase
     .from("recipes")

@@ -30,10 +30,24 @@ export async function getCategories(): Promise<Category[]> {
   return data || [];
 }
 
-export async function createCategory(formData: FormData) {
+async function requireAdmin() {
   const supabase = await createSupabaseServerClient();
+  if (!supabase) return null;
+  const { data: userRes } = await supabase.auth.getUser();
+  if (!userRes?.user) return null;
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userRes.user.id)
+    .single();
+  if (profile?.role !== "admin") return null;
+  return supabase;
+}
+
+export async function createCategory(formData: FormData) {
+  const supabase = await requireAdmin();
   if (!supabase) {
-    return { error: "Supabase client not configured" };
+    return { error: "Access denied" };
   }
 
   const name = formData.get("name") as string;
@@ -69,9 +83,9 @@ export async function createCategory(formData: FormData) {
 }
 
 export async function updateCategory(id: string, formData: FormData) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireAdmin();
   if (!supabase) {
-    return { error: "Supabase client not configured" };
+    return { error: "Access denied" };
   }
 
   const name = formData.get("name") as string;
@@ -110,9 +124,9 @@ export async function updateCategory(id: string, formData: FormData) {
 }
 
 export async function deleteCategory(id: string) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await requireAdmin();
   if (!supabase) {
-    return { error: "Supabase client not configured" };
+    return { error: "Access denied" };
   }
 
   // Check if category has recipes
