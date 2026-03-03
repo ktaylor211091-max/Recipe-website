@@ -127,22 +127,22 @@ export default function ShoppingListPage() {
     setNewItem("");
   };
 
-  const clearAll = () => {
+  const clearAll = async () => {
     if (confirm("Clear entire shopping list?")) {
       setItems([]);
       if (client && userId) {
-        client.from("shopping_list").delete().eq("user_id", userId);
+        await client.from("shopping_list").delete().eq("user_id", userId);
       } else {
         persistLocal([]);
       }
     }
   };
 
-  const clearChecked = () => {
+  const clearChecked = async () => {
     const updated = items.filter((item) => !item.checked);
     setItems(updated);
     if (client && userId) {
-      client.from("shopping_list").delete().eq("user_id", userId).eq("checked", true);
+      await client.from("shopping_list").delete().eq("user_id", userId).eq("checked", true);
     } else {
       persistLocal(updated);
     }
