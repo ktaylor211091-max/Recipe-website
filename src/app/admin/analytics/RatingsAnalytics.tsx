@@ -26,7 +26,7 @@ export async function RatingsAnalytics() {
   // Calculate analytics
   const recipeStats = recipes
     .map((recipe) => {
-      const ratings = recipe.recipe_reviews?.map((r: any) => r.rating) || [];
+      const ratings = recipe.recipe_reviews?.map((r: { rating: number }) => r.rating) || [];
       const avgRating =
         ratings.length > 0
           ? ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length

@@ -72,7 +72,26 @@ async function updateUserRecipe(formData: FormData) {
     }
   }
 
-  const updateData: any = {
+  const updateData: {
+    title: string;
+    slug: string;
+    category: string;
+    description: string | null;
+    ingredients: string[];
+    steps: string[];
+    prep_time_minutes: number | null;
+    cook_time_minutes: number | null;
+    servings: number | null;
+    notes: string | null;
+    tips: string | null;
+    published: boolean;
+    image_path: string | null;
+    calories?: number;
+    protein_grams?: number;
+    carbs_grams?: number;
+    fat_grams?: number;
+    fiber_grams?: number;
+  } = {
     title,
     slug,
     category,

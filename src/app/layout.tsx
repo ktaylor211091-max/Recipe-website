@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { getCategories } from "./admin/categories/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -7,6 +7,7 @@ import { ToastProvider, Button } from "@/components";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://recipe-website.vercel.app"),
   title: "Recipe Website - Discover & Share Recipes",
   description: "Discover delicious recipes from talented chefs. Share your favorite recipes, rate dishes, and build your cooking community.",
   openGraph: {
@@ -31,7 +32,11 @@ export const metadata: Metadata = {
   },
   keywords: ["recipes", "cooking", "food", "chef", "cuisine"],
   authors: [{ name: "Recipe Website Team" }],
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: "#16a34a",
 };
 

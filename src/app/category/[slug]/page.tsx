@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,6 +11,21 @@ import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const categories = await getCategories();
+  const category = categories.find((c) => c.slug === slug);
+  if (!category) return {};
+  return {
+    title: `${category.name} Recipes | Recipe Website`,
+    description: `Browse all ${category.name} recipes. Discover crowd favourites, quick meals, and more.`,
+    openGraph: {
+      title: `${category.name} Recipes`,
+      description: `Browse all ${category.name} recipes on Recipe Website.`,
+    },
+  };
+}
 
 export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;

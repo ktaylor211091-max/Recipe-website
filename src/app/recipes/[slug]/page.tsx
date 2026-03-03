@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { SUPABASE_CONFIG } from "@/lib/supabase/config";
 import { Breadcrumb } from "@/components/layout";
 import { Button } from "@/components";
 import { RecipePrintButton } from "./RecipePrintButton";
@@ -16,6 +18,45 @@ import { ForkButton } from "./ForkButton";
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return {};
+
+  const { data: recipe } = await supabase
+    .from("recipes")
+    .select("title,description,image_path")
+    .eq("slug", slug)
+    .eq("published", true)
+    .maybeSingle();
+
+  if (!recipe) return {};
+
+  const imageUrl = recipe.image_path
+    ? `${SUPABASE_CONFIG.url}/storage/v1/object/public/recipe-images/${recipe.image_path}`
+    : null;
+  const description =
+    recipe.description || `Check out this delicious recipe: ${recipe.title}`;
+
+  return {
+    title: `${recipe.title} | Recipe Website`,
+    description,
+    openGraph: {
+      title: recipe.title,
+      description,
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: recipe.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: recipe.title,
+      description,
+      images: imageUrl ? [imageUrl] : [],
+    },
+  };
+}
 
 type RecipeTag = {
   name: string;
